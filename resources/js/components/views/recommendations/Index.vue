@@ -1,6 +1,6 @@
 <template>
     <div>
-        <header-section icon="fas fa-copy" title="Recomendaciones">
+        <header-section icon="fas fa-copy" title="Bandeja de entrada de Recomendaciones">
             <template slot="buttons">
                 <el-button
                     size="medium"
@@ -30,13 +30,6 @@
                     icon="fas fa-edit"
                     @click="addRegister">
                     + Recomendación
-                </el-button>
-                <el-button
-                    size="medium"
-                    type="success"
-                    icon="fas fa-edit"
-                    @click="$router.push('/nuevo')">
-                    English
                 </el-button>
             </template>
         </header-section>
@@ -88,7 +81,7 @@
                     :data="recommendations"
                     style="width: 100%">
                     <el-table-column
-                        prop="ods.name"
+                        prop="implode_ods"
                         label="ODS">
                     </el-table-column>
                     <el-table-column
@@ -111,6 +104,13 @@
                         label="Poder de Gobierno">
                     </el-table-column>
                     <el-table-column
+                        prop="isPublished"
+                        label="Estatus">
+                        <template slot-scope="scope">
+                            {{ scope.row.isPublished ? 'Publicado' : 'Sin publicar' }}
+                        </template>
+                    </el-table-column>
+                    <el-table-column
                         label="Acciones" header-align="left" align="center" width="200">
                         <template slot-scope="scope">
                             <el-button-group>
@@ -124,6 +124,18 @@
                                         size="mini"
                                         icon="fas fa-edit"
                                         @click="editRegister(scope.row.hash)">
+                                    </el-button>
+                                </el-tooltip>
+                                <el-tooltip
+                                    class="item"
+                                    effect="dark"
+                                    content="Publicar"
+                                    placement="top-start">
+                                    <el-button
+                                        type="success"
+                                        size="mini"
+                                        icon="fas fa-upload"
+                                        @click="publishRegister(scope.row.hash)">
                                     </el-button>
                                 </el-tooltip>
                                 <el-tooltip
@@ -207,6 +219,12 @@
 
             },
 
+            changeLanguage(language){
+                if(language == 1){
+
+                }
+            },
+
             addRegister() {
                 let data = {
                   cat_transaction_type_id: 1,
@@ -235,6 +253,24 @@
                     this.$router.push({
                         name: 'RecommendationEdit',
                         params: {id: id}
+                    });
+                }).catch(error => {
+                    this.$message({
+                        type: "warning",
+                        message: "No fue posible completar la acción, intente nuevamente."
+                    });
+                });
+            },
+
+            publishRegister(id) {
+                let data = {
+                    id:id
+                };
+                this.getRecommendations();
+                axios.post('/api/recommendations/publish/register', data).then(response => {
+                    this.$message({
+                        type: "success",
+                        message: "Se ha Publicado correctamente."
                     });
                 }).catch(error => {
                     this.$message({

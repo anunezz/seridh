@@ -25,7 +25,7 @@ class RecommendationsController extends Controller
         try {
             $data = $request->all();
 
-            $recommendations = Recommendation::with('user', 'ods:id,name', 'entity:id,name',
+            $recommendations = Recommendation::with('user', 'ods', 'entity:id,name',
                 'order:id,name', 'power:id,name')
                 ->search($data['filters'])
                 ->where('isActive', true)
@@ -131,6 +131,10 @@ class RecommendationsController extends Controller
             $recommendation->fill($data);
             $recommendation->save();
 
+            if ( count($data['cat_ods_id']) > 0 ) {
+                $recommendation->ods()->sync($data['cat_ods_id']);
+            }
+
             if ( count($data['files']) > 0 ) {
                 foreach ( $data['files'] as $file ) {
                     $recommendationDocument = Document::find($file);
@@ -207,7 +211,7 @@ class RecommendationsController extends Controller
                 ->orderBy('name')
                 ->get(['id', 'name']);
 
-            $recommendation = Recommendation::with('documents')->find(decrypt($id));
+            $recommendation = Recommendation::with('documents', 'ods')->find(decrypt($id));
             $recommendationForm = [
                 'recommendation'               => $recommendation->recommendation,
                 'cat_entity_id'                => $recommendation->cat_entity_id,
@@ -220,7 +224,7 @@ class RecommendationsController extends Controller
                 'cat_review_right_id'          => $recommendation->cat_review_right_id,
                 'cat_review_topic_id'          => $recommendation->cat_review_topic_id,
                 'cat_subtopic_id'              => $recommendation->cat_subtopic_id,
-                'cat_ods_id'                   => $recommendation->cat_ods_id,
+                'cat_ods_id'                   => $recommendation->ods->pluck('id')->toArray(),
                 'comments'                     => $recommendation->comments,
                 'documents'                    => $recommendation->documents
             ];
@@ -262,6 +266,10 @@ class RecommendationsController extends Controller
             $recommendation->fill($data);
             $recommendation->save();
 
+            if ( count($data['cat_ods_id']) > 0 ) {
+                $recommendation->ods()->sync($data['cat_ods_id']);
+            }
+
             if ( count($data['files']) > 0 ) {
                 foreach ( $data['files'] as $file ) {
                     $recommendationDocument = Document::find($file);
@@ -291,14 +299,17 @@ class RecommendationsController extends Controller
         }
     }
 
-    public function destroy($id)
+    public function publish(Request $request)
     {
         try {
 
-            $recommendation = Recommendation::find(decrypt($id));
+            $recommendation = Recommendation::find(decrypt($request->id));
 
-            $recommendation->isActive = false;
+            $recommendation->isPublished = true;
             $recommendation->save();
+
+            GeneralController::saveTransactionLog(5,
+                'Publica una recomendación con id: ' . $recommendation->id);
 
             return response()->json([
                 'success' => true
@@ -311,6 +322,34 @@ class RecommendationsController extends Controller
                 'message' => 'No se pudo completar la acción',
             ], 500);
         }
+
+    }
+
+    public function destroy($id)
+    {
+        try {
+
+            $recommendation = Recommendation::find(decrypt($id));
+
+            $recommendation->isActive = false;
+            $recommendation->save();
+
+            GeneralController::saveTransactionLog(4,
+                'Elimina una recomendación con id: ' . $recommendation->id);
+
+            return response()->json([
+                'success' => true
+            ]);
+        }
+        catch (\Exception $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'No se pudo completar la acción',
+            ], 500);
+        }
+
+
     }
 
     public function uploadFile(Request $request)

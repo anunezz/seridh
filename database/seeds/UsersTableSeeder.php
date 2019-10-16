@@ -15,11 +15,11 @@ class UsersTableSeeder extends Seeder
         DB::table('users')->insert([
         [
             'id'                => 1,
-            'username'          =>'jrojo',
+            'username'          =>'igomez',
             'cat_profile_id'    => 1,
-            'name'              => 'Manuel',
-            'firstName'         => 'Rojo',
-            'secondName'        => 'Marquez',
+            'name'              => 'ivan',
+            'firstName'         => 'perdomo',
+            'secondName'        => 'gomez',
             'created_at'        => Carbon::now(),
             'updated_at'        => Carbon::now(),
         ]

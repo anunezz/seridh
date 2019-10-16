@@ -36,6 +36,12 @@ class CatTransactionTypeSeeder extends Seeder
                 'name' => 'Eliminación',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
+            ],
+            [
+                'id' => 5,
+                'name' => 'Publicación',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ]
         ]);
     }
