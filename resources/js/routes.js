@@ -1,8 +1,12 @@
 import Home from "./components/views/layouts/Home";
+
+import Public from "./components/views/layouts/Public";
+import PublicHome from "./components/views/public/Home";
 import AccessDenied from "./components/views/layouts/AccessDenied";
 import Menu from "./components/views/layouts/Menu";
 //import Admin from "./routes/Admin";
 import Recommendations from "./routes/Recommendations";
+import Catalogs from "./routes/Catalogs";
 //import Reports from "./routes/Reports";
 
 export const routes = [
@@ -19,12 +23,23 @@ export const routes = [
         }
     },
     {
+        path: '/publico',
+        component: Public,
+        children: [
+            { path: '', component: PublicHome }
+        ],
+        beforeEnter: (to, from, next) => {
+            next();
+        }
+    },
+    {
         path: '/',
         component: Home,
         children: [
             { path: '', component: Menu },
             //{ ...Admin },
-            { ...Recommendations },
+              { ...Recommendations },
+              { ...Catalogs },
             //{ ...Reports },
             // { ...Minister },
             // { ...Organism },
