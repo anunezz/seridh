@@ -29,6 +29,7 @@ class CreateRecommendationTable extends Migration {
             $table->unsignedBigInteger('cat_ods_id')->nullable();
             $table->text('comments');
             $table->boolean('isActive')->default(1);
+            $table->boolean('isPublished')->default(0);
             $table->timestamps();
 
             $table->foreign('user_id')

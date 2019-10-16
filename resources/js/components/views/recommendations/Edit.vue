@@ -240,7 +240,9 @@
                                       ]">
                         <el-select
                             v-model="recommendationForm.cat_ods_id"
-                            filterable placeholder="Seleccionar"
+                            filterable
+                            multiple
+                            placeholder="Seleccionar"
                             style="width: 100%">
                             <el-option
                                 v-for="(od, index) in ods"
@@ -346,11 +348,14 @@
                 </el-col>
             </el-row>
             <el-row :gutter="10">
-                <el-col :span="5" :offset="14">
+                <el-col :span="3" :offset="14">
                     <el-button type="danger" style="width: 100%" @click="$router.push('/recomendaciones')">Cancelar</el-button>
                 </el-col>
-                <el-col :span="5" >
-                    <el-button type="success" style="width: 100%" @click="submitForm">Actualizar</el-button>
+                <el-col :span="3" >
+                    <el-button type="success" style="width: 100%" @click="submitForm(false)">Actualizar</el-button>
+                </el-col>
+                <el-col :span="3" >
+                    <el-button type="primary" style="width: 100%" @click="submitForm(true)">Guardar y Publicar</el-button>
                 </el-col>
             </el-row>
         </el-form>
@@ -541,12 +546,14 @@
                 });
             },
 
-            submitForm() {
+            submitForm(type) {
                 this.startLoading();
                 let recommendationId = this.$route.params.id;
 
                 this.$refs['recommendationForm'].validate((valid) => {
                     if (valid) {
+
+                        this.recommendationForm.isPublished = type;
 
                         axios.put(`/api/recommendations/${recommendationId}`, this.recommendationForm).then(response => {
                             this.stopLoading();

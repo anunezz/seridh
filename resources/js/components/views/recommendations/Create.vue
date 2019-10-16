@@ -1,6 +1,6 @@
 <template>
     <div>
-        <header-section icon="fa-edit" title="Agregar recomendacion">
+        <header-section icon="fa-edit" :title="lang.header && lang.header.title ? lang.header.title: 'Agregar Recomendación'">
             <template slot="buttons">
                 <el-button
                     size="medium"
@@ -9,12 +9,21 @@
                     @click="$router.push('/recomendaciones')">
                     Regresar
                 </el-button>
+                <el-button
+                    size="medium"
+                    type="success"
+                    icon="fas fa-flag-usa"
+                    @click="changeLanguage(1)">
+                    English
+                </el-button>
+
             </template>
         </header-section>
+
         <el-form ref="recommendationForm" :model="recommendationForm" label-width="120px" label-position="top" >
             <el-row :gutter="10">
                 <el-col :span="24">
-                    <el-form-item label="Texto de Recomendación"
+                    <el-form-item :label="lang.form && lang.form.text? lang.form.text : 'Texto de Recomendación'"
                                   :rules="[
                                     { required: true, message: 'Este campo es requerido', trigger: 'blur'},
                                   ]">
@@ -27,7 +36,7 @@
             </el-row>
             <el-row :gutter="20">
                 <el-col :span="8">
-                    <el-form-item label="Entidad Emisora"
+                    <el-form-item :label="lang.form && lang.form.entity? lang.form.entity : 'Entidad Emisora'"
                                   prop="cat_entity_id"
                                   :rules="[
                                         { required: true, message: 'Este campo es requerido', trigger: 'blur'},
@@ -35,7 +44,7 @@
                         <el-select
                             v-model="recommendationForm.cat_entity_id"
                             filterable
-                            placeholder="Seleccionar"
+                            :placeholder="lang.form && lang.form.elegir? lang.form.elegir : 'Seleccionar'"
                             style="width: 100%">
                             <el-option
                                 v-for="(entitie, index) in entities"
@@ -48,14 +57,15 @@
                 </el-col>
 
                 <el-col :span="8">
-                    <el-form-item label="Orden de Gobierno"
+                    <el-form-item :label="lang.form && lang.form.order? lang.form.order : 'Orden de Gobierno'"
                                   prop="cat_gob_order_id"
                                   :rules="[
                                         { required: true, message: 'Este campo es requerido', trigger: 'blur'},
                                       ]">
                         <el-select
                             v-model="recommendationForm.cat_gob_order_id"
-                            filterable placeholder="Seleccionar"
+                            filterable
+                            :placeholder="lang.form && lang.form.elegir? lang.form.elegir : 'Seleccionar'"
                             style="width: 100%">
                             <el-option
                                 v-for="(order, index) in orders"
@@ -68,14 +78,15 @@
                 </el-col>
 
                 <el-col :span="8">
-                    <el-form-item label="Poder de Gobierno"
+                    <el-form-item :label="lang.form && lang.form.power? lang.form.power : 'Poder de Gobierno'"
                                   prop="cat_gob_power_id"
                                   :rules="[
                                     { required: true, message: 'Este campo es requerido', trigger: 'blur'},
                                   ]">
                         <el-select
                             v-model="recommendationForm.cat_gob_power_id"
-                            filterable placeholder="Seleccionar"
+                            filterable
+                            :placeholder="lang.form && lang.form.elegir? lang.form.elegir : 'Seleccionar'"
                             style="width: 100%">
                             <el-option
                                 v-for="(power, index) in powers"
@@ -90,14 +101,15 @@
 
             <el-row :gutter="20">
                 <el-col :span="8">
-                    <el-form-item label="Entidad encargada de atender"
+                    <el-form-item :label="lang.form && lang.form.attending? lang.form.attending : 'Entidad encargada de atender'"
                                   prop="cat_attendig_id"
                                   :rules="[
                                         { required: true, message: 'Este campo es requerido', trigger: 'blur'},
                                       ]">
                         <el-select
                             v-model="recommendationForm.cat_attendig_id"
-                                   filterable placeholder="Seleccionar"
+                            filterable
+                            :placeholder="lang.form && lang.form.elegir? lang.form.elegir : 'Seleccionar'"
                                    style="width: 100%">
                             <el-option
                                 v-for="(attending, index) in attendings"
@@ -110,14 +122,15 @@
                 </el-col>
 
                 <el-col :span="8">
-                    <el-form-item label="Derechos de la recomendación"
+                    <el-form-item :label="lang.form && lang.form.right? lang.form.right : 'Derechos de la recomendación'"
                                   prop="cat_rights_recommendation_id"
                                   :rules="[
                                         { required: true, message: 'Este campo es requerido', trigger: 'blur'},
                                       ]">
                         <el-select
                             v-model="recommendationForm.cat_rights_recommendation_id"
-                            filterable placeholder="Seleccionar"
+                            filterable
+                            :placeholder="lang.form && lang.form.elegir? lang.form.elegir : 'Seleccionar'"
                             style="width: 100%">
                             <el-option
                                 v-for="(right, index) in rights"
@@ -130,14 +143,15 @@
                 </el-col>
 
                 <el-col :span="8">
-                    <el-form-item label="Población"
+                    <el-form-item :label="lang.form && lang.form.population? lang.form.population : 'Población'"
                                   prop="cat_population_id"
                                   :rules="[
                                         { required: true, message: 'Este campo es requerido', trigger: 'blur'},
                                       ]">
                         <el-select
                             v-model="recommendationForm.cat_population_id"
-                            filterable placeholder="Seleccionar"
+                            filterable
+                            :placeholder="lang.form && lang.form.elegir? lang.form.elegir : 'Seleccionar'"
                             style="width: 100%">
                             <el-option
                                 v-for="(population, index) in populations"
@@ -151,14 +165,15 @@
             </el-row>
             <el-row :gutter="20">
                 <el-col :span="8">
-                    <el-form-item label="Acción Solidaria"
+                    <el-form-item :label="lang.form && lang.form.solidarity? lang.form.solidarity : 'Acción Solidaria'"
                                   prop="cat_solidarity_action_id"
                                   :rules="[
                                         { required: true, message: 'Este campo es requerido', trigger: 'blur'},
                                       ]">
                         <el-select
                             v-model="recommendationForm.cat_solidarity_action_id"
-                            filterable placeholder="Seleccionar"
+                            filterable
+                            :placeholder="lang.form && lang.form.elegir? lang.form.elegir : 'Seleccionar'"
                             style="width: 100%">
                             <el-option
                                 v-for="(action, index) in actions"
@@ -171,14 +186,15 @@
                 </el-col>
 
                 <el-col :span="8">
-                    <el-form-item label="Revisión de derechos de la recomendación"
+                    <el-form-item :label="lang.form && lang.form.review? lang.form.review : 'Revisión de derechos de la recomendación'"
                                   prop="cat_review_right_id"
                                   :rules="[
                                         { required: true, message: 'Este campo es requerido', trigger: 'blur'},
                                       ]">
                         <el-select
                             v-model="recommendationForm.cat_review_right_id"
-                            filterable placeholder="Seleccionar"
+                            filterable
+                            :placeholder="lang.form && lang.form.elegir? lang.form.elegir : 'Seleccionar'"
                             style="width: 100%">
                             <el-option
                                 v-for="(review, index) in reviews"
@@ -191,14 +207,15 @@
                 </el-col>
 
                 <el-col :span="8">
-                    <el-form-item label="Revisión de tema(s)"
+                    <el-form-item :label="lang.form && lang.form.topic? lang.form.topic : 'Revisión de tema(s)'"
                                   prop="cat_review_topic_id"
                                   :rules="[
                                         { required: true, message: 'Este campo es requerido', trigger: 'blur'},
                                       ]">
                         <el-select
                             v-model="recommendationForm.cat_review_topic_id"
-                            filterable placeholder="Seleccionar"
+                            filterable
+                            :placeholder="lang.form && lang.form.elegir? lang.form.elegir : 'Seleccionar'"
                             style="width: 100%">
                             <el-option
                                 v-for="(topic, index) in topics"
@@ -213,14 +230,15 @@
 
             <el-row :gutter="20">
                 <el-col :span="12">
-                    <el-form-item label="Revisión de subtema(s)"
+                    <el-form-item :label="lang.form && lang.form.subtopic? lang.form.subtopic : 'Revisión de subtema(s)'"
                                   prop="cat_subtopic_id"
                                   :rules="[
                                         { required: true, message: 'Este campo es requerido', trigger: 'blur'},
                                       ]">
                         <el-select
                             v-model="recommendationForm.cat_subtopic_id"
-                                   filterable placeholder="Seleccionar"
+                            filterable
+                            :placeholder="lang.form && lang.form.elegir? lang.form.elegir : 'Seleccionar'"
                                    style="width: 100%">
                             <el-option
                                 v-for="(subtopic, index) in subtopics"
@@ -233,14 +251,16 @@
                 </el-col>
 
                 <el-col :span="12">
-                    <el-form-item label="ODS"
+                    <el-form-item :label="lang.form && lang.form.goals? lang.form.goals : 'ODS (Objetivos de Desarrollo Sostenible)'"
                                   prop="cat_ods_id"
                                   :rules="[
                                         { required: true, message: 'Este campo es requerido', trigger: 'blur'},
                                       ]">
                         <el-select
                             v-model="recommendationForm.cat_ods_id"
-                            filterable placeholder="Seleccionar"
+                            filterable
+                            multiple
+                            :placeholder="lang.form && lang.form.elegir? lang.form.elegir : 'Seleccionar'"
                             style="width: 100%">
                             <el-option
                                 v-for="(od, index) in ods"
@@ -292,7 +312,7 @@
 
             <el-row :gutter="10">
                 <el-col :span="24">
-                    <el-form-item label="Comentarios"
+                    <el-form-item :label="lang.form && lang.form.comment? lang.form.comment : 'Comentarios'"
                                   prop="comments"
                                   :rules="[
                                     { required: true, message: 'Este campo es requerido', trigger: 'blur'},
@@ -302,11 +322,14 @@
                 </el-col>
             </el-row>
             <el-row :gutter="10">
-                <el-col :span="5" :offset="14">
+                <el-col :span="3" :offset="14">
                     <el-button type="danger" style="width: 100%" @click="$router.push('/recomendaciones')">Cancelar</el-button>
                 </el-col>
-                <el-col :span="5" >
-                    <el-button type="success" style="width: 100%" @click="submitForm">Crear</el-button>
+                <el-col :span="3" >
+                    <el-button type="success" style="width: 100%" @click="submitForm(false)">Guardar</el-button>
+                </el-col>
+                <el-col :span="3" >
+                    <el-button type="primary" style="width: 100%" @click="submitForm(true)">Guardar y Publicar</el-button>
                 </el-col>
             </el-row>
         </el-form>
@@ -325,6 +348,11 @@
 
         data() {
             return {
+                lang: {
+                    "header": {
+                        "title": "Agregar Recomendación"
+                    }
+                },
                 entities: [],
                 orders: [],
                 powers: [],
@@ -336,6 +364,7 @@
                 topics: [],
                 subtopics: [],
                 ods: [],
+
                 props: {
                     label: 'name',
                     children: 'zones'
@@ -355,7 +384,7 @@
                     cat_review_right_id: null,
                     cat_review_topic_id: null,
                     cat_subtopic_id: null,
-                    cat_ods_id: null,
+                    cat_ods_id: [],
                     comments: '',
 
                     files: []
@@ -421,6 +450,18 @@
         },
 
         methods: {
+
+            changeLanguage(lang){
+                if(lang == 1){
+                    axios.get('/api/get-language',{params:{lang}}).then(response => {
+                        if(response.data){
+                            this.lang = response.data;
+                        }
+                    })
+                }
+            },
+
+
             handleCheckChange(data, checked, indeterminate) {
                 console.log(data, checked, indeterminate);
             },
@@ -496,11 +537,13 @@
                 });
             },
 
-            submitForm() {
+            submitForm(type) {
                 this.startLoading();
 
                 this.$refs['recommendationForm'].validate((valid) => {
                     if (valid) {
+
+                        this.recommendationForm.isPublished = type;
 
                         axios.post('/api/recommendations', this.recommendationForm).then(response => {
                             this.stopLoading();

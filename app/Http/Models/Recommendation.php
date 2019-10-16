@@ -68,9 +68,9 @@ class Recommendation extends Model
 {
     protected $fillable = ['recommendation', 'cat_entity_id', 'cat_gob_order_id', 'cat_gob_power_id', 'cat_attendig_id',
         'cat_rights_recommendation_id', 'cat_population_id', 'cat_solidarity_action_id', 'cat_review_right_id',
-        'cat_review_topic_id', 'cat_subtopic_id', 'cat_ods_id', 'comments'];
+        'cat_review_topic_id', 'cat_subtopic_id', 'comments', 'isPublished'];
 
-    protected $appends = ['hash', 'is_creator'];
+    protected $appends = ['hash', 'is_creator', 'implode_ods'];
 
     public function user()
     {
@@ -162,9 +162,9 @@ class Recommendation extends Model
 
     public function ods()
     {
-        return $this->belongsTo(
+        return $this->belongsToMany(
             CatOds::class,
-            'cat_ods_id'
+            'ods_recommendation'
         );
     }
 
@@ -205,5 +205,10 @@ class Recommendation extends Model
     public function getIsCreatorAttribute(): bool
     {
         return $this->user_id === auth()->user()->id;
+    }
+
+    public function getImplodeOdsAttribute()
+    {
+        return implode(', ', $this->ods->pluck('name')->toArray());
     }
 }

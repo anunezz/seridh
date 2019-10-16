@@ -14,4 +14,5 @@ Route::group(['middleware' => ['auth:api']], function () {
     // Agrega la trazabilidad de un usuario
     Route::post('transaction', 'TransactionsController@store');
     Route::get('count-registers', 'GeneralController@getCountRegisters');
+    Route::get('get-language','LanguageController@getLanguage');
 });
