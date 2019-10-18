@@ -24,6 +24,6 @@ class UsersTableSeeder extends Seeder
             'updated_at'        => Carbon::now(),
         ]
         ]);
-        $this->command->info("La tabla users fue creada exitosamente...");
+
     }
 }

@@ -7,3 +7,9 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::get('recommendations/remove/file/{id}', 'RecommendationsController@disableFile');
     Route::post('recommendations/publish/register', 'RecommendationsController@publish');
 });
+
+
+Route::prefix('public')->group(function () {
+    Route::get('recommendations/count', 'PublicSeridhController@count');
+    Route::post('visits', 'PublicSeridhController@visits');
+});

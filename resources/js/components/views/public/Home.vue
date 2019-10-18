@@ -110,37 +110,53 @@
 	          <a href="#estados">32 Estados y sus municipios</a><br>
 	          <a href="/gobierno/mexico-en-el-mundo">146 Embajadas y consulados</a>
 	        </div>
+
+            <div class="row">
+                <div class="col-md-3 hidden-xs">
+                <div class="media office-sm-structure circle-quotes">
+                    <a href="#secretarias">
+                    <figure>
+                        <h2 v-text="countRecommendations"></h2>
+                        <p>Recomendaciones</p>
+                    </figure>
+                    </a>
+                </div>
+                </div>
+                <div class="col-md-3 hidden-xs">
+                <div class="media office-sm-structure circle-quotes">
+                    <a href="#dependencias">
+                    <figure>
+                        <h2>150</h2>
+                        <p>Entidades emisoras</p>
+                    </figure>
+                    </a>
+                </div>
+                </div>
+                <div class="col-md-3 hidden-xs">
+                <div class="media office-sm-structure circle-quotes">
+                    <a href="#estados">
+                    <figure>
+                        <h2>32</h2>
+                        <p>Temas</p>
+                    </figure>
+                    </a>
+                </div>
+                </div>
 	        <div class="col-md-3 hidden-xs">
 	          <div class="media office-sm-structure circle-quotes">
-	            <a href="#secretarias">
+	            <a href="/gobierno/mexico-en-el-mundo">
 	              <figure>
-	                <h2>2855</h2>
-	                <p>Recomendaciones</p>
+	                <h2 v-text='visitas'></h2>
+	                <p>Visitas</p>
 	              </figure>
 	            </a>
 	          </div>
 	        </div>
-	        <div class="col-md-3 hidden-xs">
-	          <div class="media office-sm-structure circle-quotes">
-	            <a href="#dependencias">
-	              <figure>
-	                <h2>150</h2>
-	                <p>Entidades emisoras</p>
-	              </figure>
-	            </a>
-	          </div>
-	        </div>
-	        <div class="col-md-3 hidden-xs">
-	          <div class="media office-sm-structure circle-quotes">
-	            <a href="#estados">
-	              <figure>
-	                <h2>32</h2>
-	                <p>Temas</p>
-	              </figure>
-	            </a>
-	          </div>
-	        </div>
-	        <div class="col-md-3 hidden-xs">
+            </div>
+
+
+
+	        <!-- <div class="col-md-3 hidden-xs">
 	          <div class="media office-sm-structure circle-quotes">
 	            <a href="/gobierno/mexico-en-el-mundo">
 	              <figure>
@@ -149,7 +165,7 @@
 	              </figure>
 	            </a>
 	          </div>
-	        </div>
+	        </div> -->
 	      </div>
 	       	<h2>¿Qué es el SERIDH?</h2>
 	        <hr class="red small-margin">
@@ -245,7 +261,9 @@
     export default {
         data() {
             return {
-
+              countRecommendations:0,
+              visitsArray:{ id:1, page:'publico'},
+              visitas:0
             };
         },
 
@@ -257,8 +275,33 @@
         },
 
         methods: {
+            count(){
+             let me = this;
+                axios.get('/api/public/recommendations/count').then(function (response) {
+                   // console.log("Recommendations count: ",response);
+                    me.countRecommendations =  response.data.recommendation;
+                }).catch(function (error) {
+                    console.log(error);
+                });
 
+             me.countRecommendations ='';
 
+            },
+            visits(){
+                let me = this;
+                axios.post('/api/public/visits',{
+                    'id':1
+                }).then(function (response){
+                    me.visitas = response.data.lResults;
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            }
+        },
+        mounted(){
+            let me = this;
+            me.count();
+            me.visits();
         }
     }
 </script>

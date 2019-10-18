@@ -1,8 +1,5 @@
 <?php
-
 //Rutas Generales
-use App\Recommendation;
-
 Route::post('login', 'LoginController@login');
 Route::post('logout', 'LoginController@logout');
 
@@ -16,3 +13,4 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::get('count-registers', 'GeneralController@getCountRegisters');
     Route::get('get-language','LanguageController@getLanguage');
 });
+//Route::get('recommendations/count','PublicSeridhController@count');

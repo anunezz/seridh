@@ -26,6 +26,8 @@ class DatabaseSeeder extends Seeder
             CatAttendingSeeder::class,
             CatSubtopicSeeder::class,
 
+            VisitsQueriesSeeder::class,
+
             UsersTableSeeder::class,
         ]);
     }

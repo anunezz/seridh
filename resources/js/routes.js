@@ -38,8 +38,7 @@ export const routes = [
         children: [
             { path: '', component: Menu },
             //{ ...Admin },
-              { ...Recommendations },
-              { ...Catalogs },
+              { ...Recommendations }
             //{ ...Reports },
             // { ...Minister },
             // { ...Organism },

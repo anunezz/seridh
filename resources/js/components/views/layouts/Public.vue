@@ -28,6 +28,11 @@
         methods: {
 
 
+        },
+        mounted(){
+            let recaptchaScript = document.createElement('script')
+    recaptchaScript.setAttribute('src', 'https://framework-gb.cdn.gob.mx/gobmx.js')
+    document.head.appendChild(recaptchaScript);
         }
     }
 </script>
