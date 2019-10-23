@@ -4,6 +4,7 @@ use App\Http\Models\Cats\CatAttending;
 use App\Http\Models\Cats\CatEntity;
 use App\Http\Models\Cats\CatGobOrder;
 use App\Http\Models\Cats\CatGobPower;
+use App\Http\Models\Cats\CatIde;
 use App\Http\Models\Cats\CatOds;
 use App\Http\Models\Cats\CatPopulation;
 use App\Http\Models\Cats\CatReviewRight;
@@ -66,7 +67,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Recommendation extends Model
 {
-    protected $fillable = ['recommendation', 'cat_entity_id', 'cat_gob_order_id', 'cat_gob_power_id', 'cat_attendig_id',
+    protected $fillable = ['recommendation','cat_ide_id', 'cat_entity_id', 'cat_gob_order_id', 'cat_gob_power_id', 'cat_attendig_id',
         'cat_rights_recommendation_id', 'cat_population_id', 'cat_solidarity_action_id', 'cat_review_right_id',
         'cat_review_topic_id', 'cat_subtopic_id', 'comments', 'isPublished'];
 
@@ -77,6 +78,14 @@ class Recommendation extends Model
         return $this->belongsTo(
             User::class,
             'user_id'
+        );
+    }
+
+    public function ide()
+    {
+        return $this->belongsTo(
+            CatIde::class,
+            'cat_ide_id'
         );
     }
 

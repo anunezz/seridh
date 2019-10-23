@@ -1,7 +1,7 @@
 import Home from "./components/views/layouts/Home";
 import AccessDenied from "./components/views/layouts/AccessDenied";
 import Menu from "./components/views/layouts/Menu";
-//import Admin from "./routes/Admin";
+import Admin from "./routes/Admin";
 import Recommendations from "./routes/Recommendations";
 //import Reports from "./routes/Reports";
 
@@ -23,7 +23,7 @@ export const routes = [
         component: Home,
         children: [
             { path: '', component: Menu },
-            //{ ...Admin },
+            { ...Admin },
             { ...Recommendations },
             //{ ...Reports },
             // { ...Minister },

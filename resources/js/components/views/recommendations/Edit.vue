@@ -24,6 +24,29 @@
                             v-model="recommendationForm.recommendation"/>
                     </el-form-item>
                 </el-col>
+
+                <el-col :span="5">
+                    <el-form-item label="ID"
+                                  prop="cat_ide_id"
+                                  :rules="[
+                                        { required: true, message: 'Este campo es requerido', trigger: 'blur'},
+                                      ]">
+                        <el-select
+                            v-model="recommendationForm.cat_ide_id"
+                            filterable
+                            placeholder="Seleccionar"
+                            style="width: 100%">
+                            <el-option
+                                v-for="(ide, index) in ides"
+                                :key="index"
+                                :label="ide.name"
+                                :value="ide.id">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-col>
+
+
             </el-row>
             <el-row :gutter="20">
                 <el-col :span="8">
@@ -351,11 +374,11 @@
                 <el-col :span="3" :offset="14">
                     <el-button type="danger" style="width: 100%" @click="$router.push('/recomendaciones')">Cancelar</el-button>
                 </el-col>
-                <el-col :span="3" >
-                    <el-button type="success" style="width: 100%" @click="submitForm(false)">Actualizar</el-button>
+                <el-col :span="3.5" >
+                    <el-button type="danger" style="width: 100%" @click="submitForm(false)">Despublicar y Guardar</el-button>
                 </el-col>
                 <el-col :span="3" >
-                    <el-button type="primary" style="width: 100%" @click="submitForm(true)">Guardar y Publicar</el-button>
+                    <el-button type="success" style="width: 100%" @click="submitForm(true)">Actualizar</el-button>
                 </el-col>
             </el-row>
         </el-form>
@@ -374,6 +397,7 @@
 
         data() {
             return {
+                ides: [],
                 entities: [],
                 orders: [],
                 powers: [],
@@ -394,6 +418,7 @@
 
                 recommendationForm: {
                     recommendation: '',
+                    cat_ide_id: null,
                     cat_entity_id: null,
                     cat_gob_order_id: null,
                     cat_gob_power_id: null,
@@ -443,7 +468,7 @@
             let recommendationId = this.$route.params.id;
 
             axios.get(`/api/recommendations/${recommendationId}/edit`).then(response => {
-
+                this.ides = response.data.ides;
                 this.entities = response.data.entities;
                 this.orders = response.data.orders;
                 this.powers = response.data.powers;

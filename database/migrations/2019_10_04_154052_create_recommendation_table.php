@@ -16,6 +16,7 @@ class CreateRecommendationTable extends Migration {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('user_id')->nullable();
             $table->longText('recommendation');
+            $table->unsignedBigInteger('cat_ide_id')->nullable();
             $table->unsignedBigInteger('cat_entity_id')->nullable();
             $table->unsignedBigInteger('cat_gob_order_id')->nullable();
             $table->unsignedBigInteger('cat_gob_power_id')->nullable();
@@ -36,9 +37,15 @@ class CreateRecommendationTable extends Migration {
                 ->references('id')
                 ->on('users');
 
+            $table->foreign('cat_ide_id')
+                ->references('id')
+                ->on('cat_ides');
+
             $table->foreign('cat_entity_id')
                 ->references('id')
                 ->on('cat_entities');
+
+
 
             $table->foreign('cat_gob_order_id')
                 ->references('id')
