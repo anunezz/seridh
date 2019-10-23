@@ -7,5 +7,7 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::get('recommendations/get/file/{id}', 'RecommendationsController@getFile');
     Route::get('recommendations/remove/file/{id}', 'RecommendationsController@disableFile');
     Route::post('recommendations/publish/register', 'RecommendationsController@publish');
+
     Route::post('recommendations/unpublish/register' ,'RecommendationsController@unpublish');
+    Route::post('recommendations/upload/excel', 'RecommendationsController@readExcel');
 });

@@ -18,7 +18,8 @@ export default {
         {
             path:'/nuevo',
             component: RecommendationCreate,
-            name: 'RecommendationCreate'
+            name: 'RecommendationCreate',
+            props:true
         },
         {
             path:'/editar/:id',
