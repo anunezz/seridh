@@ -4,7 +4,7 @@ import Public from "./components/views/layouts/Public";
 import PublicHome from "./components/views/public/Home";
 import AccessDenied from "./components/views/layouts/AccessDenied";
 import Menu from "./components/views/layouts/Menu";
-//import Admin from "./routes/Admin";
+import Admin from "./routes/Admin";
 import Recommendations from "./routes/Recommendations";
 
 export const routes = [
@@ -35,8 +35,9 @@ export const routes = [
         component: Home,
         children: [
             { path: '', component: Menu },
-            //{ ...Admin },
-              { ...Recommendations }
+
+            { ...Admin },
+            { ...Recommendations },
             //{ ...Reports },
             // { ...Minister },
             // { ...Organism },

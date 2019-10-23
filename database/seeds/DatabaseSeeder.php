@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             CatProfileSeeder::class,
             CatTransactionTypeSeeder::class,
+            CatIdeSeeder::class,
             CatEntitySeeder::class,
             CatGobOrderSeeder::class,
             CatRightRecommendationSeeder::class,
@@ -25,6 +26,7 @@ class DatabaseSeeder extends Seeder
             CatGobPowerSeeder::class,
             CatAttendingSeeder::class,
             CatSubtopicSeeder::class,
+            CatLanguageSeeder::class,
 
             VisitsQueriesSeeder::class,
 

@@ -216,6 +216,7 @@
                                     </el-button>
                                 </el-tooltip>
                                 <el-tooltip
+                                    v-if="! scope.row.isPublished"
                                     class="item"
                                     effect="dark"
                                     content="Publicar"
@@ -224,7 +225,20 @@
                                         type="success"
                                         size="mini"
                                         icon="fas fa-upload"
-                                        @click="publishRegister(scope.row.hash)">
+                                        @click="disableDialogPost(scope.row.hash)">
+                                    </el-button>
+                                </el-tooltip>
+                                <el-tooltip
+                                    v-else
+                                    class="item"
+                                    effect="dark"
+                                    content="Quitar de publicado"
+                                    placement="top-start">
+                                    <el-button
+                                        type="danger"
+                                        size="mini"
+                                        icon="fas fa-download"
+                                        @click="disableDialogUnPost(scope.row.hash)">
                                     </el-button>
                                 </el-tooltip>
                                 <el-tooltip
@@ -266,6 +280,29 @@
                 <el-button type="success" @click="disableRecommendation(removeHash)">Aceptar</el-button>
             </span>
         </el-dialog>
+
+        <el-dialog
+            v-if="publicDialog"
+            :visible.sync="publicDialog"
+            width="40%" style="text-align: center">
+            <h3>¿Está seguro que quiere publicar esta recomendación?</h3>
+            <span slot="footer" class="dialog-footer">
+                <el-button type="danger" @click="publicDialog = false">Cancelar</el-button>
+                <el-button type="success" @click="publishRegister">Aceptar</el-button>
+            </span>
+        </el-dialog>
+
+        <el-dialog
+            v-if="unpublicDialog"
+            :visible.sync="unpublicDialog"
+            width="40%" style="text-align: center">
+            <h3>¿Está seguro de cambiar esta recomendación a estar sin publicar?</h3>
+            <span slot="footer" class="dialog-footer">
+                <el-button type="danger" @click="unpublicDialog = false">Cancelar</el-button>
+                <el-button type="success" @click="unpublishRegister">Aceptar</el-button>
+            </span>
+        </el-dialog>
+
     </div>
 </template>
 
@@ -296,7 +333,10 @@
                 },
                 showFilters: false,
                 removeDialog: false,
+                publicDialog: false,
+                unpublicDialog: false,
                 removeHash: null,
+                hashId: null,
                 apiToken: 'Bearer ' + sessionStorage.getItem('SERIDH_token'),
                 errorCarga:false,
                 errorRecommendations:[],
@@ -421,16 +461,19 @@
                 });
             },
 
-            publishRegister(id) {
+            publishRegister() {
                 let data = {
-                    id:id
+                    id: this.hashId
                 };
-                this.getRecommendations();
-                axios.post('/api/recommendations/publish/register', data).then(response => {
+
+                axios.post(`/api/recommendations/publish/register`, data).then(response => {
                     this.$message({
                         type: "success",
                         message: "Se ha Publicado correctamente."
                     });
+
+                    this.publicDialog = false;
+                    this.getRecommendations();
                 }).catch(error => {
                     this.$message({
                         type: "warning",
@@ -439,13 +482,36 @@
                 });
             },
 
-            getRecommendations(currentPage =  1) {
+            unpublishRegister() {
+                let data = {
+                    id: this.hashId
+                };
+
+                axios.post('/api/recommendations/unpublish/register', data).then(response => {
+                    this.$message({
+                        type: "success",
+                        message: "Se ha quitado la publicacion correctamente."
+                    });
+
+                    this.unpublicDialog = false;
+                    this.getRecommendations();
+                }).catch(error => {
+                    this.$message({
+                        type: "warning",
+                        message: "No fue posible completar la acción, intente nuevamente."
+                    });
+                });
+            },
+
+            getRecommendations(currentPage = 1) {
                 this.startLoading();
 
-                let data = { params: {
+                let data = {
+                    params: {
                         page: currentPage,
                         perPage: this.pagination.perPage,
-                        filters: this.filters}
+                        filters: this.filters
+                    }
                 };
 
                 axios.get('/api/recommendations', data).then(response => {
@@ -480,7 +546,18 @@
 
             disableDialog(id) {
                 this.removeDialog = true;
+                this.publicDialog = true;
                 this.removeHash = id;
+            },
+
+            disableDialogPost(id) {
+                this.publicDialog = true;
+                this.hashId = id;
+            },
+
+            disableDialogUnPost(id) {
+                this.unpublicDialog = true;
+                this.hashId = id;
             },
 
             disableRecommendation(id) {

@@ -6,6 +6,7 @@ use App\Http\Models\Cats\CatAttending;
 use App\Http\Models\Cats\CatEntity;
 use App\Http\Models\Cats\CatGobOrder;
 use App\Http\Models\Cats\CatGobPower;
+use App\Http\Models\Cats\CatIde;
 use App\Http\Models\Cats\CatOds;
 use App\Http\Models\Cats\CatPopulation;
 use App\Http\Models\Cats\CatReviewRight;
@@ -52,6 +53,10 @@ class RecommendationsController extends Controller
     public function create()
     {
         try {
+            $ides = CatIde::where('isActive', 1)
+                ->orderBy('name')
+                ->get(['id', 'name']);
+
             $entities = CatEntity::where('isActive', 1)
                 ->orderBy('name')
                 ->get(['id', 'name']);
@@ -97,6 +102,7 @@ class RecommendationsController extends Controller
                 ->get(['id', 'name']);
 
             return response()->json([
+                'ides'        => $ides,
                 'entities'    => $entities,
                 'orders'      => $orders,
                 'rights'      => $rights,
@@ -169,6 +175,11 @@ class RecommendationsController extends Controller
     public function edit(Request $request, $id)
     {
         try {
+
+            $ides = CatIde::where('isActive', 1)
+                ->orderBy('name')
+                ->get(['id', 'name']);
+
             $entities = CatEntity::where('isActive', 1)
                 ->orderBy('name')
                 ->get(['id', 'name']);
@@ -217,6 +228,7 @@ class RecommendationsController extends Controller
 
             $recommendationForm = [
                 'recommendation'               => $recommendation->recommendation,
+                'cat_ide_id'                   => $recommendation->cat_ide_id,
                 'cat_entity_id'                => $recommendation->cat_entity_id,
                 'cat_gob_order_id'             => $recommendation->cat_gob_order_id,
                 'cat_gob_power_id'             => $recommendation->cat_gob_power_id,
@@ -233,6 +245,7 @@ class RecommendationsController extends Controller
             ];
 
             return response()->json([
+                'ides'               => $ides,
                 'entities'           => $entities,
                 'orders'             => $orders,
                 'rights'             => $rights,
@@ -327,6 +340,33 @@ class RecommendationsController extends Controller
         }
 
     }
+
+    public function unpublish(Request $request)
+    {
+        try {
+
+            $recommendation = Recommendation::find(decrypt($request->id));
+
+            $recommendation->isPublished = false;
+            $recommendation->save();
+
+            GeneralController::saveTransactionLog(5,
+                'Despublica una recomendación con id: ' . $recommendation->id);
+
+            return response()->json([
+                'success' => true
+            ]);
+        }
+        catch (\Exception $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'No se pudo completar la acción',
+            ], 500);
+        }
+
+    }
+
 
     public function destroy($id)
     {

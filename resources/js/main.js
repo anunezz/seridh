@@ -12,6 +12,7 @@ import IdleVue from 'idle-vue'
 import tinymce from 'vue-tinymce-editor'
 import {getIPs, getIPv4, getIPv6} from 'webrtc-ips';
 import Loading from './mixins/Loading';
+import VJsoneditor from 'v-jsoneditor';
 
 require('moment/locale/es');
 require('../../node_modules/animate.css/animate.css');
@@ -30,6 +31,7 @@ Vue.use( ElementUI, { locale } );
 Vue.use( require('vue-moment'), { moment, momentTz });
 Vue.component('tinymce', tinymce);
 Vue.mixin(Loading);
+Vue.use(VJsoneditor);
 
 Vue.use(IdleVue, {
     eventEmitter: eventsHub,

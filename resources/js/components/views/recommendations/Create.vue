@@ -32,7 +32,62 @@
                             v-model="recommendationForm.recommendation"/>
                     </el-form-item>
                 </el-col>
+
+
+
+
+
+
+                <el-col :span="5">
+                    <el-form-item :label="lang.form && lang.form.entity? lang.form.entity : 'ID'"
+                                  prop="cat_ide_id"
+                                  :rules="[
+                                        { required: true, message: 'Este campo es requerido', trigger: 'blur'},
+                                      ]">
+                        <el-select
+                            v-model="recommendationForm.cat_entity_id"
+                            multiple
+                            filterable
+                            remote
+                            reserve-keyword
+                            :placeholder="lang.form && lang.form.elegir? lang.form.elegir : 'Seleccionar'"
+                            :remote-method="remoteMethod"
+                            :loading="loading">
+                            <el-option
+                                v-for="(ide, index) in ides"
+                                :key="index"
+                                :label="ide.name"
+                                :value="ide.id">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-col>
+
+
+
+                <el-col :span="5">
+                    <el-form-item :label="lang.form && lang.form.entity? lang.form.entity : 'ID'"
+                                  prop="cat_ide_id"
+                                  :rules="[
+                                        { required: true, message: 'Este campo es requerido', trigger: 'blur'},
+                                      ]">
+                        <el-select
+                            v-model="recommendationForm.cat_ide_id"
+                            filterable
+                            :placeholder="lang.form && lang.form.elegir? lang.form.elegir : 'Seleccionar'"
+                            style="width: 100%">
+                            <el-option
+                                v-for="(ide, index) in ides"
+                                :key="index"
+                                :label="ide.name"
+                                :value="ide.id">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-col>
+
             </el-row>
+
             <el-row :gutter="20">
                 <el-col :span="8">
                     <el-form-item :label="lang.form && lang.form.entity? lang.form.entity : 'Entidad Emisora'"
@@ -324,8 +379,8 @@
                 <el-col :span="3" :offset="14">
                     <el-button type="danger" style="width: 100%" @click="$router.push('/recomendaciones')">Cancelar</el-button>
                 </el-col>
-                <el-col :span="3" >
-                    <el-button type="success" style="width: 100%" @click="submitForm(false)">Guardar</el-button>
+                <el-col :span="3.2" >
+                    <el-button type="success" style="width: 100%" @click="submitForm(false)">Guardar sin publicar</el-button>
                 </el-col>
                 <el-col :span="3" >
                     <el-button type="primary" style="width: 100%" @click="submitForm(true)">Guardar y Publicar</el-button>
@@ -354,6 +409,7 @@
                         "title": "Agregar Recomendación"
                     }
                 },
+                ides: [],
                 entities: [],
                 orders: [],
                 powers: [],
@@ -375,6 +431,8 @@
 
                 recommendationForm: {
                     recommendation: '',
+                    cat_ide_id: null,
+                    cat_entity_name: null,
                     cat_entity_id: null,
                     cat_gob_order_id: null,
                     cat_gob_power_id: null,
@@ -426,6 +484,8 @@
 
             axios.get('/api/recommendations/create').then(response => {
 
+                this.ides = response.data.ides;
+                this.ods = response.data.ods;
                 this.entities = response.data.entities;
                 this.orders = response.data.orders;
                 this.powers = response.data.powers;
@@ -587,6 +647,12 @@
                     }
                     else {
                         this.stopLoading();
+
+                        this.$message({
+                            type: "warning",
+                            title: 'Error',
+                            message: "Complete los campos para continuar"
+                        });
                     }
                 });
             }
