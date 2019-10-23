@@ -31,26 +31,115 @@
                     @click="addRegister">
                     + Recomendación
                 </el-button>
+                <el-badge :value="errorsBulk.length" class="item" v-if="errorsBulk.length>0">
+                    <el-button type="danger" size="small" @click="errorCarga=true">Errores</el-button>
+                </el-badge>
             </template>
         </header-section>
-
         <el-dialog
             title="Carga masiva"
             :visible.sync="dialogVisible"
             width="50%">
             <p>
-                1. Para ver el formato en el que tiene que realizar la carga masiva, haga clic en la siguiente liga <a href="/carga.xlsx"> Formato Excel</a>.
+                1. Para ver el formato en el que tiene que realizar la carga masiva, haga clic en la siguiente liga <el-link type="primary" @click="getFile"> Formato Excel</el-link>.
             </p>
             <p>
                 2. Para adjuntar el archivo con la información de sus becarios, haga clic en "Seleccionar archivo" escoja el archivo y luego haga clic en "Subir".
             </p>
-            <input type="file"/>
             <span slot="footer" class="dialog-footer">
-                        <el-button @click="dialogVisible = false">Cancelar</el-button>
-                        <el-button type="primary" @click="dialogVisible = false">Cargar</el-button>
-                    </span>
+                <el-upload
+                    class="upload-demo"
+                    ref="upload"
+                    accept=".xlsm"
+                    name="document"
+                    action="/api/recommendations/upload/excel"
+                    :before-upload="beforeUploadFile"
+                    :headers="{'Authorization': apiToken}"
+                    :auto-upload="false"
+                    :on-error="onError"
+                    :on-success="onSeccess">
+                    <el-button style="margin-bottom: 10px" slot="trigger" size="small" type="info">Selecciona un archivo</el-button>
+                    <el-button size="small" @click="dialogVisible = false">Cancelar</el-button>
+                    <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">Cargar</el-button>
+                  <div slot="tip" class="el-upload__tip">Solo archivos Excel</div>
+                </el-upload>
+            </span>
         </el-dialog>
 
+        <el-dialog
+            title="Errores de carga masiva"
+            :visible.sync="errorCarga"
+            width="80%">
+            <el-table
+                size="mini"
+                border
+                :data="errorsBulk"
+                style="width: 100%"
+                max-height="300">
+                <el-table-column
+                    prop="ods"
+                    label="ODS">
+                </el-table-column>
+                <el-table-column
+                    prop="recommendation"
+                    label="Recomendación">
+                    <template slot-scope="scope">
+                        <span v-html="scope.row.recommendation"></span>
+                    </template>
+                </el-table-column>
+                <el-table-column
+                    prop="entity.name"
+                    label="Entidad Emisora">
+                </el-table-column>
+                <el-table-column
+                    prop="gobOrder.name"
+                    label="Orden de Gobierno">
+                </el-table-column>
+                <el-table-column
+                    prop="gobPower.name"
+                    label="Poder de Gobierno">
+                </el-table-column>
+                <el-table-column
+                    prop="isPublished"
+                    label="Estatus">
+                    <template slot-scope="scope">
+                        {{ scope.row.isPublished===1 ? 'Publicado' : 'Sin publicar' }}
+                    </template>
+                </el-table-column>
+                <el-table-column
+                    label="Acciones" header-align="left" align="center" width="200">
+                    <template slot-scope="scope">
+                        <el-button-group>
+                            <el-tooltip
+                                class="item"
+                                effect="dark"
+                                content="Editar"
+                                placement="top-start">
+                                <el-button
+                                    type="primary"
+                                    size="mini"
+                                    icon="fas fa-edit"
+                                    @click="bulkLoad(scope.row,scope.$index)">
+                                </el-button>
+
+                            </el-tooltip>
+                        </el-button-group>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <br>
+            <el-pagination
+                :page-size="parseInt(pagination.perPage)"
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+                layout="total, ->, prev, pager, next"
+                :current-page.sync="pagination.currentPage"
+                :total="pagination.total">
+            </el-pagination>
+            <span slot="footer" class="dialog-footer">
+            <el-button type="primary" size="mini" @click="errorCarga=false">Cancelar</el-button>
+            </span>
+        </el-dialog>
 
         <el-row :gutter="20">
             <el-col :span="6">
@@ -182,6 +271,7 @@
 
 <script>
     import HeaderSection from "../layouts/partials/HeaderSection";
+    import { mapGetters, mapActions } from 'vuex';
 
     export default {
         components: {
@@ -207,16 +297,85 @@
                 showFilters: false,
                 removeDialog: false,
                 removeHash: null,
+                apiToken: 'Bearer ' + sessionStorage.getItem('SERIDH_token'),
+                errorCarga:false,
+                errorRecommendations:[],
+                totalErrors: 0,
             }
         },
 
         created() {
             this.getRecommendations();
         },
-
+        computed: {
+            ...mapGetters("bulkLoading",[
+                "errorsBulk"
+            ])
+        },
         methods: {
+            ...mapActions("bulkLoading", ['increment']),
             getFile() {
+                document.location.href = 'template/Recomendaciones.xlsm';
+            },
 
+            submitUpload() {
+                this.startLoading();
+                this.$refs.upload.submit();
+                this.dialogVisible = false;
+
+            },
+
+            onError(err, file, fileList){
+                this.stopLoading();
+                this.$message({
+                    type: 'warning',
+                    message: 'No fue posible leer el archivo, inténtelo nuevamente.',
+                });
+            },
+            beforeUploadFile(file) {
+                var type = file.name;
+                var find = type.search(".xlsm");
+                if (file.size/1024/1024 > 6) {
+                    this.$message.error('El archivo seleccionado excede el limite permitido');
+                    return false;
+                }
+                if (find === -1) {
+                    this.$message.error('Tipo de Archivo no permitido');
+                    return false;
+                }
+                return true;
+            },
+
+            onSeccess(response, file, fileList){
+                this.recommendations= [];
+                let data = {
+                    cat_transaction_type_id: 6,
+                    action: 'Iportación de Recomendaciones'
+                };
+
+                axios.post('/api/transaction', data).then(response => {
+                }).catch(error => {
+                    this.$message({
+                        type: "warning",
+                        message: "No fue posible completar la acción, intente nuevamente."
+                    });
+                });
+                this.getRecommendations();
+                if (response.filas.length>0){
+                    this.increment(response.filas);
+                    this.totalErrors = response.filas.length;
+                    this.errorCarga=true;
+                }
+                this.stopLoading();
+            },
+
+            bulkLoad(e,index){
+                e.action=1;
+                e.index=index;
+                this.$router.push({
+                    name: 'RecommendationCreate',
+                    params: {item: e}
+                })
             },
 
             changeLanguage(language){
@@ -227,8 +386,8 @@
 
             addRegister() {
                 let data = {
-                  cat_transaction_type_id: 1,
-                  action: 'Ingresa a crear una recomendación'
+                    cat_transaction_type_id: 1,
+                    action: 'Ingresa a crear una recomendación'
                 };
 
                 axios.post('/api/transaction', data).then(response => {
@@ -299,7 +458,6 @@
                     this.showFilters = false;
 
                     this.stopLoading();
-
                 }).catch(error => {
                     this.stopLoading();
 

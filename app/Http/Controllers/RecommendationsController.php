@@ -15,8 +15,10 @@ use App\Http\Models\Cats\CatSolidarityAction;
 use App\Http\Models\Cats\CatSubtopic;
 use App\Http\Models\Document;
 use App\Http\Models\Recommendation;
+use App\Imports\RecommendationsImport;
 use DB;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class RecommendationsController extends Controller
 {
@@ -212,6 +214,7 @@ class RecommendationsController extends Controller
                 ->get(['id', 'name']);
 
             $recommendation = Recommendation::with('documents', 'ods')->find(decrypt($id));
+
             $recommendationForm = [
                 'recommendation'               => $recommendation->recommendation,
                 'cat_entity_id'                => $recommendation->cat_entity_id,
@@ -428,6 +431,33 @@ class RecommendationsController extends Controller
                 'success' => false,
                 'message' => 'No se pudo completar la acción',
             ], 500);
+        }
+    }
+
+    public function readExcel(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            $path = '/';
+            $document = $request->document;
+
+            $document->storeAs($path, 'Recomendaciones.xlsm');
+
+            Excel::import(new RecommendationsImport, 'Recomendaciones.xlsm');
+            DB::commit();
+
+            return response()->json([
+                'success'    => true,
+                'filas'      => session('errorMasivo')
+            ]);
+        }
+        catch ( \Exception $e ) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]);
         }
     }
 }
