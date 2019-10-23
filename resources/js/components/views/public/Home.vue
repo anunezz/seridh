@@ -1,47 +1,7 @@
 <template>
-<div>
- <nav class="navbar navbar-inverse sub-navbar fixed-top" style="margin-top: 50px!important;">
-		  <div class="container">
-		    <div class="navbar-header">
-		      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#subenlaces">
-		        <span class="sr-only">Interruptor de Navegación</span>
-		        <span class="icon-bar"></span>
-		        <span class="icon-bar"></span>
-		        <span class="icon-bar"></span>
-		      </button>
-		      <a class="navbar-brand" href="?tab=">SERIDH </a>
-		    </div>
-		    <div class="collapse navbar-collapse" id="subenlaces">
-		      <ul class="nav subnav navbar-nav navbar-right">
-	            <li class="landing-btn active">
-	                <a href="index.html">
-	            		Inicio
-	            	</a>
-	        	</li>
-	        	<li class="landing-btn">
-		            <a href="catalogo.html">
-		                Catálogo
-		            </a>
-		        </li>
-		    	<li class="landing-btn">
-		            <a href="#">
-		                Preguntas frecuentes
-		            </a>
-		        </li>
-		   		<li class="landing-btn">
-		            <a href="#">
-		                Metogología
-		            </a>
-		        </li>
-		        <li class="landing-btn">
-		            <a href="#">
-		                Datos abiertos
-		            </a>
-		        </li>
-		      </ul>
-		    </div>
-		  </div>
-		</nav>
+<div  v-loading="loading"  element-loading-text="Buscando recomendaciones..."
+                           element-loading-spinner="el-icon-loading"
+                           element-loading-background="rgba(0, 0, 0, 0.8)">
 		<div id="myCarousel" class="carousel slide" data-ride="carousel" style="max-height: 450px;">
 			<!-- Indicators -->
 			<ol class="carousel-indicators">
@@ -51,8 +11,6 @@
                 <li data-target="#myCarousel" data-slide-to="3"></li>
                 <li data-target="#myCarousel" data-slide-to="4"></li>
 			</ol>
-
-
 
 			<!-- Wrapper for slides -->
 			<div class="carousel-inner">
@@ -95,10 +53,6 @@
 
 		</div>
 
-
-
-
-
 		<br/>
 
 		<main class="page">
@@ -126,7 +80,7 @@
                 <div class="media office-sm-structure circle-quotes">
                     <a href="#dependencias">
                     <figure>
-                        <h2>150</h2>
+                        <h2 v-text="issuingEntities"></h2>
                         <p>Entidades emisoras</p>
                     </figure>
                     </a>
@@ -185,6 +139,210 @@
 	        	cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
 	        	proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 	        </p>
+
+
+<div class="row">
+    <div class="col-md-12">
+      <h2>Búsqueda Avanzada de Recomendaciones</h2>
+      <hr class="red small-margin">
+    </div>
+
+    <div class="col-md-12">
+        <div class="panel-group ficha-collapse" id="accordion">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-parent="#accordion" data-toggle="collapse" href="#panel-01" aria-expanded="true" aria-controls="panel-01">
+                       <h4>Filtros</h4>
+                    </a>
+                </h4>
+            </div>
+
+            <div class="panel-collapse collapse in" id="panel-01">
+
+                <div class="panel-body animated fadeIn">
+                  <div class="card">
+                      <div class="card-body col-md-12" style="padding: 5px;">
+
+                        <div class="col-md-3" v-for="(item,index) in arrayFilter" :key="index" style="padding: 5px;">
+                            <div v-if="item.label !== 'Buscar Recomendación'" class="first" v-bind:class="[item.btn === false ? '' :'firstClik']" style="padding: 5px!important;" @click="panelBusqueda(item)" if>
+                              <div v-text="item.label" style="float:left; width: 85%;"> {{item.label}} </div>
+                              <div style="float:left; width: 10%;" class="text-right"><span v-bind:class="[item.btn === false ? 'glyphicon glyphicon-chevron-up' : 'glyphicon glyphicon-chevron-down']" aria-hidden="true"></span></div>
+                            </div>
+                            <div v-else class="first firstSearch" style="padding: 5px!important;" @click="recommendationFilter()">
+                              <div v-text="item.label" style="float:left; width: 85%;"> {{item.label}} </div>
+                              <div style="float:left; width: 10%;" class="text-right"><span class="icon-search" aria-hidden="true"></span></div>
+                            </div>
+                            <div>
+
+                            </div>
+                        </div>
+                      </div>
+                     <!-- <div class="col-md-12 pull-right" style="padding: 20px;">
+                         <button type="button" class="btn btn-success  pull-right" @click="recommendationFilter()">Buscar</button>
+                      </div> -->
+                    </div>
+
+                        <div class="card">
+                            <div class="card-body col-md-12" style="padding: 20px;" v-if="showTable === true">
+                              <div v-for="(item,index) in arrayFilter" :key="index">
+                                  <div v-if="btnSelect === item.id && item.id !== 0">
+                                    <div class="form-check animated fadeIn fast" v-for="(i,index) in item.data" :key="index">
+                                          <label class="form-check-label">
+                                              <!-- <input v-if="index === 0" type="checkbox" class="form-check-input" :value="i.id" v-model="checkedNames[item.name].check"> -->
+                                              <input type="checkbox" class="form-check-input" :value="i.id" v-model="checkedNames[item.id].check">
+                                              {{i.name}}
+                                          </label>
+                                    </div>
+                                  </div>
+
+                                  <div v-else-if="btnSelect === item.id && item.id === 0">
+                                    <div class="form-check animated fadeIn fast" v-for="(i,index) in item.data" :key="index">
+                                          <label class="form-check-label">
+                                              <input type="checkbox" class="form-check-input" :value="i.year" v-model="checkedNames[item.id].check">
+                                              {{i.year}}
+                                          </label>
+                                    </div>
+                                  </div>
+
+
+                                  <div>
+
+                                  </div>
+                              </div>
+                            </div>
+                             <div class="card-body col-md-12" style="padding: 20px;" v-else>
+
+
+
+<!-- <template>
+  <el-table
+    :data="tableData"
+    style="width: 100%"
+    height="250">
+    <el-table-column
+      fixed
+      prop="cat_gob_order_id"
+      label="Orden de Gobierno"
+      width="170">
+    </el-table-column>
+    <el-table-column
+      prop="cat_gob_power_id"
+      label="Poder de gobierno"
+      width="170">
+    </el-table-column>
+  </el-table>
+</template> -->
+
+
+
+
+
+
+
+                             </div>
+                        </div>
+                </div>
+
+            </div>
+
+
+
+
+        </div>
+        </div>
+    </div>
+
+</div>
+
+
+ <!-- {{resultados}}
+ ----------------------------
+{{checkedNames}} -->
+
+
+
+<div class="modal fade modalFilter" id="modalFilter" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog" id="modalFilter">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">Filtros de recomendación</h4>
+          </div>
+          <div class="modal-body">
+
+
+
+
+
+          <div class="row">
+               <div class="col-md-12">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th scope="col" v-for="(item,index) in arrayFilter" :key="index" >
+                                   <div v-if="item.label === 'Buscar Recomendación'">
+                                       Ver
+                                   </div>
+                                   <div v-else v-text="item.label"></div>
+                                </th>
+                            </tr>
+                        </thead>
+                            <tbody>
+                                <tr v-for="(item,index) in resultados" :key="index">
+                                    <td v-text="transformNamesTableColums(item.created_at,0)"></td>
+                                    <td v-text="transformNamesTableColums(item.cat_entity_id,1)"></td>
+                                    <td v-text="transformNamesTableColums(item.cat_population_id,2)"></td>
+                                    <td v-text="transformNamesTableColums(item.cat_review_topic_id,3)"></td>
+                                    <td v-text="transformNamesTableColums(item.cat_review_topic_id,3)"></td>
+                                    <td>Sin datos</td>
+                                    <td class="pull-right">
+                                        <button type="button" class="btn btn-success">Ver<span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                    </table>
+               </div>
+           </div>
+
+
+
+
+
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          </div>
+        </div>
+      </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	        <h2>Enlaces de interés</h2>
 	        <hr class="red small-margin">
 	        <div class="row categorias">
@@ -253,61 +411,151 @@
 
 	      </div>
 	    </main>
+
+
 </div>
 </template>
 
 <script>
-
     export default {
         data() {
             return {
               countRecommendations:0,
-              visitsArray:{ id:1, page:'publico'},
-              visitas:0
+              idPage: 1,
+              visitas:0,
+              issuingEntities: 0,
+              arrayFilter:[],
+              checkedNames:[],
+              btnSelect:0,
+              showTable: false,
+              loading:false,
+              tableData:[],
+              resultados:{}
             };
         },
-
         computed: {
         },
-
         created() {
-
         },
-
         methods: {
+            panelBusqueda(item){
+                let me = this;
+                console.log("ARRAY FILTER: ",me.arrayFilter);
+                for (let i = 0; i < me.arrayFilter.length; i++) {
+                    me.arrayFilter[i].btn = false;
+                    if(me.arrayFilter[i].id === item.id){
+                          me.arrayFilter[i].btn = (me.arrayFilter[i].btn === false)? true : false;
+                          me.btnSelect = me.arrayFilter[i].id;
+                          me.showTable = true;
+                    }
+                }
+            },
             count(){
              let me = this;
                 axios.get('/api/public/recommendations/count').then(function (response) {
-                   // console.log("Recommendations count: ",response);
-                    me.countRecommendations =  response.data.recommendation;
+                    me.countRecommendations = response.data.recommendation;
+                    me.issuingEntities = response.data.issuingEntities;
                 }).catch(function (error) {
                     console.log(error);
                 });
-
              me.countRecommendations ='';
-
             },
             visits(){
                 let me = this;
                 axios.post('/api/public/visits',{
-                    'id':1
+                    'id': me.idPage
                 }).then(function (response){
+                    console.log("RESPONSE VISITS: ",response);
                     me.visitas = response.data.lResults;
                 }).catch(function (error) {
                     console.log(error);
                 });
-            }
+            },
+            labelForm(){
+             let me = this;
+                axios.get('/api/public/recommendations/labelsForm').then(function (response) {
+                  console.log("LabelsForm: ",response.data.lResults);
+                  for (let i = 0; i < response.data.lResults.length; i++){
+                      me.arrayFilter.push({ id: response.data.lResults[i].id,
+                                         label: response.data.lResults[i].name,
+                                           btn: false,
+                                          data: response.data.lResults[i].data });
+
+                       me.checkedNames.push({id: response.data.lResults[i].id,
+                                          check: []})
+                  }
+
+
+                  console.log("arrayFilter: ",me.arrayFilter);
+
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },
+            recommendationFilter(){
+              let me = this;
+                me.showTable =  true;
+
+
+                console.log("Respuesta de cheknames: ",me.checkedNames);
+
+                let data={
+                   'date': me.checkedNames[0].check,
+                   'entity_id':me.checkedNames[1].check
+                };
+                axios.post('/api/public/recommendationFilter', data).then(function (response) {
+                 if( response.data.lResults.length > 0 ){
+                    me.loading=true;
+                    setTimeout(()=>{
+                        me.resultados = response.data.lResults;
+                        $("#modalFilter").modal('show');
+                        $(".modal-dialog").removeAttr('style');
+                         me.loading=false;
+                         console.log("REspuesta de datos: recommendations ",me.resultados);
+                    },1000);
+
+
+
+                 }else{
+                        alert("No hay recomendaciones por mostrar....");
+                 }
+
+
+                }).catch(function (error) {
+                    me.loading=false;
+                    console.log(error);
+                });
+            },
+            transformNamesTableColums(value,num){
+                if(num === 0){
+                    console.log("AÑO: ",value);
+                    value = value.substr(0,4);
+                 return value;
+                }
+                console.log("transformacion de datos: ",value,num);
+
+                let me = this,valueColumTable = '',nametable='',i='',name='';
+                nametable = me.arrayFilter.find(item => item.id === num);
+                for (let i = 0; i < nametable.data.length; i++) {
+                  if(nametable.data[i].id === value){
+                    name = nametable.data[i].name;
+                  }
+                }
+                return name;
+            },
+        },
+        computed:{
         },
         mounted(){
             let me = this;
             me.count();
             me.visits();
+            me.labelForm();
         }
     }
 </script>
 
 <style scoped>
-
 .sub_banner{
 	text-align: center;
 }
@@ -328,7 +576,6 @@
     border-radius: .25rem;
 }
 a[data-v-2e10a77a]:link{text-decoration:none;color:#fff!important}a[data-v-2e10a77a]:hover{text-decoration:underline;color:#38a2f9!important}a[data-v-2e10a77a]:visited{text-decoration:none;color:#fff!important}.panel-footer[data-v-2e10a77a]{font-family:Montserrat;font-size:85%;color:#fff;line-height:135%;background-image:url(https://framework-gb.cdn.gob.mx/landing/img/fondofooter.svg);height:auto;background-size:cover}#division[data-v-2e10a77a]{margin-top:25%}#mail[data-v-2e10a77a]{margin-top:-6%}@media only screen and (max-width:600px){#division[data-v-2e10a77a]{margin-top:5%}.logo_footer[data-v-2e10a77a]{width:75%;margin-top:25%!important;margin-left:0!important;padding-left:0;-ms-flex-line-pack:center;align-content:center}#redes[data-v-2e10a77a]{margin-top:10%!important}#mail[data-v-2e10a77a]{line-height:300%}}@media screen and (min-width:1600px){.container[data-v-2e10a77a]{max-width:5000px!important;width:80%!important}}@media only screen and (min-width:768px) and (max-width:1024px){#mail[data-v-2e10a77a]{font-size:81%}}[data-v-ce5e9132]:focus{-webkit-box-shadow:0 0 0 0 #000!important;box-shadow:0 0 0 0 #000!important}.global[data-v-ce5e9132]{font-family:Montserrat,sans-serif;margin-bottom:3rem}.dorado[data-v-ce5e9132]{color:#b38e5d}.doradoclaro[data-v-ce5e9132]{color:#d4c19c}.elemento-oculto[data-v-ce5e9132]{position:absolute!important;clip:rect(1px 1px 1px 1px);clip:rect(1px,1px,1px,1px)}#carouselMainGobmxHead[data-v-ce5e9132]{position:relative}.carousel-indicators[data-v-ce5e9132]{margin:3px}.carousel-indicators li[data-v-ce5e9132]{background-color:#9d2449;height:10px;width:10px;border-radius:50%;border:1px solid #fff;margin-bottom:5px}.carousel-control-next[data-v-ce5e9132],.carousel-control-prev[data-v-ce5e9132]{width:5%}#topsearch[data-v-ce5e9132]{color:#fff;position:absolute;bottom:20px;z-index:50}#topsearch p[data-v-ce5e9132]{margin:2px;font-size:20px!important;text-shadow:2.5px 2.5px 5px #000}#topsearch a[data-v-ce5e9132]:hover{background-color:#b38e5d;text-decoration:none;color:#fff}#topsearch a[data-v-ce5e9132]{margin-bottom:4px}#masbuscados[data-v-ce5e9132]{position:absolute}.btn-top-search[data-v-ce5e9132]{color:#fff;background-color:#000;border:0;padding:5px 7px;font-size:.7rem;margin-right:.25rem}.card-gob .list-unstyled[data-v-ce5e9132]{height:5.2rem}.card-img-gob[data-v-ce5e9132]{width:30%;margin-left:auto;margin-right:auto;padding-bottom:0;margin-top:5%}.card-body[data-v-ce5e9132]{padding-top:2px;padding-bottom:2px}.card-carousel a[data-v-ce5e9132]:visited{color:#212529}.card-footer[data-v-ce5e9132]{font-size:11px;color:#fff;background-color:#285c4d;height:8rem}.footerverde[data-v-ce5e9132]{background-color:#621132}.card-title[data-v-ce5e9132]{margin-bottom:2px;height:2.3rem}.card-gob[data-v-ce5e9132]{margin-bottom:2rem}.card-gob h4[data-v-ce5e9132]{font-weight:900;font-size:1rem}.card-img-top[data-v-ce5e9132]{margin-bottom:3%}.programas[data-v-ce5e9132]{height:5.4rem}.programastab[data-v-ce5e9132]{height:6.5rem}.programascel[data-v-ce5e9132]{height:6.2rem}.card-gob[data-v-ce5e9132]:hover{-webkit-box-shadow:0 5px 8px 0 #d1d1d1;box-shadow:0 5px 8px 0 #d1d1d1}.card-gob p a[data-v-ce5e9132],.card-gob ul a[data-v-ce5e9132]{text-decoration:none;color:#706f6f}.card-gob a[data-v-ce5e9132]:hover{text-decoration:underline;color:#000}.titulocategoria a[data-v-ce5e9132]:visited{text-decoration:none;color:#000}.card-title a[data-v-ce5e9132]:visited{text-decoration:none}.card-body a[data-v-ce5e9132]:hover,.card-gob p a[data-v-ce5e9132]:hover,.card-gob ul a[data-v-ce5e9132]:hover{text-decoration:underline;color:#706f6f}.card-title a[data-v-ce5e9132]:hover,.card-title a[data-v-ce5e9132]:visited{text-decoration:underline;color:#000}.btn-categorias[data-v-ce5e9132]{color:#fff!important;background-color:#9d2449;border:0;padding:5px 7px;font-size:.9rem;margin-bottom:10px}.btn-categorias[data-v-ce5e9132]:hover{color:#fff!important;background-color:#000}.card-carousel[data-v-ce5e9132]{border:0;margin-bottom:3rem}.categorias .card-gob[data-v-ce5e9132]{height:290px}#topsearch h2[data-v-ce5e9132]{font-size:20px}#glit[data-v-ce5e9132]{position:relative;margin-top:2.8rem;margin-bottom:3.7rem}#line[data-v-ce5e9132]{position:absolute;background-color:#b38e5d;bottom:-10px;width:35px;height:5px}#glit h3[data-v-ce5e9132]{font-weight:400;color:#706f6f}@media screen and (min-width:320px){.next2[data-v-ce5e9132],.prev2[data-v-ce5e9132]{height:2rem!important;width:3rem;margin-top:-12%!important}.prev2[data-v-ce5e9132]{margin-left:65%!important}.card-body[data-v-ce5e9132]{height:8rem}.card-footer[data-v-ce5e9132]{height:11rem}}@media screen and (min-width:340px){.categorias .card-gob[data-v-ce5e9132]{height:320px}.next2[data-v-ce5e9132],.prev2[data-v-ce5e9132]{height:2.5rem!important;margin-top:-14%!important}}@media screen and (min-width:430px){.categorias .card-gob[data-v-ce5e9132]{height:350px!important}.next2[data-v-ce5e9132],.prev2[data-v-ce5e9132]{height:2.5rem!important;margin-top:-11%!important}.prev2[data-v-ce5e9132]{margin-left:75%!important}.card-body[data-v-ce5e9132],.card-footer[data-v-ce5e9132]{height:6rem}}@media screen and (min-width:500px){.categorias .card-gob[data-v-ce5e9132]{height:370px!important}.next2[data-v-ce5e9132],.prev2[data-v-ce5e9132]{height:2.5rem!important;margin-top:-9%!important}.prev2[data-v-ce5e9132]{margin-left:79%!important}}@media screen and (min-width:576px){.header_padding[data-v-ce5e9132]{padding-top:2.5rem!important}.categorias .card-gob[data-v-ce5e9132]{height:290px!important}.list-unstyled[data-v-ce5e9132]{margin-bottom:20%}.card-footer[data-v-ce5e9132]{height:6rem}.programascel[data-v-ce5e9132]{height:4rem}}@media screen and (min-width:768px){.header_padding[data-v-ce5e9132]{padding-top:48px}.categorias .card-gob[data-v-ce5e9132]{height:310px!important}.next2[data-v-ce5e9132],.prev2[data-v-ce5e9132]{height:2.5rem!important;margin-top:-6%!important}.prev2[data-v-ce5e9132]{margin-left:85%!important}.list-unstyled[data-v-ce5e9132]{margin-bottom:7%}.card-footer[data-v-ce5e9132]{height:7rem}.card-body[data-v-ce5e9132]{height:8rem}}@media screen and (min-width:992px){#topsearch p[data-v-ce5e9132],.btn-top-search[data-v-ce5e9132]{font-size:1rem}.card-title[data-v-ce5e9132]{margin-bottom:2px;height:3.5rem}.programas[data-v-ce5e9132]{height:7rem}.carousel-indicators li[data-v-ce5e9132]{height:15px;width:15px}#topsearch[data-v-ce5e9132]{bottom:30px}.btn-top-search[data-v-ce5e9132]{padding:5px 15px}.card-gob .list-unstyled[data-v-ce5e9132]{height:6.7rem}.categorias .card-gob[data-v-ce5e9132]{height:300px!important}.next2[data-v-ce5e9132],.prev2[data-v-ce5e9132]{height:2.5rem!important;margin-top:-4.5%!important}.prev2[data-v-ce5e9132]{margin-left:89%!important}.card-footer[data-v-ce5e9132]{height:8rem}}@media screen and (min-width:1200px){.categorias .card-gob[data-v-ce5e9132]{height:300px!important}.programas[data-v-ce5e9132]{height:5.4rem}.card-body[data-v-ce5e9132]{height:6.5rem}.card-footer[data-v-ce5e9132]{height:9rem}.card-title[data-v-ce5e9132]{margin-bottom:2px;height:3rem}.card-gob .list-unstyled[data-v-ce5e9132]{height:6rem}.prev2[data-v-ce5e9132]{margin-left:91%!important}}@media screen and (min-width:1391px){.categorias .card-gob[data-v-ce5e9132]{height:280px!important}.card-title[data-v-ce5e9132]{margin-bottom:2px;height:2.3rem}.card-gob .list-unstyled[data-v-ce5e9132]{height:5.2rem}}@media screen and (min-width:1600px){.container[data-v-ce5e9132]{max-width:5000px!important;width:80%!important}.card-footer[data-v-ce5e9132]{font-size:.75rem}.categorias .card-gob[data-v-ce5e9132]{height:290px!important}.next2[data-v-ce5e9132],.prev2[data-v-ce5e9132]{height:2.5rem!important;margin-top:-4%!important}}@media screen and (min-width:1800px){.container[data-v-ce5e9132]{max-width:5000px!important;width:80%!important}.card-footer[data-v-ce5e9132]{font-size:.8rem}.categorias .card-gob[data-v-ce5e9132]{height:320px!important}.card-gob .list-unstyled[data-v-ce5e9132]{height:5.5rem}.card-body[data-v-ce5e9132]{height:6rem}}@media screen and (min-width:2000px){.categorias .card-gob[data-v-ce5e9132]{height:325px!important}.next2[data-v-ce5e9132],.prev2[data-v-ce5e9132]{height:2.5rem!important;margin-top:-3%!important}.prev2[data-v-ce5e9132]{margin-left:93.5%!important}.categorias .card-gob[data-v-ce5e9132]{height:340px!important}.card-footer[data-v-ce5e9132]{height:6rem}}@media screen and (min-width:2300px){.categorias .card-gob[data-v-ce5e9132]{height:365px!important}.card-body[data-v-ce5e9132]{height:5.5rem}}@media screen and (min-width:2600px){.categorias .card-gob[data-v-ce5e9132]{height:390px!important}.next2[data-v-ce5e9132],.prev2[data-v-ce5e9132]{height:2.7rem!important;margin-top:-2.5%!important}.prev2[data-v-ce5e9132]{margin-left:95%!important}.card-footer[data-v-ce5e9132]{height:5rem}}@media screen and (max-width:767px){.header_padding[data-v-ce5e9132]{padding-top:68.91px}}.prev2[data-v-ce5e9132]{margin-left:89%}.next2[data-v-ce5e9132],.prev2[data-v-ce5e9132]{height:2.2rem;background-color:#9d2449;margin-top:-4%;opacity:1!important}.next2[data-v-ce5e9132]:hover,.prev2[data-v-ce5e9132]:hover{background-color:#000}.video-container[data-v-ce5e9132]{top:0;left:0;height:auto;width:100%;overflow:hidden}video.fillWidth[data-v-ce5e9132]{width:100%}
-
 .gobierno .circle-quotes {
     text-align: center;
     width: 230px;
@@ -361,10 +608,46 @@ a[data-v-2e10a77a]:link{text-decoration:none;color:#fff!important}a[data-v-2e10a
 	margin-bottom: 5px;
 	cursor: pointer;
 }
-
 .icon_operation{
 	width: 40px;
 	margin-right: 5px;
 	cursor: pointer;
 }
+/* Estilos Adrian Nuñez Alanis  */
+.first{
+ width: 100%;
+ height: 50px;
+ border: 1px solid  #13322B;
+ border-radius: 4px;
+ padding: 7px;
+ background:  white;
+ color: black;
+ cursor:pointer;
+ text-align: left;
+ font-size: 0.8em;
+}
+.first:hover{
+  background: #13322B;
+  color: white;
+}
+.firstClik{
+  background: #13322B;
+  color: white;
+}
+
+.firstSearch{
+  background: #449d44;
+  color: white;
+}
+
+#modalFilter{
+    width: 95% !important;
+}
+
+.modalFilter{
+margin: 0px auto !important;
+top: 70px !important;
+}
+
+
 </style>

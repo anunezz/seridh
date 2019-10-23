@@ -1,5 +1,50 @@
 <template>
     <div>
+
+ <nav class="navbar navbar-inverse sub-navbar fixed-top" style="margin-top: 50px!important;">
+		  <div class="container">
+		    <div class="navbar-header">
+		      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#subenlaces">
+		        <span class="sr-only">Interruptor de Navegación</span>
+		        <span class="icon-bar"></span>
+		        <span class="icon-bar"></span>
+		        <span class="icon-bar"></span>
+		      </button>
+		      <a class="navbar-brand" href="?tab=">SERIDH </a>
+		    </div>
+		    <div class="collapse navbar-collapse" id="subenlaces">
+		      <ul class="nav subnav navbar-nav navbar-right">
+	            <li class="landing-btn active">
+	                <a href="index.html">
+	            		Inicio
+	            	</a>
+	        	</li>
+	        	<li class="landing-btn">
+		            <a href="catalogo.html">
+		                Catálogo
+		            </a>
+		        </li>
+		    	<li class="landing-btn">
+		            <a href="#">
+		                Preguntas frecuentes
+		            </a>
+		        </li>
+		   		<li class="landing-btn">
+		            <a href="#">
+		                Metogología
+		            </a>
+		        </li>
+		        <li class="landing-btn">
+		            <a href="#">
+		                Datos abiertos
+		            </a>
+		        </li>
+		      </ul>
+		    </div>
+		  </div>
+</nav>
+
+
         <router-view></router-view>
     </div>
 </template>

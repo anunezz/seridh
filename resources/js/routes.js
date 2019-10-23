@@ -6,8 +6,6 @@ import AccessDenied from "./components/views/layouts/AccessDenied";
 import Menu from "./components/views/layouts/Menu";
 //import Admin from "./routes/Admin";
 import Recommendations from "./routes/Recommendations";
-import Catalogs from "./routes/Catalogs";
-//import Reports from "./routes/Reports";
 
 export const routes = [
     {
