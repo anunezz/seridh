@@ -19,7 +19,6 @@
 
             </template>
         </header-section>
-
         <el-form ref="recommendationForm" :model="recommendationForm" label-width="120px" label-position="top" >
             <el-row :gutter="10">
                 <el-col :span="24">
@@ -342,6 +341,8 @@
     import HeaderSection from "../layouts/partials/HeaderSection";
 
     export default {
+        props: ['item'],
+
         components: {
             HeaderSection
         },
@@ -448,9 +449,29 @@
                 });
             });
         },
+        mounted(){
+            if (this.item!=undefined){
+                console.log(this.item);
+                this.errorData();
+            }
+        },
 
         methods: {
-
+            errorData(){
+                    this.recommendationForm.recommendation =this.item.recommendation;
+                    this.recommendationForm.cat_entity_id = this.item.entity ? this.item.entity.id : null;
+                    this.recommendationForm.cat_gob_order_id = this.item.gobOrder ? this.item.gobOrder.id : null;
+                    this.recommendationForm.cat_gob_power_id = this.item.gobPower ? this.item.gobPower.id : null;
+                    this.recommendationForm.cat_attendig_id = this.item.attending ? this.item.attending.id : null;
+                    this.recommendationForm.cat_rights_recommendation_id = this.item.rightsRe ? this.item.rightsRe.id : null;
+                    this.recommendationForm.cat_population_id = this.item.population ? this.item.population.id : null;
+                    this.recommendationForm.cat_solidarity_action_id = this.item.solidarityAction ? this.item.solidarityAction.id : null;
+                    this.recommendationForm.cat_review_right_id = this.item.reviewRight ? this.item.reviewRight.id : null;
+                    this.recommendationForm.cat_review_topic_id = this.item.review_topic ? this.item.review_topic.id : null;
+                    this.recommendationForm.cat_subtopic_id = this.item.subtopic ? this.item.subtopic.id : null;
+                    this.recommendationForm.cat_ods_id = this.item.odsIds ? this.item.odsIds : [];
+                    this.recommendationForm.comments = this.comments;
+            },
             changeLanguage(lang){
                 if(lang == 1){
                     axios.get('/api/get-language',{params:{lang}}).then(response => {
