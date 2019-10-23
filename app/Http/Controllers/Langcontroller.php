@@ -39,21 +39,14 @@ class Langcontroller extends Controller
 
             $lang = CatLanguage::where('acronym', $lang)->first();
 
-            if (lang){
-                $pathToFile = storage_path() . "/app/lang/" . $lang->acronym . '.json';
+            $pathToFile = storage_path() . "/app/lang/" . $lang->acronym . '.json';
 
-                return response()->download(
-                    $pathToFile,
-                    $lang,
-                    [],
-                    'inline'//attachment
-                );
-            }
-            else {
-                return response()->json([
-                'success' => false,
-                    ]);
-            }
+            return response()->download(
+                $pathToFile,
+                $lang,
+                [],
+                'inline'//attachment
+            );
 
         } catch (\Exception $e) {
             return response()->json([
