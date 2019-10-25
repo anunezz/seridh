@@ -7,6 +7,7 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'App\\Console\\Kernel' => $baseDir . '/app/Console/Kernel.php',
+    'App\\DataModel' => $baseDir . '/app/DataModel.php',
     'App\\Exceptions\\Handler' => $baseDir . '/app/Exceptions/Handler.php',
     'App\\Http\\Controllers\\ChangeLanguageController' => $baseDir . '/app/Http/Controllers/ChangeLanguageController.php',
     'App\\Http\\Controllers\\Controller' => $baseDir . '/app/Http/Controllers/Controller.php',
@@ -14,6 +15,7 @@ return array(
     'App\\Http\\Controllers\\LangController' => $baseDir . '/app/Http/Controllers/LangController.php',
     'App\\Http\\Controllers\\LanguageController' => $baseDir . '/app/Http/Controllers/LanguageController.php',
     'App\\Http\\Controllers\\LoginController' => $baseDir . '/app/Http/Controllers/LoginController.php',
+    'App\\Http\\Controllers\\PublicSeridhController' => $baseDir . '/app/Http/Controllers/PublicSeridhController.php',
     'App\\Http\\Controllers\\RecommendationsController' => $baseDir . '/app/Http/Controllers/RecommendationsController.php',
     'App\\Http\\Controllers\\TransactionsController' => $baseDir . '/app/Http/Controllers/TransactionsController.php',
     'App\\Http\\Kernel' => $baseDir . '/app/Http/Kernel.php',
@@ -42,6 +44,7 @@ return array(
     'App\\Http\\Models\\Document' => $baseDir . '/app/Http/Models/Document.php',
     'App\\Http\\Models\\Recommendation' => $baseDir . '/app/Http/Models/Recommendation.php',
     'App\\Http\\Models\\Transaction' => $baseDir . '/app/Http/Models/Transaction.php',
+    'App\\Http\\Models\\VisitsQuery' => $baseDir . '/app/Http/Models/VisitsQuery.php',
     'App\\Imports\\FirstSheetImport' => $baseDir . '/app/Imports/FirstSheetImport.php',
     'App\\Imports\\RecommendationsImport' => $baseDir . '/app/Imports/RecommendationsImport.php',
     'App\\Providers\\AppServiceProvider' => $baseDir . '/app/Providers/AppServiceProvider.php',
@@ -4998,6 +5001,7 @@ return array(
     'TijsVerkoyen\\CssToInlineStyles\\Css\\Rule\\Processor' => $vendorDir . '/tijsverkoyen/css-to-inline-styles/src/Css/Rule/Processor.php',
     'TijsVerkoyen\\CssToInlineStyles\\Css\\Rule\\Rule' => $vendorDir . '/tijsverkoyen/css-to-inline-styles/src/Css/Rule/Rule.php',
     'UsersTableSeeder' => $baseDir . '/database/seeds/UsersTableSeeder.php',
+    'VisitsQueriesSeeder' => $baseDir . '/database/seeds/VisitsQueriesSeeder.php',
     'Webmozart\\Assert\\Assert' => $vendorDir . '/webmozart/assert/src/Assert.php',
     'Whoops\\Exception\\ErrorException' => $vendorDir . '/filp/whoops/src/Whoops/Exception/ErrorException.php',
     'Whoops\\Exception\\Formatter' => $vendorDir . '/filp/whoops/src/Whoops/Exception/Formatter.php',

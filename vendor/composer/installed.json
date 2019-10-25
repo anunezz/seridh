@@ -800,7 +800,7 @@
                 "dev-master": "1.3.x-dev"
             }
         },
-        "installation-source": "dist",
+        "installation-source": "source",
         "autoload": {
             "psr-4": {
                 "Doctrine\\Common\\Inflector\\": "lib/Doctrine/Common/Inflector"
@@ -929,7 +929,7 @@
                 "dev-master": "1.1.x-dev"
             }
         },
-        "installation-source": "dist",
+        "installation-source": "source",
         "autoload": {
             "psr-4": {
                 "Doctrine\\Common\\Lexer\\": "lib/Doctrine/Common/Lexer"
@@ -991,7 +991,7 @@
                 "dev-master": "2.3-dev"
             }
         },
-        "installation-source": "dist",
+        "installation-source": "source",
         "autoload": {
             "psr-4": {
                 "Cron\\": "src/Cron/"
@@ -1103,7 +1103,7 @@
         },
         "time": "2019-03-17T18:48:37+00:00",
         "type": "library",
-        "installation-source": "dist",
+        "installation-source": "source",
         "autoload": {
             "psr-0": {
                 "Parsedown": ""
@@ -6126,7 +6126,7 @@
                 "dev-master": "1.12-dev"
             }
         },
-        "installation-source": "dist",
+        "installation-source": "source",
         "autoload": {
             "psr-4": {
                 "Symfony\\Polyfill\\Ctype\\": ""

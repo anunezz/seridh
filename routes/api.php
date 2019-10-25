@@ -1,8 +1,5 @@
 <?php
-
 //Rutas Generales
-use App\Recommendation;
-
 Route::post('login', 'LoginController@login');
 Route::post('logout', 'LoginController@logout');
 
@@ -21,5 +18,4 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::get('lang-rollback', 'LangController@rollback');
     Route::delete('lang-deleted/{acronym}', 'LangController@disableLang');
 });
-
 

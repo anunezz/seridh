@@ -7,11 +7,32 @@
     <title>SERIDH</title>
     <!-- Favicon -->
     <link rel="shortcut icon" href="{{ asset('img/favicon.ico') }}" />
+
+
+    <?php
+if(strpos($_SERVER["REQUEST_URI"],'publico')){
+    // <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+   echo '<link href="https://framework-gb.cdn.gob.mx/qa/assets/styles/main.css" rel="stylesheet">';
+}
+
+?>
+
+
+
 </head>
 <body>
 <div id="app"></div>
+
 <!-- JS -->
 <script src="{{ asset(mix('js/app.js')) }}"></script>
+<?php
+if(strpos($_SERVER["REQUEST_URI"],'publico')){
+    // <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+   echo '<script src="https://framework-gb.cdn.gob.mx/gobmx.js"></script>';
+}
+
+?>
+
 <script>
     console.log("%c¡Detente!", "font-family: ';Arial';, serif; font-weight: bold; color: red; font-size: 45px");
     console.log("%cEsta función del navegador está pensada para desarrolladores. Si alguien te indicó que copiaras y pegaras algo aquí para habilitar una función de inTgra o para PIRATEAR la cuenta de alguien, se trata de un fraude.", "font-family: ';Arial';, serif; color: black; font-size: 20px");

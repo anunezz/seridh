@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit77efc82008bb80a9343fdb6740eb8156
+class ComposerStaticInitaa1e49d2248e0f40390a0ae4fd1fe58b
 {
     public static $files = array (
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
@@ -639,6 +639,7 @@ class ComposerStaticInit77efc82008bb80a9343fdb6740eb8156
 
     public static $classMap = array (
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
+        'App\\DataModel' => __DIR__ . '/../..' . '/app/DataModel.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
         'App\\Http\\Controllers\\ChangeLanguageController' => __DIR__ . '/../..' . '/app/Http/Controllers/ChangeLanguageController.php',
         'App\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Controller.php',
@@ -646,6 +647,7 @@ class ComposerStaticInit77efc82008bb80a9343fdb6740eb8156
         'App\\Http\\Controllers\\LangController' => __DIR__ . '/../..' . '/app/Http/Controllers/LangController.php',
         'App\\Http\\Controllers\\LanguageController' => __DIR__ . '/../..' . '/app/Http/Controllers/LanguageController.php',
         'App\\Http\\Controllers\\LoginController' => __DIR__ . '/../..' . '/app/Http/Controllers/LoginController.php',
+        'App\\Http\\Controllers\\PublicSeridhController' => __DIR__ . '/../..' . '/app/Http/Controllers/PublicSeridhController.php',
         'App\\Http\\Controllers\\RecommendationsController' => __DIR__ . '/../..' . '/app/Http/Controllers/RecommendationsController.php',
         'App\\Http\\Controllers\\TransactionsController' => __DIR__ . '/../..' . '/app/Http/Controllers/TransactionsController.php',
         'App\\Http\\Kernel' => __DIR__ . '/../..' . '/app/Http/Kernel.php',
@@ -674,6 +676,7 @@ class ComposerStaticInit77efc82008bb80a9343fdb6740eb8156
         'App\\Http\\Models\\Document' => __DIR__ . '/../..' . '/app/Http/Models/Document.php',
         'App\\Http\\Models\\Recommendation' => __DIR__ . '/../..' . '/app/Http/Models/Recommendation.php',
         'App\\Http\\Models\\Transaction' => __DIR__ . '/../..' . '/app/Http/Models/Transaction.php',
+        'App\\Http\\Models\\VisitsQuery' => __DIR__ . '/../..' . '/app/Http/Models/VisitsQuery.php',
         'App\\Imports\\FirstSheetImport' => __DIR__ . '/../..' . '/app/Imports/FirstSheetImport.php',
         'App\\Imports\\RecommendationsImport' => __DIR__ . '/../..' . '/app/Imports/RecommendationsImport.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',
@@ -5630,6 +5633,7 @@ class ComposerStaticInit77efc82008bb80a9343fdb6740eb8156
         'TijsVerkoyen\\CssToInlineStyles\\Css\\Rule\\Processor' => __DIR__ . '/..' . '/tijsverkoyen/css-to-inline-styles/src/Css/Rule/Processor.php',
         'TijsVerkoyen\\CssToInlineStyles\\Css\\Rule\\Rule' => __DIR__ . '/..' . '/tijsverkoyen/css-to-inline-styles/src/Css/Rule/Rule.php',
         'UsersTableSeeder' => __DIR__ . '/../..' . '/database/seeds/UsersTableSeeder.php',
+        'VisitsQueriesSeeder' => __DIR__ . '/../..' . '/database/seeds/VisitsQueriesSeeder.php',
         'Webmozart\\Assert\\Assert' => __DIR__ . '/..' . '/webmozart/assert/src/Assert.php',
         'Whoops\\Exception\\ErrorException' => __DIR__ . '/..' . '/filp/whoops/src/Whoops/Exception/ErrorException.php',
         'Whoops\\Exception\\Formatter' => __DIR__ . '/..' . '/filp/whoops/src/Whoops/Exception/Formatter.php',
@@ -5792,10 +5796,10 @@ class ComposerStaticInit77efc82008bb80a9343fdb6740eb8156
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit77efc82008bb80a9343fdb6740eb8156::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit77efc82008bb80a9343fdb6740eb8156::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit77efc82008bb80a9343fdb6740eb8156::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInit77efc82008bb80a9343fdb6740eb8156::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitaa1e49d2248e0f40390a0ae4fd1fe58b::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitaa1e49d2248e0f40390a0ae4fd1fe58b::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInitaa1e49d2248e0f40390a0ae4fd1fe58b::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInitaa1e49d2248e0f40390a0ae4fd1fe58b::$classMap;
 
         }, null, ClassLoader::class);
     }

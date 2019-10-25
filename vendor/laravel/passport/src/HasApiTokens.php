@@ -1,4 +1,6 @@
-<?php namespace Laravel\Passport;
+<?php
+
+namespace Laravel\Passport;
 
 use Illuminate\Container\Container;
 

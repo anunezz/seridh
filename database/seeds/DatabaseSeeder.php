@@ -28,6 +28,8 @@ class DatabaseSeeder extends Seeder
             CatSubtopicSeeder::class,
             CatLanguageSeeder::class,
 
+            VisitsQueriesSeeder::class,
+
             UsersTableSeeder::class,
         ]);
     }
