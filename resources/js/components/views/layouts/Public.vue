@@ -1,6 +1,5 @@
 <template>
     <div>
-
  <nav class="navbar navbar-inverse sub-navbar fixed-top" style="margin-top: 50px!important;">
 		  <div class="container">
 		    <div class="navbar-header">
@@ -43,8 +42,6 @@
 		    </div>
 		  </div>
 </nav>
-
-
         <router-view></router-view>
     </div>
 </template>
@@ -75,9 +72,9 @@
 
         },
         mounted(){
-            let recaptchaScript = document.createElement('script')
-    recaptchaScript.setAttribute('src', 'https://framework-gb.cdn.gob.mx/gobmx.js')
-    document.head.appendChild(recaptchaScript);
+    //         let recaptchaScript = document.createElement('script')
+    // recaptchaScript.setAttribute('src', 'https://framework-gb.cdn.gob.mx/gobmx.js')
+    // document.head.appendChild(recaptchaScript);
         }
     }
 </script>

@@ -148,40 +148,24 @@
     </div>
 
     <div class="col-md-12">
-        <div class="panel-group ficha-collapse" id="accordion">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    <a data-parent="#accordion" data-toggle="collapse" href="#panel-01" aria-expanded="true" aria-controls="panel-01">
-                       <h4>Filtros</h4>
-                    </a>
-                </h4>
-            </div>
-
-            <div class="panel-collapse collapse in" id="panel-01">
-
-                <div class="panel-body animated fadeIn">
-                  <div class="card">
-                      <div class="card-body col-md-12" style="padding: 5px;">
-
-                        <div class="col-md-3" v-for="(item,index) in arrayFilter" :key="index" style="padding: 5px;">
-                            <div v-if="item.label !== 'Buscar Recomendación'" class="first" v-bind:class="[item.btn === false ? '' :'firstClik']" style="padding: 5px!important;" @click="panelBusqueda(item)" if>
-                              <div v-text="item.label" style="float:left; width: 85%;"> {{item.label}} </div>
-                              <div style="float:left; width: 10%;" class="text-right"><span v-bind:class="[item.btn === false ? 'glyphicon glyphicon-chevron-up' : 'glyphicon glyphicon-chevron-down']" aria-hidden="true"></span></div>
-                            </div>
-                            <div v-else class="first firstSearch" style="padding: 5px!important;" @click="recommendationFilter()">
-                              <div v-text="item.label" style="float:left; width: 85%;"> {{item.label}} </div>
-                              <div style="float:left; width: 10%;" class="text-right"><span class="icon-search" aria-hidden="true"></span></div>
-                            </div>
-                            <div>
-
-                            </div>
+        <div class="panel-body animated fadeIn">
+            <div class="card">
+                <div class="card-body" style="padding: 5px;">
+                    <div class="col-md-3" v-for="(item,index) in arrayFilter" :key="index" style="padding: 5px;">
+                        <div v-if="item.label !== 'Buscar Recomendación'" class="first" v-bind:class="[item.btn === false ? '' :'firstClik']" style="padding: 5px!important;" @click="panelBusqueda(item)" if>
+                            <div v-text="item.label" style="float:left; width: 85%;"> {{item.label}} </div>
+                            <div style="float:left; width: 10%;" class="text-right"><span v-bind:class="[item.btn === false ? 'glyphicon glyphicon-chevron-up' : 'glyphicon glyphicon-chevron-down']" aria-hidden="true"></span></div>
                         </div>
-                      </div>
-                     <!-- <div class="col-md-12 pull-right" style="padding: 20px;">
-                         <button type="button" class="btn btn-success  pull-right" @click="recommendationFilter()">Buscar</button>
-                      </div> -->
+                        <div v-else class="first firstSearch" style="padding: 5px!important;" @click="recommendationFilter(1)">
+                            <div v-text="item.label" style="float:left; width: 85%;"> {{item.label}} </div>
+                            <div style="float:left; width: 10%;" class="text-right"><span class="icon-search" aria-hidden="true"></span></div>
+                        </div>
                     </div>
+                </div>
+                <!-- <div class="col-md-12 pull-right" style="padding: 20px;">
+                    <button type="button" class="btn btn-success  pull-right" @click="recommendationFilter()">Buscar</button>
+                </div> -->
+            </div>
 
                         <div class="card">
                             <div class="card-body col-md-12" style="padding: 20px;" v-if="showTable === true">
@@ -214,45 +198,10 @@
                              <div class="card-body col-md-12" style="padding: 20px;" v-else>
 
 
-
-<!-- <template>
-  <el-table
-    :data="tableData"
-    style="width: 100%"
-    height="250">
-    <el-table-column
-      fixed
-      prop="cat_gob_order_id"
-      label="Orden de Gobierno"
-      width="170">
-    </el-table-column>
-    <el-table-column
-      prop="cat_gob_power_id"
-      label="Poder de gobierno"
-      width="170">
-    </el-table-column>
-  </el-table>
-</template> -->
-
-
-
-
-
-
-
                              </div>
                         </div>
-                </div>
-
-            </div>
-
-
-
-
-        </div>
         </div>
     </div>
-
 </div>
 
 
@@ -260,7 +209,7 @@
  ----------------------------
 {{checkedNames}} -->
 
-
+<!-- {{checkedNames}} -->
 
 <div class="modal fade modalFilter" id="modalFilter" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 <div class="modal-dialog" id="modalFilter">
@@ -271,11 +220,23 @@
           </div>
           <div class="modal-body">
 
-
-
-
-
           <div class="row">
+
+
+<div class="col-md-12">
+    <ul class="pagination pull-right">
+        <li class="page-item" v-if="pagination.current_page > 1">
+            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1)">Ant</a>
+        </li>
+        <li class="page-item" v-for="page in pagesNumber" :key="page" :class="[page == isActived ? 'active' : '']">
+            <a class="page-link" href="#" @click.prevent="cambiarPagina(page)" v-text="page"></a>
+        </li>
+        <li class="page-item" v-if="pagination.current_page < pagination.last_page">
+            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1)">Sig</a>
+        </li>
+    </ul>
+</div>
+
                <div class="col-md-12">
                     <table class="table table-bordered">
                         <thead>
@@ -290,14 +251,14 @@
                         </thead>
                             <tbody>
                                 <tr v-for="(item,index) in resultados" :key="index">
-                                    <td v-text="transformNamesTableColums(item.created_at,0)"></td>
-                                    <td v-text="transformNamesTableColums(item.cat_entity_id,1)"></td>
-                                    <td v-text="transformNamesTableColums(item.cat_population_id,2)"></td>
-                                    <td v-text="transformNamesTableColums(item.cat_review_topic_id,3)"></td>
-                                    <td v-text="transformNamesTableColums(item.cat_review_topic_id,3)"></td>
-                                    <td>Sin datos</td>
-                                    <td class="pull-right">
-                                        <button type="button" class="btn btn-success">Ver<span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></button>
+                                    <td style="width: 145px!important" v-text="transformNamesTableColums(item.created_at,0)"></td>
+                                    <td style="width: 145px!important" v-text="transformNamesTableColums(item.cat_entity_id,1)"></td>
+                                    <td style="width: 145px!important" v-text="transformNamesTableColums(item.cat_population_id,2)"></td>
+                                    <td style="width: 145px!important" v-text="transformNamesTableColums(item.cat_review_topic_id,3)"></td>
+                                    <td style="width: 145px!important" v-text="transformNamesTableColums(item.cat_attendig_id,4)"></td>
+                                    <td style="width: 145px!important" >Sin datos</td>
+                                    <td style="width: 145px!important">
+                                        <button type="button" class="btn btn-success" @click="viewRecommendations(item)">Ver<span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></button>
                                     </td>
                                 </tr>
                             </tbody>
@@ -306,14 +267,10 @@
            </div>
 
 
-
-
-
-
           </div>
-          <div class="modal-footer">
+          <!-- <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-          </div>
+          </div> -->
         </div>
       </div>
 </div>
@@ -430,7 +387,16 @@
               showTable: false,
               loading:false,
               tableData:[],
-              resultados:{}
+              resultados:{},
+                pagination : {
+                    'total' : 0,
+                    'current_page' : 0,
+                    'per_page' : 0,
+                    'last_page' : 0,
+                    'from' : 0,
+                    'to' : 0,
+                },
+                offset : 3,
             };
         },
         computed: {
@@ -492,22 +458,57 @@
                     console.log(error);
                 });
             },
-            recommendationFilter(){
+            viewRecommendations(data){
+                let me = this;
+                console.log("Nueva funcion de recomendaciones....",data);
+                $("#modalFilter").modal('hide');
+
+                setTimeout(item =>{
+                 this.$router.push( '/publico/filtros' );
+              //  me.$router.push({path: '/publico/filtros',array:1});
+                // /publico/filtros/
+                //, params: { array: data}
+                // me.$router.push({
+                //     name: 'PublicFilter',
+                //     id: data });
+                },500);
+
+
+            },
+            cambiarPagina(page,buscar,criterio){
+                let me = this;
+                //Actualiza la página actual
+                me.pagination.current_page = page;
+                //Envia la petición para visualizar la data de esa página
+                me.recommendationFilter(page);
+            },
+            recommendationFilter(page){
               let me = this;
                 me.showTable =  true;
-
 
                 console.log("Respuesta de cheknames: ",me.checkedNames);
 
                 let data={
                    'date': me.checkedNames[0].check,
-                   'entity_id':me.checkedNames[1].check
+                   'entity_id':me.checkedNames[1].check,
+                   'population_id':me.checkedNames[2].check,
+                   'review_topic_id':me.checkedNames[3].check,
+                   'attendig_id':me.checkedNames[4].check
                 };
-                axios.post('/api/public/recommendationFilter', data).then(function (response) {
-                 if( response.data.lResults.length > 0 ){
+
+
+                  var url= '/api/public/recommendationFilter?page=' + page;
+                   // axios.post('/api/public/recommendationFilter', data).then(function (response) {
+                   axios.post(url, data).then(function (response) {
+
+                    console.log("PAGINATE RESULTADOS.....: ",response," Parametros length: ",data.length);
+                 if( response.data.lResults.data.length > 0 ){
                     me.loading=true;
                     setTimeout(()=>{
-                        me.resultados = response.data.lResults;
+
+                        me.resultados = response.data.lResults.data;
+                        me.pagination= response.data.pagination;
+
                         $("#modalFilter").modal('show');
                         $(".modal-dialog").removeAttr('style');
                          me.loading=false;
@@ -517,7 +518,7 @@
 
 
                  }else{
-                        alert("No hay recomendaciones por mostrar....");
+                    me.message('warning','Sin resultados.');
                  }
 
 
@@ -526,9 +527,15 @@
                     console.log(error);
                 });
             },
+            message(type,msj){
+            let me = this;
+                    this.$message({
+                        message: msj,
+                        type: type
+                    });
+            },
             transformNamesTableColums(value,num){
                 if(num === 0){
-                    console.log("AÑO: ",value);
                     value = value.substr(0,4);
                  return value;
                 }
@@ -545,6 +552,33 @@
             },
         },
         computed:{
+            isActived: function(){
+                return this.pagination.current_page;
+            },
+            //Calcula los elementos de la paginación
+            pagesNumber: function() {
+                if(!this.pagination.to) {
+                    return [];
+                }
+
+                var from = this.pagination.current_page - this.offset;
+                if(from < 1) {
+                    from = 1;
+                }
+
+                var to = from + (this.offset * 2);
+                if(to >= this.pagination.last_page){
+                    to = this.pagination.last_page;
+                }
+
+                var pagesArray = [];
+                while(from <= to) {
+                    pagesArray.push(from);
+                    from++;
+                }
+                return pagesArray;
+
+            }
         },
         mounted(){
             let me = this;

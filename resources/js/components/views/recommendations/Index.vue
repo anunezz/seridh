@@ -355,7 +355,7 @@
         methods: {
             ...mapActions("bulkLoading", ['increment']),
             getFile() {
-                document.location.href = 'template/Recomendaciones.xlsm';
+                document.location.href = '/template/Recomendaciones.xlsm';
             },
 
             submitUpload() {
