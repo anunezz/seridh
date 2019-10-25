@@ -106,7 +106,7 @@ class PublicSeridhController extends Controller
                   $query->orWhereYear('created_at',$value);
                 }
          // })->orderBy('id', 'desc')->get();
-            })->orderBy('id', 'desc')->paginate(10);
+            })->orderBy('id', 'desc')->paginate(2);
 
                     return response()->json([
                         'success' => true,
