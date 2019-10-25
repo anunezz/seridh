@@ -13,8 +13,7 @@
                     size="medium"
                     type="primary"
                     icon="fas fa-file-excel"
-                    :disabled="downloading"
-                    @click="getFile">
+                    :disabled="downloading">
                     {{ downloadText }}
                 </el-button>
                 <el-button
@@ -31,7 +30,7 @@
                     @click="addRegister">
                     + Recomendación
                 </el-button>
-                <el-badge :value="errorsBulk.length" class="item" v-if="errorsBulk.length>0">
+                <el-badge :value="errorsBulk.length" :max="99" class="item" v-if="errorsBulk.length>0">
                     <el-button type="danger" size="small" @click="errorCarga=true">Errores</el-button>
                 </el-badge>
             </template>
@@ -134,7 +133,7 @@
                 @current-change="handleCurrentChange"
                 layout="total, ->, prev, pager, next"
                 :current-page.sync="pagination.currentPage"
-                :total="pagination.total">
+                :total="50">
             </el-pagination>
             <span slot="footer" class="dialog-footer">
             <el-button type="primary" size="mini" @click="errorCarga=false">Cancelar</el-button>
@@ -353,13 +352,12 @@
             ])
         },
         methods: {
-            ...mapActions("bulkLoading", ['increment']),
+            ...mapActions("bulkLoading", ['addRows']),
             getFile() {
                 document.location.href = '/template/Recomendaciones.xlsm';
             },
 
             submitUpload() {
-                this.startLoading();
                 this.$refs.upload.submit();
                 this.dialogVisible = false;
 
@@ -373,13 +371,16 @@
                 });
             },
             beforeUploadFile(file) {
+                this.startLoading();
                 var type = file.name;
                 var find = type.search(".xlsm");
                 if (file.size/1024/1024 > 6) {
+                    this.stopLoading();
                     this.$message.error('El archivo seleccionado excede el limite permitido');
                     return false;
                 }
                 if (find === -1) {
+                    this.stopLoading();
                     this.$message.error('Tipo de Archivo no permitido');
                     return false;
                 }
@@ -387,34 +388,42 @@
             },
 
             onSeccess(response, file, fileList){
-                this.recommendations= [];
-                let data = {
-                    cat_transaction_type_id: 6,
-                    action: 'Iportación de Recomendaciones'
-                };
+                if (response.success){
+                    this.recommendations= [];
+                    this.getRecommendations();
+                    let data = {
+                        cat_transaction_type_id: 6,
+                        action: 'Iportación de Recomendaciones'
+                    };
 
-                axios.post('/api/transaction', data).then(response => {
-                }).catch(error => {
-                    this.$message({
-                        type: "warning",
-                        message: "No fue posible completar la acción, intente nuevamente."
+                    axios.post('/api/transaction', data).then(response => {
+                    }).catch(error => {
+                        this.$message({
+                            type: "warning",
+                            message: "No fue posible completar la acción, intente nuevamente."
+                        });
                     });
-                });
-                this.getRecommendations();
-                if (response.filas.length>0){
-                    this.increment(response.filas);
-                    this.totalErrors = response.filas.length;
-                    this.errorCarga=true;
+
+                    if (response.filas.length>0){
+                        this.addRows(response.filas);
+                        this.totalErrors = response.filas.length;
+                        this.errorCarga=true;
+                    }
+                    this.stopLoading();
+                }else {
+                    this.stopLoading();
+                    this.$message({
+                        type: 'warning',
+                        message: 'Archivo incorrecto, descargue el Excel.',
+                    });
                 }
-                this.stopLoading();
             },
 
             bulkLoad(e,index){
-                e.action=1;
                 e.index=index;
                 this.$router.push({
                     name: 'RecommendationCreate',
-                    params: {item: e}
+                    params: {index: index}
                 })
             },
 
@@ -515,7 +524,6 @@
                 };
 
                 axios.get('/api/recommendations', data).then(response => {
-
                     this.recommendations = response.data.recommendations.data;
                     this.pagination.total = response.data.recommendations.total;
                     this.pagination.currentPage = response.data.recommendations.current_page;

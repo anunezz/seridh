@@ -3,22 +3,28 @@ const state = {
 };
 
 const mutations = {
-    increment:(state, data)=>{
+    addRows(state, data){
         state.errorsBulk = data;
     },
-    decrement(state){
-        state.errorsBulk--
+    deleteRow(state,data){
+        state.errorsBulk.splice(data, 1);
     }
 };
 
 const actions = {
-    increment({commit}, data) {
-        commit('increment', data)
+    addRows({commit}, data) {
+        commit('addRows', data)
+    },
+    deleteRow({commit},data){
+        commit('deleteRow',data)
     }
 };
 
 const getters = {
-    errorsBulk: state => state.errorsBulk
+    errorsBulk: state => state.errorsBulk,
+    editRow: (state) => (index) => {
+        return state.errorsBulk[index]
+    }
 };
 
 export default {

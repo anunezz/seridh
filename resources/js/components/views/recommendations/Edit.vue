@@ -468,6 +468,7 @@
             let recommendationId = this.$route.params.id;
 
             axios.get(`/api/recommendations/${recommendationId}/edit`).then(response => {
+                console.log(response.data);
                 this.ides = response.data.ides;
                 this.entities = response.data.entities;
                 this.orders = response.data.orders;

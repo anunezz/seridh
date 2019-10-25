@@ -394,9 +394,10 @@
 
 <script>
     import HeaderSection from "../layouts/partials/HeaderSection";
+    import {mapActions, mapGetters } from 'vuex';
 
     export default {
-        props: ['item'],
+        props: ['index'],
 
         components: {
             HeaderSection
@@ -478,12 +479,11 @@
                 },
             }
         },
-
         created() {
             this.startLoading();
-
+            console.log(this.index);
             axios.get('/api/recommendations/create').then(response => {
-
+                //this.recommendationForm.recommendation = '<p style="font-family: Montserrat; font-size: 14px; font-style: normal; font-weight: normal;">No gritar</p>';
                 this.ides = response.data.ides;
                 this.ods = response.data.ods;
                 this.entities = response.data.entities;
@@ -499,6 +499,9 @@
                 this.ods = response.data.ods;
 
                 this.stopLoading();
+                if (this.index){
+                    this.errorData(this.index);
+                }
 
             }).catch(error => {
                 this.stopLoading();
@@ -508,30 +511,36 @@
                     message: "No fue posible completar la acción, intente nuevamente."
                 });
             });
+
+        },
+        computed: {
+            ...mapGetters("bulkLoading",[
+                "editRow"
+            ])
         },
         mounted(){
-            if (this.item!=undefined){
-                console.log(this.item);
-                this.errorData();
-            }
+
+
         },
 
         methods: {
-            errorData(){
-                console.log(this.item.entity);
-                    this.recommendationForm.recommendation =this.item.recommendation;
-                    this.recommendationForm.cat_entity_id = this.item.entity ? this.item.entity.id : null;
-                    this.recommendationForm.cat_gob_order_id = this.item.gobOrder ? this.item.gobOrder.id : null;
-                    this.recommendationForm.cat_gob_power_id = this.item.gobPower ? this.item.gobPower.id : null;
-                    this.recommendationForm.cat_attendig_id = this.item.attending ? this.item.attending.id : null;
-                    this.recommendationForm.cat_rights_recommendation_id = this.item.rightsRe ? this.item.rightsRe.id : null;
-                    this.recommendationForm.cat_population_id = this.item.population ? this.item.population.id : null;
-                    this.recommendationForm.cat_solidarity_action_id = this.item.solidarityAction ? this.item.solidarityAction.id : null;
-                    this.recommendationForm.cat_review_right_id = this.item.reviewRight ? this.item.reviewRight.id : null;
-                    this.recommendationForm.cat_review_topic_id = this.item.review_topic ? this.item.review_topic.id : null;
-                    this.recommendationForm.cat_subtopic_id = this.item.subtopic ? this.item.subtopic.id : null;
-                    this.recommendationForm.cat_ods_id = this.item.odsIds ? this.item.odsIds : [];
-                    this.recommendationForm.comments = this.comments;
+            ...mapActions("bulkLoading", ['deleteRow']),
+            errorData(e){
+                console.log('en metodo',e);
+                let edit = this.editRow(this.index);
+                this.recommendationForm.recommendation = edit.recommendation;
+                this.recommendationForm.cat_entity_id = edit.entity ? edit.entity.id : null;
+                this.recommendationForm.cat_gob_order_id = edit.gobOrder ? edit.gobOrder.id:null;
+                this.recommendationForm.cat_gob_power_id = edit.gobPower ? edit.gobPower.id : null;
+                this.recommendationForm.cat_attendig_id = edit.attending ? edit.attending.id : null;
+                this.recommendationForm.cat_rights_recommendation_id = edit.rightsRe ? edit.rightsRe.id : null;
+                this.recommendationForm.cat_population_id = edit.population ? edit.population.id : null;
+                this.recommendationForm.cat_solidarity_action_id = edit.solidarityAction ? edit.solidarityAction.id : null;
+                this.recommendationForm.cat_review_right_id = edit.reviewRight ? edit.reviewRight.id : null;
+                this.recommendationForm.cat_review_topic_id = edit.review_topic ? edit.review_topic.id : null;
+                this.recommendationForm.cat_subtopic_id = edit.subtopic ? edit.subtopic.id : null;
+                this.recommendationForm.cat_ods_id = edit.odsIds ? edit.odsIds : [];
+                this.recommendationForm.comments = edit.comments;
             },
             changeLanguage(lang){
                 if(lang == 1){
@@ -629,13 +638,13 @@
 
                         axios.post('/api/recommendations', this.recommendationForm).then(response => {
                             this.stopLoading();
-
+                            this.deleteRow(this.index);
                             this.$message({
                                 type: "success",
                                 title: 'Éxito',
                                 message: "Se almaceno la información correctamente"
                             });
-
+                            this.recommendationForm = {};
                             this.$router.push('/recomendaciones');
                         }).catch(error => {
                             this.stopLoading();
