@@ -1,0 +1,25 @@
+{
+
+    "header": {
+        "title": "Add Recomendation"
+    },
+
+    "form": {
+        "text": "Text Recomendation",
+        "entity": "Issuing Entity",
+        "order" : "Government Order",
+        "power" : "Government Power",
+        "attending" : "Entity in charge of attending",
+        "right" : "Rights of the recommendation",
+        "population" : "Population",
+        "solidarity" : "Solidarity action",
+        "elegir" : "Select",
+        "review" : "Review of rights of the recommendation",
+        "topic" : "Review of topic(s)",
+        "subtopic" : "Subtopic Review(s)",
+        "goals" : "ODS (Sustainable Development Goals)",
+        "comment" : "Comments"
+    }
+
+
+}
