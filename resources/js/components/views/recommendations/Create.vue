@@ -38,7 +38,7 @@
 
 
 
-                <el-col :span="5">
+                <!--<el-col :span="5">
                     <el-form-item :label="lang.form && lang.form.entity? lang.form.entity : 'ID'"
                                   prop="cat_ide_id"
                                   :rules="[
@@ -61,11 +61,11 @@
                             </el-option>
                         </el-select>
                     </el-form-item>
-                </el-col>
+                </el-col>-->
 
 
 
-                <el-col :span="5">
+                <!--<el-col :span="5">
                     <el-form-item :label="lang.form && lang.form.entity? lang.form.entity : 'ID'"
                                   prop="cat_ide_id"
                                   :rules="[
@@ -84,7 +84,7 @@
                             </el-option>
                         </el-select>
                     </el-form-item>
-                </el-col>
+                </el-col>-->
 
             </el-row>
 
@@ -518,6 +518,7 @@
 
         methods: {
             errorData(){
+                console.log(this.item.entity);
                     this.recommendationForm.recommendation =this.item.recommendation;
                     this.recommendationForm.cat_entity_id = this.item.entity ? this.item.entity.id : null;
                     this.recommendationForm.cat_gob_order_id = this.item.gobOrder ? this.item.gobOrder.id : null;
