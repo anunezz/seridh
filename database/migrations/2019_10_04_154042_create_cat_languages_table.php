@@ -17,6 +17,7 @@ class CreateCatLanguagesTable extends Migration
             $table->bigIncrements('id');
             $table->string('acronym',4);
             $table->string('description',20);
+            $table->boolean('isActive')->default(1);
             $table->timestamps();
             $table->softDeletes();
         });

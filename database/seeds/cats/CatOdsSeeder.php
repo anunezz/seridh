@@ -33,7 +33,7 @@ class CatOdsSeeder extends Seeder
             ],
             [
                 'id' => 4,
-                'name' => 'Dato 4',
+                'name' => '4.- Datos',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],

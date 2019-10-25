@@ -32,60 +32,6 @@
                             v-model="recommendationForm.recommendation"/>
                     </el-form-item>
                 </el-col>
-
-
-
-
-
-
-                <el-col :span="5">
-                    <el-form-item :label="lang.form && lang.form.entity? lang.form.entity : 'ID'"
-                                  prop="cat_ide_id"
-                                  :rules="[
-                                        { required: true, message: 'Este campo es requerido', trigger: 'blur'},
-                                      ]">
-                        <el-select
-                            v-model="recommendationForm.cat_entity_id"
-                            multiple
-                            filterable
-                            remote
-                            reserve-keyword
-                            :placeholder="lang.form && lang.form.elegir? lang.form.elegir : 'Seleccionar'"
-                            :remote-method="remoteMethod"
-                            :loading="loading">
-                            <el-option
-                                v-for="(ide, index) in ides"
-                                :key="index"
-                                :label="ide.name"
-                                :value="ide.id">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
-                </el-col>
-
-
-
-                <el-col :span="5">
-                    <el-form-item :label="lang.form && lang.form.entity? lang.form.entity : 'ID'"
-                                  prop="cat_ide_id"
-                                  :rules="[
-                                        { required: true, message: 'Este campo es requerido', trigger: 'blur'},
-                                      ]">
-                        <el-select
-                            v-model="recommendationForm.cat_ide_id"
-                            filterable
-                            :placeholder="lang.form && lang.form.elegir? lang.form.elegir : 'Seleccionar'"
-                            style="width: 100%">
-                            <el-option
-                                v-for="(ide, index) in ides"
-                                :key="index"
-                                :label="ide.name"
-                                :value="ide.id">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
-                </el-col>
-
             </el-row>
 
             <el-row :gutter="20">
@@ -119,6 +65,7 @@
                         <el-select
                             v-model="recommendationForm.cat_gob_order_id"
                             filterable
+                            multiple
                             :placeholder="lang.form && lang.form.elegir? lang.form.elegir : 'Seleccionar'"
                             style="width: 100%">
                             <el-option
@@ -155,7 +102,7 @@
 
             <el-row :gutter="20">
                 <el-col :span="8">
-                    <el-form-item :label="lang.form && lang.form.attending? lang.form.attending : 'Entidad encargada de atender'"
+                    <el-form-item :label="lang.form && lang.form.attending? lang.form.attending : 'Autoridadad'"
                                   prop="cat_attendig_id"
                                   :rules="[
                                         { required: true, message: 'Este campo es requerido', trigger: 'blur'},
@@ -434,7 +381,7 @@
                     cat_ide_id: null,
                     cat_entity_name: null,
                     cat_entity_id: null,
-                    cat_gob_order_id: null,
+                    cat_gob_order_id: [],
                     cat_gob_power_id: null,
                     cat_attendig_id: null,
                     cat_rights_recommendation_id: null,
@@ -520,7 +467,7 @@
             errorData(){
                     this.recommendationForm.recommendation =this.item.recommendation;
                     this.recommendationForm.cat_entity_id = this.item.entity ? this.item.entity.id : null;
-                    this.recommendationForm.cat_gob_order_id = this.item.gobOrder ? this.item.gobOrder.id : null;
+                    this.recommendationForm.cat_gob_order_id = this.item.gobOrder ? this.item.gobOrder : [];
                     this.recommendationForm.cat_gob_power_id = this.item.gobPower ? this.item.gobPower.id : null;
                     this.recommendationForm.cat_attendig_id = this.item.attending ? this.item.attending.id : null;
                     this.recommendationForm.cat_rights_recommendation_id = this.item.rightsRe ? this.item.rightsRe.id : null;

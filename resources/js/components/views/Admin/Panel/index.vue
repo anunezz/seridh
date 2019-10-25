@@ -9,13 +9,16 @@
         <el-form ref="tabform" :model="tabform" label-width="120px" label-position="top" >
             <el-form-item label="Crear nuevo idioma"
                           prop="newTabName"
-                          :rules="[ { type: 'string', required: false, pattern: /^[a-z]+$/, message: 'el acronimo debe llevar letras minusculas', trigger: 'change'}
+                          :rules="[ {  required: true, message: 'Este campo es requerido', trigger: 'blur',} ,
+                           {  type: 'string', required: false, pattern: /^[a-z]+$/, message: 'el acronimo debe llevar letras minusculas', trigger: 'change'}
                                   ]">
                 <el-input size="small" style="width : 270px" maxlength="2" show-word-limit placeholder="Escribe el Acronimo del idioma" v-model="tabform.newTabName" ></el-input>
             </el-form-item>
+
             <el-form-item>
                 <el-button
                     size="small"
+                    v-model="tabform.newTabName"
                     @click="addTab(tabform.newTabName)"
                 >
                     añadir tab
@@ -33,8 +36,12 @@
                     <el-button type="success" style="width: 100%" @click="submitForm(lang.acronym)">Guardar</el-button>
                 </el-col>
                 <el-col :span="3" >
+                    <el-button type="danger" style="width: 100%" @click="disableLang(lang.acronym)">Eliminar</el-button>
+                </el-col>
+                <el-col :span="3" >
                     <el-button type="primary" style="width: 100%" @click="rollback()">Recuperar Anterior</el-button>
                 </el-col>
+
             </el-row>
         </el-tab-pane>
     </el-tabs>
@@ -52,6 +59,11 @@
                 langs: [],
                 tabIndex: 0,
                 activeName: 'es',
+
+                removeHash: null,
+
+                RequestError: false,
+                RequestSucces: false,
 
                 tabform: {
                     newTabName: ''
@@ -83,23 +95,34 @@
         methods:
         {
             getLang(value) {
+                this.startLoading();
                this.value = value;
 
-               axios.get("/api/get-lang/" + value).then(response => {
-                   this.data = response.data;
-               }).catch(err => {
-                   console.log(err);
-               });
+                   axios.get("/api/get-lang/" + value).then(response => {
+                       this.data = response.data;this.data = response.data;
+                       this.stopLoading();
+                   }).catch(err => {
+                       this.stopLoading();
+
+                       this.$message({
+                           type: "warning",
+                           message: "No fue posible completar la acción, intente nuevamente."
+                       });
+                   });
+
         },
 
             submitForm(acronym) {
-                this.startLoading();4
+                this.startLoading();
 
                 let data = {
                     'acronym': acronym,
                     'data': this.data
                 }
 
+                //this.$refs['tabform'].validate((valid) => {
+
+                    //if (valid) {
                         axios
                             .post('/api/lang/store', data).then(response => {
                             this.stopLoading();
@@ -118,7 +141,19 @@
                                 message: "No fue posible completar la acción, intente nuevamente."
                             });
                         })
-                    },
+                   // }
+                  //  else {
+                    //    this.stopLoading();
+
+                     //   this.$message({
+                       //     type: "warning",
+                       //     title: 'Error',
+                       //     message: "Complete correctamente el campo"
+                     //   });
+                   // }
+           // });
+
+            },
 
             getPlus(value) {
                 this.value = value;
@@ -171,8 +206,39 @@
                 this.langs = tabs.filter(tab => tab.name !== targetName);
             },
 
-            rollback() {
+            disableLang(acronym) {
+                this.startLoading();
 
+                axios.delete(`/api/lang-deleted/${acronym}`).then(response => {
+                    this.stopLoading();
+                    this.getLang();
+                    //this.removeDialog = false;
+
+                    this.$message({
+                        type: "success",
+                        title: 'Éxito',
+                        message: "El lenguaje se elimino correctamente"
+                    });
+
+                }).catch(error => {
+                    this.stopLoading();
+
+                    this.$message({
+                        type: "warning",
+                        message: "No fue posible completar la acción, intente nuevamente."
+                    });
+                });
+            },
+
+            rollback() {
+                axios
+                    .post("/api/lang-rollback/" + this.value)
+                    .then(response => {
+                        this.data = response.data;
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
             },
 
             }

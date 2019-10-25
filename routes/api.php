@@ -18,6 +18,8 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::get('get-langs', 'LangController@getAll');
     Route::get('get-lang/{lang}' , 'LangController@getLang');
     Route::post('lang/store', 'LangController@store');
+    Route::get('lang-rollback', 'LangController@rollback');
+    Route::delete('lang-deleted/{acronym}', 'LangController@disableLang');
 });
 
 

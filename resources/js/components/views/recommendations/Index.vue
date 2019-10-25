@@ -546,7 +546,7 @@
 
             disableDialog(id) {
                 this.removeDialog = true;
-                this.publicDialog = true;
+                //this.publicDialog = true;
                 this.removeHash = id;
             },
 
