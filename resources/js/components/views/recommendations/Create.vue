@@ -32,62 +32,6 @@
                             v-model="recommendationForm.recommendation"/>
                     </el-form-item>
                 </el-col>
-
-
-
-
-
-
-
-                <!-- <el-col :span="5">
-                    <el-form-item :label="lang.form && lang.form.entity? lang.form.entity : 'ID'"
-                                  prop="cat_ide_id"
-                                  :rules="[
-                                        { required: true, message: 'Este campo es requerido', trigger: 'blur'},
-                                      ]">
-                        <el-select
-                            v-model="recommendationForm.cat_entity_id"
-                            multiple
-                            filterable
-                            remote
-                            reserve-keyword
-                            :placeholder="lang.form && lang.form.elegir? lang.form.elegir : 'Seleccionar'"
-                            :remote-method="remoteMethod"
-                            :loading="loading">
-                            <el-option
-                                v-for="(ide, index) in ides"
-                                :key="index"
-                                :label="ide.name"
-                                :value="ide.id">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
-                </el-col> -->
-
-
-
-                <!-- <el-col :span="5">
-                    <el-form-item :label="lang.form && lang.form.entity? lang.form.entity : 'ID'"
-                                  prop="cat_ide_id"
-                                  :rules="[
-                                        { required: true, message: 'Este campo es requerido', trigger: 'blur'},
-                                      ]">
-                        <el-select
-                            v-model="recommendationForm.cat_ide_id"
-                            filterable
-                            :placeholder="lang.form && lang.form.elegir? lang.form.elegir : 'Seleccionar'"
-                            style="width: 100%">
-                            <el-option
-                                v-for="(ide, index) in ides"
-                                :key="index"
-                                :label="ide.name"
-                                :value="ide.id">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
-                </el-col> -->
-
-
             </el-row>
 
             <el-row :gutter="20">
@@ -484,7 +428,6 @@
         },
         created() {
             this.startLoading();
-            console.log(this.index);
             axios.get('/api/recommendations/create').then(response => {
                 //this.recommendationForm.recommendation = '<p style="font-family: Montserrat; font-size: 14px; font-style: normal; font-weight: normal;">No gritar</p>';
                 this.ides = response.data.ides;
@@ -502,8 +445,9 @@
                 this.ods = response.data.ods;
 
                 this.stopLoading();
-                if (this.index){
-                    this.errorData(this.index);
+
+                if (this.indexEdit!=null){
+                    this.errorData(this.indexEdit);
                 }
 
             }).catch(error => {
@@ -518,18 +462,14 @@
         },
         computed: {
             ...mapGetters("bulkLoading",[
-                "editRow"
+                "editRow",
+                "indexEdit"
             ])
         },
-        mounted(){
-
-
-        },
-
         methods: {
             ...mapActions("bulkLoading", ['deleteRow']),
             errorData(e){
-                console.log('en metodo',e);
+                console.log('en metodo',this.indexEdit);
                 let edit = this.editRow(this.index);
                 this.recommendationForm.recommendation = edit.recommendation;
                 this.recommendationForm.cat_entity_id = edit.entity ? edit.entity.id : null;
