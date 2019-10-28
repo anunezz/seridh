@@ -23,7 +23,6 @@ class PublicSeridhController extends Controller
         $recommendation = Recommendation::where('isActive','=', 1)->where('isPublished','=', 1)->count();
         $visits = new VisitsQuery;
         $CatEntity = CatEntity::where('isActive','=', 1)->count();
-        //$CatEntity = Recommendation::select('cat_entity_id')->where('cat_entity_id','!=', null)->where('isActive','=', 1)->where('isPublished','=', 1)->count();
 
         return response()->json([
             'success' => true,
@@ -43,7 +42,6 @@ class PublicSeridhController extends Controller
          ],200);
       }
       public function labelsForm(){
-
         $CatAttending    = CatAttending::where('isActive', 1)->get();
         $CatEntity       = CatEntity::where('isActive', 1)->get();
         $CatGobOrder     = CatGobOrder::where('isActive', 1)->get();
@@ -60,8 +58,6 @@ class PublicSeridhController extends Controller
                                                        ->groupBy('year')
                                                        ->orderBy('year', 'desc')
                                                        ->get();
-
-
         $data = array(
             "0" => array("id"=> 0,"name"=>"Año","data"=> $YEAR),
             "1" => array("id"=> 1,"name"=>"Entidad emisora","data"=>$CatEntity),
@@ -72,7 +68,6 @@ class PublicSeridhController extends Controller
             '6' => array("id"=> 6,"name"=>"Buscar Recomendación","data"=>'')
         );
 
-
         return response()->json([
             'success' => true,
             'lResults'=> $data,
@@ -80,20 +75,7 @@ class PublicSeridhController extends Controller
         ],200);
       }
 
-
       public function recommendationFilter(Request $request){
-                  // ->orWhereIn('cat_gob_power_id', [2,1])
-                  // ->orWhereIn('cat_attendig_id', [2,1]); //entidad encargada de atender
-                  // derechos de la recomendacion cat_rights_recommendation_id
-                  // poblacion cat_population_i
-                  // accion solkdaria cat_solidarity_action_id
-                  // revision de derechos de la recomendacion    cat_review_right_id
-                  // revision de temas    cat_review_topic_id
-                  // revision de subtemas  cat_subtopic_id
-                  // ODS (Objetivos de Desarrollo Sostenible)  cat_ods_i
-
-      //  $ods = Recommendation::with('ods')->find(decrypt(1));
-
         $recommendation = DB::table('recommendations')->select('id','created_at','cat_entity_id',
         'cat_population_id','cat_review_topic_id','cat_attendig_id','cat_ods_id')
         ->where('isActive','=', 1)->where('isPublished','=', 1)
@@ -105,13 +87,11 @@ class PublicSeridhController extends Controller
                 foreach($request->date as $value){
                   $query->orWhereYear('created_at',$value);
                 }
-         // })->orderBy('id', 'desc')->get();
             })->orderBy('id', 'desc')->paginate(2);
 
                     return response()->json([
                         'success' => true,
-                        'lResults'=> $recommendation,//,
-                        //'Ods' =>  $ods,
+                        'lResults'=> $recommendation,
                         'pagination' => [
                             'total'        => $recommendation->total(),
                             'current_page' => $recommendation->currentPage(),

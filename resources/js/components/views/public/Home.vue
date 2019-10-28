@@ -58,87 +58,83 @@
 		<main class="page">
 	      <div class="container">
 	      	<div class="gobierno">
-	        <div class="col-md-12 hidden-sm hidden-md hidden-lg small-top-buffer">
-	          <a href="#secretarias">18 Secretarías</a><br>
-	          <a href="#dependencias">299 Entidades del Gobierno</a><br>
-	          <a href="#estados">32 Estados y sus municipios</a><br>
-	          <a href="/gobierno/mexico-en-el-mundo">146 Embajadas y consulados</a>
-	        </div>
+                <div class="col-md-12 hidden-sm hidden-md hidden-lg small-top-buffer">
+                <a href="#secretarias">18 Secretarías</a><br>
+                <a href="#dependencias">299 Entidades del Gobierno</a><br>
+                <a href="#estados">32 Estados y sus municipios</a><br>
+                <a href="/gobierno/mexico-en-el-mundo">146 Embajadas y consulados</a>
+                </div>
 
             <div class="row">
                 <div class="col-md-3 hidden-xs">
-                <div class="media office-sm-structure circle-quotes">
-                    <a href="#secretarias">
-                    <figure>
-                        <h2 v-text="countRecommendations"></h2>
-                        <p>Recomendaciones</p>
-                    </figure>
-                    </a>
-                </div>
-                </div>
-                <div class="col-md-3 hidden-xs">
-                <div class="media office-sm-structure circle-quotes">
-                    <a href="#dependencias">
-                    <figure>
-                        <h2 v-text="issuingEntities"></h2>
-                        <p>Entidades emisoras</p>
-                    </figure>
-                    </a>
-                </div>
+                    <div class="media office-sm-structure circle-quotes">
+                        <a href="#secretarias">
+                            <figure>
+                                <h2 v-text="countRecommendations"></h2>
+                                <p>Recomendaciones</p>
+                            </figure>
+                        </a>
+                    </div>
                 </div>
                 <div class="col-md-3 hidden-xs">
-                <div class="media office-sm-structure circle-quotes">
-                    <a href="#estados">
-                    <figure>
-                        <h2>32</h2>
-                        <p>Temas</p>
-                    </figure>
-                    </a>
+                    <div class="media office-sm-structure circle-quotes">
+                        <a href="#dependencias">
+                            <figure>
+                                <h2 v-text="issuingEntities"></h2>
+                                <p>Entidades emisoras</p>
+                            </figure>
+                        </a>
+                    </div>
                 </div>
+                <div class="col-md-3 hidden-xs">
+                    <div class="media office-sm-structure circle-quotes">
+                        <a href="#estados">
+                            <figure>
+                                <h2>32</h2>
+                                <p>Temas</p>
+                            </figure>
+                        </a>
+                    </div>
                 </div>
 	        <div class="col-md-3 hidden-xs">
-	          <div class="media office-sm-structure circle-quotes">
-	            <a href="/gobierno/mexico-en-el-mundo">
-	              <figure>
-	                <h2 v-text='visitas'></h2>
-	                <p>Visitas</p>
-	              </figure>
-	            </a>
-	          </div>
+                <div class="media office-sm-structure circle-quotes">
+                    <a href="/gobierno/mexico-en-el-mundo">
+                        <figure>
+                            <h2 v-text='visitas'></h2>
+                            <p>Visitas</p>
+                        </figure>
+                    </a>
+                </div>
 	        </div>
             </div>
 
-
-
-	        <!-- <div class="col-md-3 hidden-xs">
-	          <div class="media office-sm-structure circle-quotes">
-	            <a href="/gobierno/mexico-en-el-mundo">
-	              <figure>
-	                <h2>9444</h2>
-	                <p>Visitas</p>
-	              </figure>
-	            </a>
-	          </div>
-	        </div> -->
 	      </div>
-	       	<h2>¿Qué es el SERIDH?</h2>
-	        <hr class="red small-margin">
-	        <p>
-	        	Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-	        	tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-	        	quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-	        	consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-	        	cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-	        	proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-	        </p>
-	        <p>
-	        	Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-	        	tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-	        	quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-	        	consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-	        	cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-	        	proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-	        </p>
+
+
+            <div class="row">
+                <div class="col-md-12">
+                    <h2>¿Qué es el SERIDH?</h2>
+                    <hr class="red small-margin">
+                    <p>
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+                        cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+                        proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                    </p>
+                    <p>
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+                        cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+                        proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                    </p>
+                </div>
+            </div>
+
+
 
 
 <div class="row">
@@ -146,9 +142,8 @@
       <h2>Búsqueda Avanzada de Recomendaciones</h2>
       <hr class="red small-margin">
     </div>
-
     <div class="col-md-12">
-        <div class="panel-body animated fadeIn">
+        <div class="panel-body animated fadeIn fast">
             <div class="card">
                 <div class="card-body" style="padding: 5px;">
                     <div class="col-md-3" v-for="(item,index) in arrayFilter" :key="index" style="padding: 5px;">
@@ -162,90 +157,66 @@
                         </div>
                     </div>
                 </div>
-                <!-- <div class="col-md-12 pull-right" style="padding: 20px;">
-                    <button type="button" class="btn btn-success  pull-right" @click="recommendationFilter()">Buscar</button>
-                </div> -->
+            </div>
+            <div class="card" v-if="showTable !== true">
+                <div class="card-body col-md-12" style="padding: 20px;">
+                    <div v-for="(item,index) in arrayFilter" :key="index">
+                        <div v-if="btnSelect === item.id && item.id !== 0">
+                            <div class="form-check animated fadeIn fast" v-for="(i,index) in item.data" :key="index">
+                                <label class="form-check-label">
+                                    <input type="checkbox" class="form-check-input" :value="i.id" v-model="checkedNames[item.id].check">
+                                    {{i.name}}
+                                </label>
+                            </div>
+                        </div>
+                        <div v-else-if="btnSelect === item.id && item.id === 0">
+                            <div class="form-check animated fadeIn fast" v-for="(i,index) in item.data" :key="index">
+                                <label class="form-check-label">
+                                    <input type="checkbox" class="form-check-input" :value="i.year" v-model="checkedNames[item.id].check">
+                                    {{i.year}}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card" v-if="showTable === true">
+                <div class="col-md-12">
+
+ <!-- Los datos seleccionados {{checkedNames}} -->
+
+            <div class="col-md-2" v-for="(item,index) in checkedNames" :key="index">
+                <ul>
+                    <li v-for="(i,indexx) in item.check" :key="indexx" v-text="i"></li>
+                </ul>
             </div>
 
-                        <div class="card">
-                            <div class="card-body col-md-12" style="padding: 20px;" v-if="showTable === true">
-                              <div v-for="(item,index) in arrayFilter" :key="index">
-                                  <div v-if="btnSelect === item.id && item.id !== 0">
-                                    <div class="form-check animated fadeIn fast" v-for="(i,index) in item.data" :key="index">
-                                          <label class="form-check-label">
-                                              <!-- <input v-if="index === 0" type="checkbox" class="form-check-input" :value="i.id" v-model="checkedNames[item.name].check"> -->
-                                              <input type="checkbox" class="form-check-input" :value="i.id" v-model="checkedNames[item.id].check">
-                                              {{i.name}}
-                                          </label>
-                                    </div>
-                                  </div>
-
-                                  <div v-else-if="btnSelect === item.id && item.id === 0">
-                                    <div class="form-check animated fadeIn fast" v-for="(i,index) in item.data" :key="index">
-                                          <label class="form-check-label">
-                                              <input type="checkbox" class="form-check-input" :value="i.year" v-model="checkedNames[item.id].check">
-                                              {{i.year}}
-                                          </label>
-                                    </div>
-                                  </div>
 
 
-                                  <div>
 
-                                  </div>
-                              </div>
-                            </div>
-                             <div class="card-body col-md-12" style="padding: 20px;" v-else>
-
-
-                             </div>
-                        </div>
-        </div>
-    </div>
-</div>
-
-
- <!-- {{resultados}}
- ----------------------------
-{{checkedNames}} -->
-
-<!-- {{checkedNames}} -->
-
-<div class="modal fade modalFilter" id="modalFilter" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-<div class="modal-dialog" id="modalFilter">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="myModalLabel">Filtros de recomendación</h4>
-          </div>
-          <div class="modal-body">
-
-          <div class="row">
+                            <ul class="pagination pull-right">
+                                <li class="page-item" v-if="pagination.current_page > 1">
+                                    <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1)">Ant</a>
+                                </li>
+                                <li class="page-item" v-for="page in pagesNumber" :key="page" :class="[page == isActived ? 'active' : '']">
+                                    <a class="page-link" href="#" @click.prevent="cambiarPagina(page)" v-text="page"></a>
+                                </li>
+                                <li class="page-item" v-if="pagination.current_page < pagination.last_page">
+                                    <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1)">Sig</a>
+                                </li>
+                            </ul>
+                </div>
 
 
-<div class="col-md-12">
-    <ul class="pagination pull-right">
-        <li class="page-item" v-if="pagination.current_page > 1">
-            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1)">Ant</a>
-        </li>
-        <li class="page-item" v-for="page in pagesNumber" :key="page" :class="[page == isActived ? 'active' : '']">
-            <a class="page-link" href="#" @click.prevent="cambiarPagina(page)" v-text="page"></a>
-        </li>
-        <li class="page-item" v-if="pagination.current_page < pagination.last_page">
-            <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1)">Sig</a>
-        </li>
-    </ul>
-</div>
-
-               <div class="col-md-12">
-                    <table class="table table-bordered">
+                <div class="card-body col-md-12" style="padding: 20px;">
+                    <table class="table table-bordered animated fadeIn fast">
                         <thead>
                             <tr>
                                 <th scope="col" v-for="(item,index) in arrayFilter" :key="index" >
-                                   <div v-if="item.label === 'Buscar Recomendación'">
-                                       Ver
-                                   </div>
-                                   <div v-else v-text="item.label"></div>
+                                <div v-if="item.label === 'Buscar Recomendación'">
+                                    Ver
+                                </div>
+                                <div v-else v-text="item.label"></div>
                                 </th>
                             </tr>
                         </thead>
@@ -263,41 +234,18 @@
                                 </tr>
                             </tbody>
                     </table>
-               </div>
-           </div>
-
-
-          </div>
-          <!-- <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-          </div> -->
+                </div>
+            </div> <!-- TERMINA CARD PARA TABLA DE FILTROS -->
         </div>
-      </div>
+    </div>
 </div>
 
 
+ <!-- {{resultados}}
+ ----------------------------
+{{checkedNames}} -->
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<!-- {{checkedNames}} -->
 
 
 	        <h2>Enlaces de interés</h2>
@@ -406,13 +354,12 @@
         methods: {
             panelBusqueda(item){
                 let me = this;
-                console.log("ARRAY FILTER: ",me.arrayFilter);
                 for (let i = 0; i < me.arrayFilter.length; i++) {
                     me.arrayFilter[i].btn = false;
                     if(me.arrayFilter[i].id === item.id){
                           me.arrayFilter[i].btn = (me.arrayFilter[i].btn === false)? true : false;
                           me.btnSelect = me.arrayFilter[i].id;
-                          me.showTable = true;
+                          me.showTable = false;
                     }
                 }
             },
@@ -483,45 +430,26 @@
                 me.recommendationFilter(page);
             },
             recommendationFilter(page){
-              let me = this;
-                me.showTable =  true;
+              let me = this,url='',data={};
 
-                console.log("Respuesta de cheknames: ",me.checkedNames);
+                            url= '/api/public/recommendationFilter?page=' + page;
+                            data={
+                            'date': me.checkedNames[0].check,
+                            'entity_id':me.checkedNames[1].check,
+                            'population_id':me.checkedNames[2].check,
+                            'review_topic_id':me.checkedNames[3].check,
+                            'attendig_id':me.checkedNames[4].check
+                            };
 
-                let data={
-                   'date': me.checkedNames[0].check,
-                   'entity_id':me.checkedNames[1].check,
-                   'population_id':me.checkedNames[2].check,
-                   'review_topic_id':me.checkedNames[3].check,
-                   'attendig_id':me.checkedNames[4].check
-                };
-
-
-                  var url= '/api/public/recommendationFilter?page=' + page;
-                   // axios.post('/api/public/recommendationFilter', data).then(function (response) {
-                   axios.post(url, data).then(function (response) {
-
-                    console.log("PAGINATE RESULTADOS.....: ",response," Parametros length: ",data.length);
-                 if( response.data.lResults.data.length > 0 ){
-                    me.loading=true;
-                    setTimeout(()=>{
-
-                        me.resultados = response.data.lResults.data;
-                        me.pagination= response.data.pagination;
-
-                        $("#modalFilter").modal('show');
-                        $(".modal-dialog").removeAttr('style');
-                         me.loading=false;
-                         console.log("REspuesta de datos: recommendations ",me.resultados);
-                    },1000);
-
-
-
+                  axios.post(url, data).then(function (response){
+                        if( response.data.lResults.data.length > 0 ){
+                            me.resultados = response.data.lResults.data;
+                            console.log("RESPONSE: ",me.resultados);
+                            me.pagination= response.data.pagination;
+                            me.showTable =  true;
                  }else{
                     me.message('warning','Sin resultados.');
                  }
-
-
                 }).catch(function (error) {
                     me.loading=false;
                     console.log(error);

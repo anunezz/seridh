@@ -10,9 +10,15 @@
 
 
     <?php
+
+    $link = '';
+    $script = '';
+
+
 if(strpos($_SERVER["REQUEST_URI"],'publico')){
-    // <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-   echo '<link href="https://framework-gb.cdn.gob.mx/qa/assets/styles/main.css" rel="stylesheet">';
+   echo $link = '<link href="https://framework-gb.cdn.gob.mx/qa/assets/styles/main.css" rel="stylesheet">';;
+}else{
+   echo $link = '';
 }
 
 ?>
@@ -28,7 +34,9 @@ if(strpos($_SERVER["REQUEST_URI"],'publico')){
 <?php
 if(strpos($_SERVER["REQUEST_URI"],'publico')){
     // <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-   echo '<script src="https://framework-gb.cdn.gob.mx/gobmx.js"></script>';
+    echo $script = '<script src="https://framework-gb.cdn.gob.mx/gobmx.js"></script>';
+}else{
+    $script = '';
 }
 
 ?>

@@ -15,7 +15,7 @@ export default {
             name: 'PublicHome',
         },
         {
-            path:'/publico/filtros',
+            path:'/publico/filtros/:json',
             component: PublicFilter,
             name: 'PublicFilter',
             props:true
