@@ -22,5 +22,5 @@ use Illuminate\Database\Eloquent\Model;
  */
 class CatGobOrder extends Model
 {
-    //
+    protected $table = 'cat_gob_orders';
 }

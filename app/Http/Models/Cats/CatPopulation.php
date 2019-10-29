@@ -22,5 +22,5 @@ use Illuminate\Database\Eloquent\Model;
  */
 class CatPopulation extends Model
 {
-    //
+    protected $table = 'cat_populations';
 }

@@ -6,6 +6,7 @@ use App\Http\Models\Cats\CatGobOrder;
 use App\Http\Models\Cats\CatGobPower;
 use App\Http\Models\Cats\CatIde;
 use App\Http\Models\Cats\CatOds;
+use App\Http\Models\Cats\CatDate;
 use App\Http\Models\Cats\CatPopulation;
 use App\Http\Models\Cats\CatReviewRight;
 use App\Http\Models\Cats\CatReviewTopic;
@@ -20,6 +21,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property int $id
  * @property string $name
+
  * @property int|null $cat_entitie_id
  * @property int|null $cat_gob_order_id
  * @property int|null $cat_rights_recommendation_id
@@ -27,6 +29,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int|null $cat_solidarity_action_id
  * @property int|null $cat_review_right_id
  * @property int|null $cat_review_topic_id
+ * @property int|null $cat_date_id
  * @property int|null $user_id
  * @property int|null $cat_od_id
  * @property int $isActive
@@ -67,25 +70,17 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Recommendation extends Model
 {
-    protected $fillable = ['recommendation','cat_ide_id', 'cat_entity_id', 'cat_gob_order_id', 'cat_gob_power_id', 'cat_attendig_id',
-        'cat_rights_recommendation_id', 'cat_population_id', 'cat_solidarity_action_id', 'cat_review_right_id',
-        'cat_review_topic_id', 'cat_subtopic_id', 'comments', 'isPublished'];
+    protected $fillable = ['recommendation', 'cat_entity_id', 'cat_rights_recommendation_id', 'cat_date_id',
+        'cat_review_right_id', 'cat_review_topic_id', 'cat_subtopic_id', 'comments', 'isPublished'];
 
-    protected $appends = ['hash', 'is_creator', 'implode_ods'];
+    protected $appends = ['hash', 'is_creator', 'implode_ods', 'implode_order', 'implode_power', 'implode_attendig',
+        'implode_population', 'implode_action'];
 
     public function user()
     {
         return $this->belongsTo(
             User::class,
             'user_id'
-        );
-    }
-
-    public function ide()
-    {
-        return $this->belongsTo(
-            CatIde::class,
-            'cat_ide_id'
         );
     }
 
@@ -99,25 +94,25 @@ class Recommendation extends Model
 
     public function order()
     {
-        return $this->belongsTo(
+        return $this->belongsToMany(
             CatGobOrder::class,
-            'cat_gob_order_id'
+            'orders_recommendation'
         );
     }
 
     public function power()
     {
-        return $this->belongsTo(
+        return $this->belongsToMany(
             CatGobPower::class,
-            'cat_gob_power_id'
+            'powers_recommendation'
         );
     }
 
-    public function attending()
+    public function attendig()
     {
-        return $this->belongsTo(
+        return $this->belongsToMany(
             CatAttending::class,
-            'cat_attendig_id'
+            'attendig_recommendation'
         );
     }
 
@@ -131,25 +126,25 @@ class Recommendation extends Model
 
     public function population()
     {
-        return $this->belongsTo(
+        return $this->belongsToMany(
             CatPopulation::class,
-            'cat_population_id'
+            'population_recommendation'
         );
     }
 
     public function action()
     {
-        return $this->belongsTo(
+        return $this->belongsToMany(
             CatSolidarityAction::class,
-            'cat_solidarity_action_id'
+            'action_recommendation'
         );
     }
 
-    public function reviewRight()
+    public function date()
     {
         return $this->belongsTo(
-            CatReviewRight::class,
-            'cat_review_right_id'
+            CatDate::class,
+            'cat_date_id'
         );
     }
 
@@ -176,6 +171,8 @@ class Recommendation extends Model
             'ods_recommendation'
         );
     }
+
+
 
     public function documents()
     {
@@ -220,4 +217,30 @@ class Recommendation extends Model
     {
         return implode(', ', $this->ods->pluck('name')->toArray());
     }
+
+    public function getImplodeOrderAttribute()
+    {
+        return implode(', ', $this->order->pluck('name')->toArray());
+    }
+
+    public function getImplodePowerAttribute()
+    {
+        return implode(', ', $this->power->pluck('name')->toArray());
+    }
+
+    public function getImplodeAttendigAttribute()
+    {
+        return implode(', ', $this->attendig->pluck('name')->toArray());
+    }
+
+    public function getImplodePopulationAttribute()
+    {
+        return implode(', ', $this->population->pluck('name')->toArray());
+    }
+
+    public function getImplodeActionAttribute()
+    {
+        return implode(', ', $this->action->pluck('name')->toArray());
+    }
 }
+

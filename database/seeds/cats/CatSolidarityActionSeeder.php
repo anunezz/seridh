@@ -15,19 +15,31 @@ class CatSolidarityActionSeeder extends Seeder
         DB::table('cat_solidarity_actions')->insert([
             [
                 'id' => 1,
-                'name' => 'Dato 1',
+                'name' => 'Acciones en conjunto con la sociedad civil',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
             [
                 'id' => 2,
-                'name' => 'Dato 2',
+                'name' => 'Acciones judiciales',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
             [
                 'id' => 3,
-                'name' => 'Dato 3',
+                'name' => 'Acciones legislativas',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                'id' => 4,
+                'name' => 'Cooperacion internacional',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                'id' => 5,
+                'name' => 'Educación, capacitación y/o sensibilización en derechos humano',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ]

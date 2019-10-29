@@ -15,19 +15,19 @@ class CatPopulationSeeder extends Seeder
         DB::table('cat_populations')->insert([
             [
                 'id' => 1,
-                'name' => 'Dato 1',
+                'name' => 'Niñas, Niños y Adolescentes',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
             [
                 'id' => 2,
-                'name' => 'Dato 2',
+                'name' => 'Mujeres',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
             [
                 'id' => 3,
-                'name' => 'Dato 3',
+                'name' => 'Indigenas',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ]
