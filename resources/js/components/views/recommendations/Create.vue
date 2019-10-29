@@ -399,7 +399,6 @@
         },
         created() {
             this.startLoading();
-            console.log(this.index);
             axios.get('/api/recommendations/create').then(response => {
                 //this.recommendationForm.recommendation = '<p style="font-family: Montserrat; font-size: 14px; font-style: normal; font-weight: normal;">No gritar</p>';
 
@@ -419,8 +418,9 @@
                 this.tree = response.data.tree;
 
                 this.stopLoading();
-                if (this.index){
-                    this.errorData(this.index);
+
+                if (this.indexEdit!=null){
+                    this.errorData(this.indexEdit);
                 }
 
             }).catch(error => {
@@ -435,18 +435,14 @@
         },
         computed: {
             ...mapGetters("bulkLoading",[
-                "editRow"
+                "editRow",
+                "indexEdit"
             ])
         },
-        mounted(){
-
-
-        },
-
         methods: {
             ...mapActions("bulkLoading", ['deleteRow']),
             errorData(e){
-                console.log('en metodo',e);
+                console.log('en metodo',this.indexEdit);
                 let edit = this.editRow(this.index);
                 this.recommendationForm.recommendation = edit.recommendation;
                 this.recommendationForm.cat_entity_id = edit.entity ? edit.entity.id : null;

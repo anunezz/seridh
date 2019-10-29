@@ -3,36 +3,44 @@
         <header-section icon="fas fa-copy" title="Bandeja de entrada de Recomendaciones">
             <template slot="buttons">
                 <el-button
-                    size="medium"
+                    size="small"
                     type="danger"
                     icon="el-icon-arrow-left"
                     @click="$router.push('/')">
                     Regresar
                 </el-button>
-                <el-button
-                    size="medium"
-                    type="primary"
-                    icon="fas fa-file-excel"
-                    :disabled="downloading">
-                    {{ downloadText }}
-                </el-button>
-                <el-button
-                    icon="fas fa-upload"
-                    size="medium"
-                    type="success"
-                    @click="dialogVisible = true">
-                    Carga Masiva
-                </el-button>
-                <el-button
-                    size="medium"
-                    type="success"
-                    icon="fas fa-edit"
-                    @click="addRegister">
-                    + Recomendación
-                </el-button>
-                <el-badge :value="errorsBulk.length" :max="99" class="item" v-if="errorsBulk.length>0">
-                    <el-button type="danger" size="small" @click="errorCarga=true">Errores</el-button>
-                </el-badge>
+                <el-button-group>
+                    <el-button
+                        size="small"
+                        type="primary"
+                        icon="fas fa-file-excel"
+                        :disabled="downloading">
+                        {{ downloadText }}
+                    </el-button>
+                    <el-button
+                        icon="fas fa-upload"
+                        size="small"
+                        type="success"
+                        @click="dialogVisible = true">
+                        Carga Masiva
+                    </el-button>
+                    <el-button
+                        size="small"
+                        type="success"
+                        icon="fas fa-edit"
+                        @click="addRegister">
+                        + Recomendación
+                    </el-button>
+                </el-button-group>
+                <el-button-group v-if="errorsBulk.length>0">
+                    <el-tooltip content="Eliminar errores de importación" placement="bottom">
+                        <el-button type="primary" size="small" icon="el-icon-delete" @click="addRows([])"></el-button>
+                    </el-tooltip>
+                    <el-badge :value="errorsBulk.length" :max="99" class="item">
+                        <el-button type="danger" size="small" @click="errorCarga=true">Errores</el-button>
+                    </el-badge>
+                </el-button-group>
+
             </template>
         </header-section>
         <el-dialog
@@ -74,11 +82,7 @@
                 border
                 :data="errorsBulk"
                 style="width: 100%"
-                max-height="300">
-                <el-table-column
-                    prop="ods"
-                    label="ODS">
-                </el-table-column>
+                max-height="260">
                 <el-table-column
                     prop="recommendation"
                     label="Recomendación">
@@ -91,12 +95,8 @@
                     label="Entidad Emisora">
                 </el-table-column>
                 <el-table-column
-                    prop="gobOrder.name"
-                    label="Orden de Gobierno">
-                </el-table-column>
-                <el-table-column
-                    prop="gobPower.name"
-                    label="Poder de Gobierno">
+                    prop="ods"
+                    label="ODS">
                 </el-table-column>
                 <el-table-column
                     prop="isPublished"
@@ -133,7 +133,7 @@
                 @current-change="handleCurrentChange"
                 layout="total, ->, prev, pager, next"
                 :current-page.sync="pagination.currentPage"
-                :total="50">
+                :total="errorsBulk.length">
             </el-pagination>
             <span slot="footer" class="dialog-footer">
             <el-button type="primary" size="mini" @click="errorCarga=false">Cancelar</el-button>
@@ -352,7 +352,7 @@
             ])
         },
         methods: {
-            ...mapActions("bulkLoading", ['addRows']),
+            ...mapActions("bulkLoading", ['addRows','indexRow']),
             getFile() {
                 document.location.href = '/template/Recomendaciones.xlsm';
             },
@@ -421,6 +421,7 @@
 
             bulkLoad(e,index){
                 e.index=index;
+                this.indexRow(index);
                 this.$router.push({
                     name: 'RecommendationCreate',
                     params: {index: index}
