@@ -181,16 +181,10 @@
                 </div>
             </div>
             <div class="card" v-if="showTable === true">
-                <div class="col-md-12">
 
- <!-- Los datos seleccionados {{checkedNames}} -->
 
-            <div class="col-md-2" v-for="(item,index) in checkedNames" :key="index">
-                <ul>
-                    <li v-for="(i,indexx) in item.check" :key="indexx" v-text="i"></li>
-                </ul>
-            </div>
-
+            <div class="col-md-12" style="padding-top: 10px; padding-left: -8px;">
+                <span class="glyphicon glyphicon-list-alt" ></span> Total: 4
 
 
 
@@ -205,17 +199,24 @@
                                     <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1)">Sig</a>
                                 </li>
                             </ul>
-                </div>
+            </div>
 
+                <div class="col-md-12">
+                    <div class="col-md-2" v-for="(item,index) in checkedNames" :key="index">
+                        <ul style="margin-top: -0px; !important">
+                            <li v-for="(i,indexx) in item.check" :key="indexx" v-text="i"></li>
+                        </ul>
+                    </div>
+                </div>
 
                 <div class="card-body col-md-12" style="padding: 20px;">
                     <table class="table table-bordered animated fadeIn fast">
                         <thead>
                             <tr>
                                 <th scope="col" v-for="(item,index) in arrayFilter" :key="index" >
-                                <div v-if="item.label === 'Buscar Recomendación'">
-                                    Ver
-                                </div>
+                                    <div v-if="item.label === 'Buscar Recomendación'">
+                                        Ver
+                                    </div>
                                 <div v-else v-text="item.label"></div>
                                 </th>
                             </tr>
@@ -229,7 +230,10 @@
                                     <td style="width: 145px!important" v-text="transformNamesTableColums(item.cat_attendig_id,4)"></td>
                                     <td style="width: 145px!important" >Sin datos</td>
                                     <td style="width: 145px!important">
-                                        <button type="button" class="btn btn-success" @click="viewRecommendations(item)">Ver<span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></button>
+                                        <router-link :to="{name:'PublicFilter', params: {json:item }}" >
+                                          <button type="button" class="btn btn-success btn-block btn-sm"> Ver <span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></button>
+                                        </router-link>
+                                        <!-- <button type="button" class="btn btn-success" @click="viewRecommendations(item)">Ver<span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></button> -->
                                     </td>
                                 </tr>
                             </tbody>
@@ -266,9 +270,6 @@
 	                 	</div>
                  	</div>
 	        	</div>
-
-
-
 
 	        	<div class="col-sm-6 col-md-6 col-lg-3">
 	        		<div class="card text-center card-gob">

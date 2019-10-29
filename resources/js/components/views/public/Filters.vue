@@ -1,10 +1,59 @@
 <template>
-<div class="container-fluid">
+<div class="container-fluid" style="padding: 20px 10px;">
     <div class="row">
         <div class="col-md-12">
-          Arreglo de filtros...
 
-           {{array}}
+<div class="container">
+  <h2>Filtros</h2>
+  <hr class="red small-margin">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+        Titulo de la recomendación
+    <div class="pull-right">
+        <span style="float: left; padding-right: 20px;">
+            <span class="icon-calendar" aria-hidden="true"></span> 12/12/2019 &nbsp; &nbsp;
+        </span>
+        <button class="btn btn-info btn-xs" @click="loadPdf()">
+            pdf
+            <span class="glyphicon glyphicon glyphicon-file" aria-hidden="true"></span>
+        </button>
+        <button class="btn btn-success btn-xs" @click="loadExcel()">
+             excel
+             <span class="glyphicon glyphicon glyphicon-file" aria-hidden="true"></span>
+        </button>
+        <button class="btn btn-info btn-xs" @click="loadWord()">
+            word
+             <span class="glyphicon glyphicon glyphicon-file" aria-hidden="true"></span>
+        </button>
+    </div>
+    </div>
+    <div class="panel-body">
+     <div class="row">
+
+        <div class="col-md-12">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt nisi dolores, omnis dicta distinctio possimus illo nulla totam magnam. Deleniti porro officia suscipit repudiandae, blanditiis magnam ipsam est culpa qui!
+            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Doloremque voluptatem eum non, error nihil repellendus commodi, velit mollitia, quas ut dolores omnis cupiditate praesentium neque perspiciatis libero ex id consequatur?
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga dicta provident, corrupti quis, non doloribus omnis id nobis expedita explicabo error beatae excepturi asperiores quos ex vitae laboriosam, eveniet consequuntur.
+        </div>
+
+
+        <div class="col-md-12">
+          {{json}}
+        </div>
+
+        <div class="col-md-12 pull-right" style="padding: 20px;">
+            <router-link :to="{ name:'PublicHome' }" >
+            <button class="btn btn-success pull-right btn-sm" type="button">
+                Regresar <span class="glyphicon glyphicon glyphicon-share-alt" aria-hidden="true"></span>
+            </button>
+            </router-link>
+        </div>
+     </div>
+    </div>
+  </div>
+</div>
+
+
 
         </div>
     </div>
@@ -17,21 +66,40 @@
    export default {
       data(){
          return {
-
+           json:[]
          }
       },
       methods:{
-
+       loadPdf(){
+           let me = this;
+           console.log("descarga pdf..");
+           window.open('/api/public/listarPdf','_blank');
+       },
+       loadExcel(){
+           let me = this;
+           window.open('/api/public/listarExcel','_blank');
+       },
+       loadWord(){
+           let me = this;
+           alert("Estas descargando el documento de word...");
+           window.open('/api/public/listarWord','_blank');
+       }
       },
         computed: {
         },
         created(){
         },
-        methods: {
-        },
         computed:{
         },
         mounted(){
+            let me = this;
+            me.json = me.$route.params.json;
+
+
+             console.log("Este es el json: ",me.json);
+
+
+
         }
     }
 </script>

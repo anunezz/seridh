@@ -40,7 +40,7 @@ class RecommendationsController extends Controller
             ]);
 
         }
-        catch ( \Exception $e ) {
+        catch ( \Exception $e ){
 
             return response()->json([
                 'success' => false,

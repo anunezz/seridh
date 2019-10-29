@@ -28,7 +28,7 @@ class DatabaseSeeder extends Seeder
             CatSubtopicSeeder::class,
             CatLanguageSeeder::class,
 
-            VisitsQueriesSeeder::class,
+            VisitsSeeder::class,
 
             UsersTableSeeder::class,
         ]);

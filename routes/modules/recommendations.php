@@ -10,8 +10,11 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::post('recommendations/upload/excel', 'RecommendationsController@readExcel');
 });
 Route::prefix('public')->group(function () {
-    Route::get('recommendations/count', 'PublicSeridhController@count');
-    Route::post('visits', 'PublicSeridhController@visits');
-    Route::get('recommendations/labelsForm', 'PublicSeridhController@labelsForm');
-    Route::post('recommendationFilter', 'PublicSeridhController@recommendationFilter');
+    Route::get('recommendations/count', 'PublicController@count');
+    Route::post('visits', 'PublicController@visits');
+    Route::get('recommendations/labelsForm', 'PublicController@labelsForm');
+    Route::post('recommendationFilter', 'PublicController@recommendationFilter');
+    Route::get('listarPdf', 'PublicController@listPdf')->name('listar_pdf');
+    Route::get('listarExcel', 'PublicController@listExcel');
+    Route::get('listarWord', 'PublicController@listWord');
 });
