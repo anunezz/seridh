@@ -151,7 +151,7 @@
        },
        loadWord(){
            let me = this;
-           alert("Estas descargando el documento de word...");
+          // alert("Estas descargando el documento de word...");
            window.open('/api/public/listarWord','_blank');
        }
       },
