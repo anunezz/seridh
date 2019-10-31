@@ -475,6 +475,8 @@
                             'attendig_id':me.checkedNames[4].check
                             };
 
+
+
                   me.filters();
                   return;
                   axios.post('/api/public/recommendationFilter', data).then(function (response){

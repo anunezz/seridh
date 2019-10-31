@@ -258,9 +258,6 @@ class RecommendationsController extends Controller
                 ->orderBy('name')
                 ->get(['id', 'name']);
 
-            $rights = CatRightsRecommendation::where('isActive', 1)
-                ->orderBy('name')
-                ->get(['id', 'name']);
 
             $populations = CatPopulation::where('isActive', 1)
                 ->orderBy('name')
@@ -269,7 +266,6 @@ class RecommendationsController extends Controller
             $actions = CatSolidarityAction::where('isActive', 1)
                 ->orderBy('name')
                 ->get(['id', 'name']);
-
 
 
             $subtopics = CatSubtopic::where('isActive', 1)
@@ -288,12 +284,6 @@ class RecommendationsController extends Controller
                 ->where('isActive', 1)
                 ->orderBy('name')
                 ->get(['id', 'name']);
-
-            $recommendation = Recommendation::with('documents', 'ods','subright')->find(decrypt($id));
-
-            $rights = RightsTrait::orderRights($recommendation->subright->all());
-
-
 
             $topics = [];
 
@@ -322,7 +312,9 @@ class RecommendationsController extends Controller
                 'children' => $topics
             ];
 
-            $recommendation = Recommendation::with('documents', 'ods', 'order', 'power', 'attendig', 'population')->find(decrypt($id));
+            $recommendation = Recommendation::with('documents', 'ods', 'order', 'power', 'attendig', 'population','subright')->find(decrypt($id));
+
+            $rights = RightsTrait::orderRights($recommendation->subright->all());
 
             $recommendationForm = [
                 'recommendation'               => $recommendation->recommendation,
@@ -331,7 +323,6 @@ class RecommendationsController extends Controller
                 'cat_gob_order_id'             => $recommendation->order->pluck('id')->toArray(),
                 'cat_gob_power_id'             => $recommendation->power->pluck('id')->toArray(),
                 'cat_attendig_id'              => $recommendation->attendig->pluck('id')->toArray(),
-
                 'cat_population_id'            => $recommendation->population->pluck('id')->toArray(),
                 'cat_solidarity_action_id'     => $recommendation->action->pluck('id')->toArray(),
                 'cat_review_right_id'          => $recommendation->cat_review_right_id,
@@ -340,16 +331,15 @@ class RecommendationsController extends Controller
                 'cat_ods_id'                   => $recommendation->ods->pluck('id')->toArray(),
                 'cat_date_id'                  => $recommendation->cat_date_id,
                 'comments'                     => $recommendation->comments,
-                'documents'                    => $recommendation->documents
+                'documents'                    => $recommendation->documents,
+                'listRights'                   => $rights['listR']
             ];
 
             return response()->json([
                 'entities'           => $entities,
                 'orders'             => $orders,
-
                 'populations'        => $populations,
                 'actions'            => $actions,
-
                 'topics'             => $topics,
                 'ods'                => $ods,
                 'dates'              => $dates,
@@ -358,7 +348,9 @@ class RecommendationsController extends Controller
                 'subtopics'          => $subtopics,
                 'tree'               => $tree,
                 'recommendationForm' => $recommendationForm,
-                'success'            => true
+                'success'            => true,
+                'showIds'            => $rights['showIds'],
+                'rights'             => $rights['rights']
             ]);
 
         }
@@ -381,6 +373,16 @@ class RecommendationsController extends Controller
 
             $recommendation->fill($data);
             $recommendation->save();
+
+            $listRights=[];
+            foreach ($data['listRights'] as $item){
+                $listRights[$item['subright_id']]=[
+                    'right_id' => $item['right_id']
+                ];
+            }
+
+            $recommendation->subright()->sync($listRights);
+
 
             if ( count($data['cat_ods_id']) > 0 ) {
                 $recommendation->ods()->sync($data['cat_ods_id']);

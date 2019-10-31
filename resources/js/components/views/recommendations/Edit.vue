@@ -206,8 +206,19 @@
                 </el-col>
             </el-row>
             <el-row :gutter="20">
-                <el-col :span="24">
-                    
+                <el-col :span="12">
+                    <el-tree
+                        ref="rights"
+                        :data="rights"
+                        show-checkbox
+                        node-key="id"
+                        default-expand-all
+                        :props="defaultProps"
+                        :default-checked-keys="showIds"
+                        @check="rightsTree">
+                    </el-tree>
+                </el-col>
+                <el-col :span="12">
                     <el-tree
                         ref="themes"
                         :data="tree"
@@ -216,7 +227,6 @@
                         :props="defaultProps"
                         :default-checked-keys="[]"
                         @check="themesTree">
-
                     </el-tree>
                 </el-col>
             </el-row>
@@ -329,7 +339,7 @@
 
         data() {
             return {
-
+                showIds:[],
                 tree: null,
                 defaultProps: {
                     children: 'children',
@@ -374,7 +384,8 @@
                     cat_ods_id: [],
                     cat_date_id: null,
                     comments: '',
-                    listThemes: []
+                    listThemes: [],
+                    listRights: []
 
                 },
 
@@ -413,7 +424,6 @@
             let recommendationId = this.$route.params.id;
 
             axios.get(`/api/recommendations/${recommendationId}/edit`).then(response => {
-                console.log(response.data);
                 this.entities = response.data.entities;
                 this.orders = response.data.orders;
                 this.powers = response.data.powers;
@@ -429,6 +439,7 @@
                 this.tree = response.data.tree;
                 this.recommendationForm = response.data.recommendationForm;
                 this.recommendationForm.files = [];
+                this.showIds = response.data.showIds;
 
                 this.stopLoading();
 
@@ -441,7 +452,6 @@
                 });
             });
         },
-
         methods: {
             handleCheckChange(data, checked, indeterminate) {
                 console.log(data, checked, indeterminate);
@@ -450,12 +460,23 @@
             themesTree(){
                 let ide = this.$refs.themes.getCheckedNodes();
                 this.recommendationForm.listThemes=[];
-                console.log(ide);
                 if (ide.lenght!==0){
                     let $this = this;
                     ide.forEach(function(el){
                         if(el.cat_topic_id!==undefined){
                             $this.recommendationForm.listThemes.push(el);
+                        }
+                    });
+                }
+            },
+            rightsTree(){
+                let ids = this.$refs.rights.getCheckedNodes();
+                this.recommendationForm.listRights=[];
+                if (ids.length!==0){
+                    let $this = this;
+                    ids.forEach(function(el) {
+                        if (el.right_id!==undefined){
+                            $this.recommendationForm.listRights.push(el);
                         }
                     });
                 }

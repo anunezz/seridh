@@ -396,7 +396,6 @@
                 this.powers = response.data.powers;
                 this.attendings = response.data.attendings;
                 this.rights = response.data.rights;
-                console.log(response.data);
                 this.populations = response.data.populations;
                 this.actions = response.data.actions;
                 this.topics = response.data.topics;
@@ -432,7 +431,6 @@
             themesTree(){
                 let ide = this.$refs.themes.getCheckedNodes();
                 this.recommendationForm.listThemes=[];
-                console.log(ide);
                 if (ide.lenght!==0){
                     let $this = this;
                     ide.forEach(function(el){
@@ -446,7 +444,6 @@
             rightsTree(){
                 let ids = this.$refs.rights.getCheckedNodes();
                 this.recommendationForm.listRights=[];
-                console.log(ids);
                 if (ids.length!==0){
                     let $this = this;
                     ids.forEach(function(el) {
