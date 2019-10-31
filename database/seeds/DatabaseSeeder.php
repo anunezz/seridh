@@ -14,14 +14,10 @@ class DatabaseSeeder extends Seeder
         $this->call([
             CatProfileSeeder::class,
             CatTransactionTypeSeeder::class,
-
             CatEntitySeeder::class,
             CatGobOrderSeeder::class,
-            CatRightRecommendationSeeder::class,
             CatPopulationSeeder::class,
             CatSolidarityActionSeeder::class,
-            CatReviewRightsSeeder::class,
-            CatReviewTopicSeeder::class,
             CatOdsSeeder::class,
             CatGobPowerSeeder::class,
             CatAttendingSeeder::class,

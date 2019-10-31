@@ -9,9 +9,6 @@ use App\Http\Models\Cats\CatGobPower;
 use App\Http\Models\Cats\CatOds;
 use App\Http\Models\Cats\CatDate;
 use App\Http\Models\Cats\CatPopulation;
-use App\Http\Models\Cats\CatReviewRight;
-use App\Http\Models\Cats\CatReviewTopic;
-use App\Http\Models\Cats\CatRightsRecommendation;
 use App\Http\Models\Cats\CatSolidarityAction;
 use App\Http\Models\Cats\CatSubtopic;
 use App\Http\Models\Cats\CatTopic;
@@ -71,23 +68,11 @@ class RecommendationsController extends Controller
                 ->orderBy('name')
                 ->get(['id', 'name']);
 
-            $rights = CatRightsRecommendation::where('isActive', 1)
-                ->orderBy('name')
-                ->get(['id', 'name']);
-
             $populations = CatPopulation::where('isActive', 1)
                 ->orderBy('name')
                 ->get(['id', 'name']);
 
             $actions = CatSolidarityAction::where('isActive', 1)
-                ->orderBy('name')
-                ->get(['id', 'name']);
-
-            $reviews = CatReviewRight::where('isActive', 1)
-                ->orderBy('name')
-                ->get(['id', 'name']);
-
-            $topics = CatReviewTopic::where('isActive', 1)
                 ->orderBy('name')
                 ->get(['id', 'name']);
 
@@ -108,7 +93,7 @@ class RecommendationsController extends Controller
                 ->orderBy('name')
                 ->get(['id', 'name']);
 
-            $tree = [];
+            $topics = [];
 
 
             foreach ($newTopics as $topic) {
@@ -117,25 +102,29 @@ class RecommendationsController extends Controller
                 foreach ($topic->subtopics as $subtopic) {
                     $subtopics[] = [
                         'id' => $subtopic->id,
-                        'label' => $subtopic->name
+                        'label' => $subtopic->name,
+                        'cat_topic_id' => $topic -> id
                     ];
                 }
 
-                $tree[] = [
-
+                $topics[] = [
                     'id' => $topic->id,
                     'label' => $topic->name,
                     'children' => $subtopics
                 ];
             }
 
+            $tree[] = [
+                'id' => 0,
+                'label' => 'Temas',
+                'children' => $topics
+            ];
+
             return response()->json([
                 'entities'    => $entities,
                 'orders'      => $orders,
-                'rights'      => $rights,
                 'populations' => $populations,
                 'actions'     => $actions,
-                'reviews'     => $reviews,
                 'topics'      => $topics,
                 'ods'         => $ods,
                 'dates'       => $dates,
@@ -192,6 +181,7 @@ class RecommendationsController extends Controller
                 $recommendation->action()->sync($data['cat_solidarity_action_id']);
             }
 
+
             if ( count($data['files']) > 0 ) {
                 foreach ( $data['files'] as $file ) {
                     $recommendationDocument = Document::find($file);
@@ -201,6 +191,17 @@ class RecommendationsController extends Controller
                     $recommendationDocument->save();
                 }
             }
+
+            $listThemes=[];
+            foreach ($data['listThemes'] as $item){
+                $listThemes[$item['id']]=[
+                    'cat_topic_id' => $item['cat_topic_id']
+                ];
+            }
+
+            $recommendation->subtopic()->sync($listThemes);
+
+
 
             GeneralController::saveTransactionLog(2,
                 'Crea una nueva recomendación con id: ' . $recommendation->id);
@@ -241,9 +242,6 @@ class RecommendationsController extends Controller
                 ->orderBy('name')
                 ->get(['id', 'name']);
 
-            $rights = CatRightsRecommendation::where('isActive', 1)
-                ->orderBy('name')
-                ->get(['id', 'name']);
 
             $populations = CatPopulation::where('isActive', 1)
                 ->orderBy('name')
@@ -253,13 +251,7 @@ class RecommendationsController extends Controller
                 ->orderBy('name')
                 ->get(['id', 'name']);
 
-            $reviews = CatReviewRight::where('isActive', 1)
-                ->orderBy('name')
-                ->get(['id', 'name']);
 
-            $topics = CatReviewTopic::where('isActive', 1)
-                ->orderBy('name')
-                ->get(['id', 'name']);
 
             $subtopics = CatSubtopic::where('isActive', 1)
                 ->orderBy('name')
@@ -269,22 +261,62 @@ class RecommendationsController extends Controller
                 ->orderBy('name')
                 ->get(['id', 'name']);
 
-            $recommendation = Recommendation::with('documents', 'ods')->find(decrypt($id));
+            $dates = CatDate::where('isActive', 1)
+                ->orderBy('name')
+                ->get(['id', 'name']);
+
+            $newTopics = CatTopic::with('subtopics')
+                ->where('isActive', 1)
+                ->orderBy('name')
+                ->get(['id', 'name']);
+
+
+
+
+            $topics = [];
+
+
+            foreach ($newTopics as $topic) {
+                $subtopics = [];
+
+                foreach ($topic->subtopics as $subtopic) {
+                    $subtopics[] = [
+                        'id' => $subtopic->id,
+                        'label' => $subtopic->name,
+                        'topic_id' => $topic -> id
+                    ];
+                }
+
+                $topics[] = [
+                    'id' => $topic->id,
+                    'label' => $topic->name,
+                    'children' => $subtopics
+                ];
+            }
+
+            $tree[] = [
+                'id' => 0,
+                'label' => 'Temas',
+                'children' => $topics
+            ];
+
+            $recommendation = Recommendation::with('documents', 'ods', 'order', 'power', 'attendig', 'population')->find(decrypt($id));
 
             $recommendationForm = [
                 'recommendation'               => $recommendation->recommendation,
 
                 'cat_entity_id'                => $recommendation->cat_entity_id,
-                'cat_gob_order_id'             => $recommendation->cat_gob_order_id,
-                'cat_gob_power_id'             => $recommendation->cat_gob_power_id,
-                'cat_attendig_id'              => $recommendation->cat_attendig_id,
-                'cat_rights_recommendation_id' => $recommendation->cat_rights_recommendation_id,
-                'cat_population_id'            => $recommendation->cat_population_id,
-                'cat_solidarity_action_id'     => $recommendation->cat_solidarity_action_id,
+                'cat_gob_order_id'             => $recommendation->order->pluck('id')->toArray(),
+                'cat_gob_power_id'             => $recommendation->power->pluck('id')->toArray(),
+                'cat_attendig_id'              => $recommendation->attendig->pluck('id')->toArray(),
+
+                'cat_population_id'            => $recommendation->population->pluck('id')->toArray(),
+                'cat_solidarity_action_id'     => $recommendation->action->pluck('id')->toArray(),
                 'cat_review_right_id'          => $recommendation->cat_review_right_id,
                 'cat_review_topic_id'          => $recommendation->cat_review_topic_id,
                 'cat_subtopic_id'              => $recommendation->cat_subtopic_id,
                 'cat_ods_id'                   => $recommendation->ods->pluck('id')->toArray(),
+                'cat_date_id'                  => $recommendation->cat_date_id,
                 'comments'                     => $recommendation->comments,
                 'documents'                    => $recommendation->documents
             ];
@@ -292,15 +324,17 @@ class RecommendationsController extends Controller
             return response()->json([
                 'entities'           => $entities,
                 'orders'             => $orders,
-                'rights'             => $rights,
+
                 'populations'        => $populations,
                 'actions'            => $actions,
-                'reviews'            => $reviews,
+
                 'topics'             => $topics,
                 'ods'                => $ods,
+                'dates'              => $dates,
                 'powers'             => $powers,
                 'attendings'         => $attendings,
                 'subtopics'          => $subtopics,
+                'tree'               => $tree,
                 'recommendationForm' => $recommendationForm,
                 'success'            => true
             ]);
@@ -349,6 +383,16 @@ class RecommendationsController extends Controller
             if ( count($data['cat_solidarity_action_id']) > 0 ){
                 $recommendation->action()->sync($data['cat_solidarity_action_id']);
             }
+
+          //  $listThemes=[];
+          //  foreach ($data['listThemes'] as $item){
+          //      $listThemes[$item['id']]=[
+          //          'cat_topic_id' => $item['cat_topic_id']
+          //      ];
+          //  }
+
+          //  $recommendation->subtopic()->sync($listThemes);
+
 
             if ( count($data['files']) > 0 ) {
                 foreach ( $data['files'] as $file ) {

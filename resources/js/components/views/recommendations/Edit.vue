@@ -25,28 +25,6 @@
                     </el-form-item>
                 </el-col>
 
-                <el-col :span="5">
-                    <el-form-item label="ID"
-                                  prop="cat_ide_id"
-                                  :rules="[
-                                        { required: true, message: 'Este campo es requerido', trigger: 'blur'},
-                                      ]">
-                        <el-select
-                            v-model="recommendationForm.cat_ide_id"
-                            filterable
-                            placeholder="Seleccionar"
-                            style="width: 100%">
-                            <el-option
-                                v-for="(ide, index) in ides"
-                                :key="index"
-                                :label="ide.name"
-                                :value="ide.id">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
-                </el-col>
-
-
             </el-row>
             <el-row :gutter="20">
                 <el-col :span="8">
@@ -78,7 +56,9 @@
                                       ]">
                         <el-select
                             v-model="recommendationForm.cat_gob_order_id"
-                            filterable placeholder="Seleccionar"
+                            filterable
+                            multiple
+                            placeholder="Seleccionar"
                             style="width: 100%">
                             <el-option
                                 v-for="(order, index) in orders"
@@ -98,7 +78,9 @@
                                   ]">
                         <el-select
                             v-model="recommendationForm.cat_gob_power_id"
-                            filterable placeholder="Seleccionar"
+                            filterable
+                            multiple
+                            placeholder="Seleccionar"
                             style="width: 100%">
                             <el-option
                                 v-for="(power, index) in powers"
@@ -113,40 +95,22 @@
 
             <el-row :gutter="20">
                 <el-col :span="8">
-                    <el-form-item label="Entidad encargada de atender"
+                    <el-form-item label="Autoridadad"
                                   prop="cat_attendig_id"
                                   :rules="[
                                         { required: true, message: 'Este campo es requerido', trigger: 'blur'},
                                       ]">
                         <el-select
                             v-model="recommendationForm.cat_attendig_id"
-                                   filterable placeholder="Seleccionar"
+                                   filterable
+                                   multiple
+                                   placeholder="Seleccionar"
                                    style="width: 100%">
                             <el-option
                                 v-for="(attending, index) in attendings"
                                 :key="index"
                                 :label="attending.name"
                                 :value="attending.id">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
-                </el-col>
-
-                <el-col :span="8">
-                    <el-form-item label="Derechos de la recomendación"
-                                  prop="cat_rights_recommendation_id"
-                                  :rules="[
-                                        { required: true, message: 'Este campo es requerido', trigger: 'blur'},
-                                      ]">
-                        <el-select
-                            v-model="recommendationForm.cat_rights_recommendation_id"
-                            filterable placeholder="Seleccionar"
-                            style="width: 100%">
-                            <el-option
-                                v-for="(right, index) in rights"
-                                :key="index"
-                                :label="right.name"
-                                :value="right.id">
                             </el-option>
                         </el-select>
                     </el-form-item>
@@ -160,7 +124,9 @@
                                       ]">
                         <el-select
                             v-model="recommendationForm.cat_population_id"
-                            filterable placeholder="Seleccionar"
+                            filterable
+                            multiple
+                            placeholder="Seleccionar"
                             style="width: 100%">
                             <el-option
                                 v-for="(population, index) in populations"
@@ -171,8 +137,7 @@
                         </el-select>
                     </el-form-item>
                 </el-col>
-            </el-row>
-            <el-row :gutter="20">
+
                 <el-col :span="8">
                     <el-form-item label="Acción Solidaria"
                                   prop="cat_solidarity_action_id"
@@ -181,7 +146,9 @@
                                       ]">
                         <el-select
                             v-model="recommendationForm.cat_solidarity_action_id"
-                            filterable placeholder="Seleccionar"
+                            filterable
+                            multiple
+                            placeholder="Seleccionar"
                             style="width: 100%">
                             <el-option
                                 v-for="(action, index) in actions"
@@ -192,69 +159,9 @@
                         </el-select>
                     </el-form-item>
                 </el-col>
-
-                <el-col :span="8">
-                    <el-form-item label="Revisión de derechos de la recomendación"
-                                  prop="cat_review_right_id"
-                                  :rules="[
-                                        { required: true, message: 'Este campo es requerido', trigger: 'blur'},
-                                      ]">
-                        <el-select
-                            v-model="recommendationForm.cat_review_right_id"
-                            filterable placeholder="Seleccionar"
-                            style="width: 100%">
-                            <el-option
-                                v-for="(review, index) in reviews"
-                                :key="index"
-                                :label="review.name"
-                                :value="review.id">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
-                </el-col>
-
-                <el-col :span="8">
-                    <el-form-item label="Revisión de tema(s)"
-                                  prop="cat_review_topic_id"
-                                  :rules="[
-                                        { required: true, message: 'Este campo es requerido', trigger: 'blur'},
-                                      ]">
-                        <el-select
-                            v-model="recommendationForm.cat_review_topic_id"
-                            filterable placeholder="Seleccionar"
-                            style="width: 100%">
-                            <el-option
-                                v-for="(topic, index) in topics"
-                                :key="index"
-                                :label="topic.name"
-                                :value="topic.id">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
-                </el-col>
             </el-row>
 
             <el-row :gutter="20">
-                <el-col :span="12">
-                    <el-form-item label="Revisión de subtema(s)"
-                                  prop="cat_subtopic_id"
-                                  :rules="[
-                                        { required: true, message: 'Este campo es requerido', trigger: 'blur'},
-                                      ]">
-                        <el-select
-                            v-model="recommendationForm.cat_subtopic_id"
-                                   filterable placeholder="Seleccionar"
-                                   style="width: 100%">
-                            <el-option
-                                v-for="(subtopic, index) in subtopics"
-                                :key="index"
-                                :label="subtopic.name"
-                                :value="subtopic.id">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
-                </el-col>
-
                 <el-col :span="12">
                     <el-form-item label="ODS"
                                   prop="cat_ods_id"
@@ -276,15 +183,40 @@
                         </el-select>
                     </el-form-item>
                 </el-col>
+
+                <el-col :span="8">
+                    <el-form-item label="Fecha de registro"
+                                  prop="cat_date_id"
+                                  :rules="[
+                                        { required: true, message: 'Este campo es requerido', trigger: 'blur'},
+                                      ]">
+                        <el-select
+                            v-model="recommendationForm.cat_date_id"
+                            filterable
+                            placeholder="Seleccionar"
+                            style="width: 100%">
+                            <el-option
+                                v-for="(date, index) in dates"
+                                :key="index"
+                                :label="date.name"
+                                :value="date.id">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-col>
             </el-row>
             <el-row :gutter="20">
                 <el-col :span="24">
+                    
                     <el-tree
-                        :props="props"
-                        :load="loadNode"
-                        lazy
+                        ref="themes"
+                        :data="tree"
                         show-checkbox
-                        @check-change="handleCheckChange">
+                        node-key="id"
+                        :props="defaultProps"
+                        :default-checked-keys="[]"
+                        @check="themesTree">
+
                     </el-tree>
                 </el-col>
             </el-row>
@@ -371,14 +303,14 @@
                 </el-col>
             </el-row>
             <el-row :gutter="10">
-                <el-col :span="3" :offset="14">
+                <el-col :span="3" :offset="13">
                     <el-button type="danger" style="width: 100%" @click="$router.push('/recomendaciones')">Cancelar</el-button>
                 </el-col>
                 <el-col :span="3.5" >
-                    <el-button type="danger" style="width: 100%" @click="submitForm(false)">Despublicar y Guardar</el-button>
+                    <el-button type="danger" style="width: 100%" @click="submitForm(false)">Actualizar y Quitar de publicado </el-button>
                 </el-col>
-                <el-col :span="3" >
-                    <el-button type="success" style="width: 100%" @click="submitForm(true)">Actualizar</el-button>
+                <el-col :span="3.1" >
+                    <el-button type="success" style="width: 100%" @click="submitForm(true)">Actualizar y Publicar</el-button>
                 </el-col>
             </el-row>
         </el-form>
@@ -397,7 +329,14 @@
 
         data() {
             return {
-                ides: [],
+
+                tree: null,
+                defaultProps: {
+                    children: 'children',
+                    label: 'label'
+                },
+
+
                 entities: [],
                 orders: [],
                 powers: [],
@@ -409,28 +348,34 @@
                 topics: [],
                 subtopics: [],
                 ods: [],
+                dates: [],
+
+
                 props: {
                     label: 'name',
                     children: 'zones'
                 },
+
                 recommendationId: this.$route.params.id,
                 apiToken: 'Bearer ' + sessionStorage.getItem('SERIDH_token'),
 
                 recommendationForm: {
                     recommendation: '',
-                    cat_ide_id: null,
                     cat_entity_id: null,
-                    cat_gob_order_id: null,
-                    cat_gob_power_id: null,
-                    cat_attendig_id: null,
+                    cat_gob_order_id: [],
+                    cat_gob_power_id: [],
+                    cat_attendig_id: [],
                     cat_rights_recommendation_id: null,
-                    cat_population_id: null,
-                    cat_solidarity_action_id: null,
+                    cat_population_id: [],
+                    cat_solidarity_action_id: [],
                     cat_review_right_id: null,
                     cat_review_topic_id: null,
-                    cat_subtopic_id: null,
-                    cat_ods_id: null,
-                    comments: ''
+                    cat_subtopic_id: [],
+                    cat_ods_id: [],
+                    cat_date_id: null,
+                    comments: '',
+                    listThemes: []
+
                 },
 
                 tinyOptions: {
@@ -469,7 +414,6 @@
 
             axios.get(`/api/recommendations/${recommendationId}/edit`).then(response => {
                 console.log(response.data);
-                this.ides = response.data.ides;
                 this.entities = response.data.entities;
                 this.orders = response.data.orders;
                 this.powers = response.data.powers;
@@ -481,6 +425,8 @@
                 this.topics = response.data.topics;
                 this.subtopics = response.data.subtopics;
                 this.ods = response.data.ods;
+                this.dates = response.data.dates;
+                this.tree = response.data.tree;
                 this.recommendationForm = response.data.recommendationForm;
                 this.recommendationForm.files = [];
 
@@ -500,6 +446,21 @@
             handleCheckChange(data, checked, indeterminate) {
                 console.log(data, checked, indeterminate);
             },
+
+            themesTree(){
+                let ide = this.$refs.themes.getCheckedNodes();
+                this.recommendationForm.listThemes=[];
+                console.log(ide);
+                if (ide.lenght!==0){
+                    let $this = this;
+                    ide.forEach(function(el){
+                        if(el.cat_topic_id!==undefined){
+                            $this.recommendationForm.listThemes.push(el);
+                        }
+                    });
+                }
+            },
+
             loadNode(node, resolve) {
                 if (node.level === 0) {
                     return resolve([ { name: 'Tema(s)' }]);

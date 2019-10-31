@@ -126,27 +126,6 @@
                 </el-col>
 
                 <el-col :span="8">
-                    <el-form-item :label="lang.form && lang.form.right? lang.form.right : 'Derechos de la recomendación'"
-                                  prop="cat_rights_recommendation_id"
-                                  :rules="[
-                                        { required: true, message: 'Este campo es requerido', trigger: 'blur'},
-                                      ]">
-                        <el-select
-                            v-model="recommendationForm.cat_rights_recommendation_id"
-                            filterable
-                            :placeholder="lang.form && lang.form.elegir? lang.form.elegir : 'Seleccionar'"
-                            style="width: 100%">
-                            <el-option
-                                v-for="(right, index) in rights"
-                                :key="index"
-                                :label="right.name"
-                                :value="right.id">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
-                </el-col>
-
-                <el-col :span="8">
                     <el-form-item :label="lang.form && lang.form.population? lang.form.population : 'Población'"
                                   prop="cat_population_id"
                                   :rules="[
@@ -167,8 +146,7 @@
                         </el-select>
                     </el-form-item>
                 </el-col>
-            </el-row>
-            <el-row :gutter="20">
+
                 <el-col :span="8">
                     <el-form-item :label="lang.form && lang.form.solidarity? lang.form.solidarity : 'Acción Solidaria'"
                                   prop="cat_solidarity_action_id"
@@ -190,8 +168,10 @@
                         </el-select>
                     </el-form-item>
                 </el-col>
+            </el-row>
 
-                <el-col :span="8">
+            <el-row :gutter="20">
+                <el-col :span="12">
                     <el-form-item :label="lang.form && lang.form.goals? lang.form.goals : 'ODS (Objetivos de Desarrollo Sostenible)'"
                                   prop="cat_ods_id"
                                   :rules="[
@@ -237,12 +217,16 @@
 
             <el-row :gutter="20">
                 <el-col :span="24">
+
                     <el-tree
-                        v-model="recommendationForm.cat_subtopic_id"
+                        ref="themes"
                         :data="tree"
                         show-checkbox
                         node-key="id"
-                        :props="defaultProps">
+                        :props="defaultProps"
+                        :default-checked-keys="[]"
+                        @check="themesTree">
+
                     </el-tree>
 
                 </el-col>
@@ -332,14 +316,13 @@
                 orders: [],
                 powers: [],
                 attendings: [],
-                rights: [],
                 populations: [],
                 actions: [],
-                reviews: [],
                 topics: [],
                 subtopics: [],
                 ods: [],
                 dates: [],
+
 
                 props: {
                     label: 'name',
@@ -350,20 +333,19 @@
 
                 recommendationForm: {
                     recommendation: '',
-                    cat_entity_name: null,
                     cat_entity_id: null,
                     cat_gob_order_id: [],
                     cat_gob_power_id: [],
                     cat_attendig_id: [],
-                    cat_rights_recommendation_id: null,
                     cat_population_id: [],
                     cat_solidarity_action_id: [],
-                    cat_review_right_id: null,
-                    cat_review_topic_id: null,
-                    cat_subtopic_id: null,
+                    //cat_subtopic_id: null,
                     cat_ods_id: [],
                     cat_date_id: null,
+                    //cat_topic_id: null,
                     comments: '',
+                    listThemes: [],
+
 
                     files: []
                 },
@@ -407,10 +389,8 @@
                 this.orders = response.data.orders;
                 this.powers = response.data.powers;
                 this.attendings = response.data.attendings;
-                this.rights = response.data.rights;
                 this.populations = response.data.populations;
                 this.actions = response.data.actions;
-                this.reviews = response.data.reviews;
                 this.topics = response.data.topics;
                 this.subtopics = response.data.subtopics;
                 this.ods = response.data.ods;
@@ -441,6 +421,21 @@
         },
         methods: {
             ...mapActions("bulkLoading", ['deleteRow']),
+
+            themesTree(){
+                let ide = this.$refs.themes.getCheckedNodes();
+                this.recommendationForm.listThemes=[];
+                console.log(ide);
+                if (ide.lenght!==0){
+                    let $this = this;
+                    ide.forEach(function(el){
+                        if(el.cat_topic_id!==undefined){
+                            $this.recommendationForm.listThemes.push(el);
+                        }
+                    });
+                }
+            },
+
             errorData(e){
                 console.log('en metodo',this.indexEdit);
                 let edit = this.editRow(this.index);
