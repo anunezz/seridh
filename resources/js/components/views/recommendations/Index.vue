@@ -184,11 +184,11 @@
                         label="Entidad Emisora">
                     </el-table-column>
                     <el-table-column
-                        prop="order.name"
+                        prop="implode_order"
                         label="Orden de Gobierno">
                     </el-table-column>
                     <el-table-column
-                        prop="power.name"
+                        prop="implode_power"
                         label="Poder de Gobierno">
                     </el-table-column>
                     <el-table-column

@@ -156,9 +156,17 @@
                             <div style="float:left; width: 10%;" class="text-right"><span class="icon-search" aria-hidden="true"></span></div>
                         </div>
                     </div>
+
+
+                   <button class="btn btn-danger"  @click="filters()"   type="button">Buscar</button>
+
+
+
+
+
                 </div>
             </div>
-            <div class="card" v-if="showTable !== true">
+            <div class="card">
                 <div class="card-body col-md-12" style="padding: 20px;">
                     <div v-for="(item,index) in arrayFilter" :key="index">
                         <div v-if="btnSelect === item.id && item.id !== 0">
@@ -180,14 +188,17 @@
                     </div>
                 </div>
             </div>
-            <div class="card" v-if="showTable === true">
+        </div>
+    </div>
+</div>
 
 
+
+
+
+            <!-- <div class="card">
             <div class="col-md-12" style="padding-top: 10px; padding-left: -8px;">
                 <span class="glyphicon glyphicon-list-alt" ></span> Total: 4
-
-
-
                             <ul class="pagination pull-right">
                                 <li class="page-item" v-if="pagination.current_page > 1">
                                     <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1)">Ant</a>
@@ -204,7 +215,8 @@
                 <div class="col-md-12">
                     <div class="col-md-2" v-for="(item,index) in checkedNames" :key="index">
                         <ul style="margin-top: -0px; !important">
-                            <li v-for="(i,indexx) in item.check" :key="indexx" v-text="i"></li>
+                            <li v-for="(i,indexx) in item.check" :key="indexx" v-text="changeValuesNames(i,item)">
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -217,12 +229,11 @@
                                     <div v-if="item.label === 'Buscar Recomendación'">
                                         Ver
                                     </div>
-                                <div v-else v-text="item.label"></div>
                                 </th>
                             </tr>
                         </thead>
                             <tbody>
-                                <tr v-for="(item,index) in resultados" :key="index">
+                                <tr v-for="(item,index) in results" :key="index">
                                     <td style="width: 145px!important" v-text="transformNamesTableColums(item.created_at,0)"></td>
                                     <td style="width: 145px!important" v-text="transformNamesTableColums(item.cat_entity_id,1)"></td>
                                     <td style="width: 145px!important" v-text="transformNamesTableColums(item.cat_population_id,2)"></td>
@@ -233,19 +244,17 @@
                                         <router-link :to="{name:'PublicFilter', params: {json:item }}" >
                                           <button type="button" class="btn btn-success btn-block btn-sm"> Ver <span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></button>
                                         </router-link>
-                                        <!-- <button type="button" class="btn btn-success" @click="viewRecommendations(item)">Ver<span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></button> -->
                                     </td>
                                 </tr>
                             </tbody>
                     </table>
                 </div>
-            </div> <!-- TERMINA CARD PARA TABLA DE FILTROS -->
-        </div>
-    </div>
-</div>
+            </div>  -->
+
+            <!-- TERMINA CARD PARA TABLA DE FILTROS -->
 
 
- <!-- {{resultados}}
+ <!-- {{results}}
  ----------------------------
 {{checkedNames}} -->
 
@@ -333,10 +342,9 @@
               arrayFilter:[],
               checkedNames:[],
               btnSelect:0,
-              showTable: false,
               loading:false,
               tableData:[],
-              resultados:{},
+              results:{},
                 pagination : {
                     'total' : 0,
                     'current_page' : 0,
@@ -353,6 +361,29 @@
         created() {
         },
         methods: {
+            filters(){
+              let me = this;
+              let suma = 0;
+              let data = {};
+
+              for (let i = 0; i < me.checkedNames.length; i++) {
+                  if(me.checkedNames[i].check.length > 0){
+                    suma = suma + 1;
+                  }else{
+                     suma = suma + 0;
+                  }
+              }
+
+              if(suma === 0 ){
+                  me.message("warning","Sin results.");
+              }else{
+                 data.check = me.checkedNames;
+                 data.names = me.arrayFilter;
+                 me.$router.push({name:'PublicFilter', params: {json: data }});
+                 //me.$router.push({path: '/publico/filtros', params: {json:me.checkedNames }});
+              }
+
+            },
             panelBusqueda(item){
                 let me = this;
                 for (let i = 0; i < me.arrayFilter.length; i++) {
@@ -360,7 +391,6 @@
                     if(me.arrayFilter[i].id === item.id){
                           me.arrayFilter[i].btn = (me.arrayFilter[i].btn === false)? true : false;
                           me.btnSelect = me.arrayFilter[i].id;
-                          me.showTable = false;
                     }
                 }
             },
@@ -433,6 +463,8 @@
             recommendationFilter(page){
               let me = this,url='',data={};
 
+                 console.log("Estas aqui......");
+
                             url= '/api/public/recommendationFilter?page=' + page;
                             data={
                             'date': me.checkedNames[0].check,
@@ -444,12 +476,11 @@
 
                   axios.post(url, data).then(function (response){
                         if( response.data.lResults.data.length > 0 ){
-                            me.resultados = response.data.lResults.data;
-                            console.log("RESPONSE: ",me.resultados);
+                            me.results = response.data.lResults.data;
+                            console.log("RESPONSE: ",me.results);
                             me.pagination= response.data.pagination;
-                            me.showTable =  true;
                  }else{
-                    me.message('warning','Sin resultados.');
+                    me.message('warning','Sin results.');
                  }
                 }).catch(function (error) {
                     me.loading=false;
@@ -463,7 +494,15 @@
                         type: type
                     });
             },
+            changeValuesNames(value){
+            let me = this;
+            console.log("Value: ",value);
+            },
             transformNamesTableColums(value,num){
+
+                console.log("Formando el nombre de la columna");
+                console.log(value,num);
+
                 if(num === 0){
                     value = value.substr(0,4);
                  return value;

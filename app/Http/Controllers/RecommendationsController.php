@@ -7,12 +7,14 @@ use App\Http\Models\Cats\CatEntity;
 use App\Http\Models\Cats\CatGobOrder;
 use App\Http\Models\Cats\CatGobPower;
 use App\Http\Models\Cats\CatOds;
+use App\Http\Models\Cats\CatDate;
 use App\Http\Models\Cats\CatPopulation;
 use App\Http\Models\Cats\CatReviewRight;
 use App\Http\Models\Cats\CatReviewTopic;
 use App\Http\Models\Cats\CatRightsRecommendation;
 use App\Http\Models\Cats\CatSolidarityAction;
 use App\Http\Models\Cats\CatSubtopic;
+use App\Http\Models\Cats\CatTopic;
 use App\Http\Models\Document;
 use App\Http\Models\Recommendation;
 use App\Imports\RecommendationsImport;
@@ -28,7 +30,7 @@ class RecommendationsController extends Controller
             $data = $request->all();
 
             $recommendations = Recommendation::with('user', 'ods', 'entity:id,name',
-                'order:id,name', 'power:id,name')
+                'order', 'power')
                 ->search($data['filters'])
                 ->where('isActive', true)
                 ->orderBy('updated_at', 'DESC')
@@ -89,13 +91,43 @@ class RecommendationsController extends Controller
                 ->orderBy('name')
                 ->get(['id', 'name']);
 
-            $subtopics = CatSubtopic::where('isActive', 1)
+            $subtopics = CatSubtopic::with('topic')->where('isActive', 1)
                 ->orderBy('name')
                 ->get(['id', 'name']);
 
             $ods = CatOds::where('isActive', 1)
                 ->orderBy('name')
                 ->get(['id', 'name']);
+
+            $dates = CatDate::where('isActive', 1)
+                ->orderBy('name')
+                ->get(['id', 'name']);
+
+            $newTopics = CatTopic::with('subtopics')
+                ->where('isActive', 1)
+                ->orderBy('name')
+                ->get(['id', 'name']);
+
+            $tree = [];
+
+
+            foreach ($newTopics as $topic) {
+                $subtopics = [];
+
+                foreach ($topic->subtopics as $subtopic) {
+                    $subtopics[] = [
+                        'id' => $subtopic->id,
+                        'label' => $subtopic->name
+                    ];
+                }
+
+                $tree[] = [
+
+                    'id' => $topic->id,
+                    'label' => $topic->name,
+                    'children' => $subtopics
+                ];
+            }
 
             return response()->json([
                 'entities'    => $entities,
@@ -106,9 +138,11 @@ class RecommendationsController extends Controller
                 'reviews'     => $reviews,
                 'topics'      => $topics,
                 'ods'         => $ods,
+                'dates'       => $dates,
                 'powers'      => $powers,
                 'attendings'  => $attendings,
                 'subtopics'   => $subtopics,
+                'tree' => $tree,
                 'success'     => true
             ]);
 
@@ -138,8 +172,24 @@ class RecommendationsController extends Controller
                 $recommendation->ods()->sync($data['cat_ods_id']);
             }
 
-            else if ( count($data['cat_gob_order_id']) > 0 ){
+            if ( count($data['cat_gob_order_id']) > 0 ){
                 $recommendation->order()->sync($data['cat_gob_order_id']);
+            }
+
+            if ( count($data['cat_gob_power_id']) > 0 ){
+                $recommendation->power()->sync($data['cat_gob_power_id']);
+            }
+
+            if ( count($data['cat_attendig_id']) > 0 ){
+                $recommendation->attendig()->sync($data['cat_attendig_id']);
+            }
+
+            if ( count($data['cat_population_id']) > 0 ){
+                $recommendation->population()->sync($data['cat_population_id']);
+            }
+
+            if ( count($data['cat_solidarity_action_id']) > 0 ){
+                $recommendation->action()->sync($data['cat_solidarity_action_id']);
             }
 
             if ( count($data['files']) > 0 ) {
@@ -223,7 +273,7 @@ class RecommendationsController extends Controller
 
             $recommendationForm = [
                 'recommendation'               => $recommendation->recommendation,
-                'cat_ide_id'                   => $recommendation->cat_ide_id,
+
                 'cat_entity_id'                => $recommendation->cat_entity_id,
                 'cat_gob_order_id'             => $recommendation->cat_gob_order_id,
                 'cat_gob_power_id'             => $recommendation->cat_gob_power_id,
@@ -280,8 +330,24 @@ class RecommendationsController extends Controller
                 $recommendation->ods()->sync($data['cat_ods_id']);
             }
 
-            else if ( count($data['cat_gob_order_id']) > 0 ){
+            if ( count($data['cat_gob_order_id']) > 0 ){
                 $recommendation->order()->sync($data['cat_gob_order_id']);
+            }
+
+            if ( count($data['cat_gob_power_id']) > 0 ){
+                $recommendation->power()->sync($data['cat_gob_power_id']);
+            }
+
+            if ( count($data['cat_attendig_id']) > 0 ){
+                $recommendation->attendig()->sync($data['cat_attendig_id']);
+            }
+
+            if ( count($data['cat_population_id']) > 0 ){
+                $recommendation->population()->sync($data['cat_population_id']);
+            }
+
+            if ( count($data['cat_solidarity_action_id']) > 0 ){
+                $recommendation->action()->sync($data['cat_solidarity_action_id']);
             }
 
             if ( count($data['files']) > 0 ) {

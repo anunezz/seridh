@@ -1,60 +1,63 @@
 <template>
-<div class="container-fluid" style="padding: 20px 10px;">
+<!-- style="padding: 20px 10px;" -->
+<div class="container">
     <div class="row">
         <div class="col-md-12">
-
-<div class="container">
-  <h2>Filtros</h2>
-  <hr class="red small-margin">
-  <div class="panel panel-default">
-    <div class="panel-heading">
-        Titulo de la recomendación
-    <div class="pull-right">
-        <span style="float: left; padding-right: 20px;">
-            <span class="icon-calendar" aria-hidden="true"></span> 12/12/2019 &nbsp; &nbsp;
-        </span>
-        <button class="btn btn-info btn-xs" @click="loadPdf()">
-            pdf
-            <span class="glyphicon glyphicon glyphicon-file" aria-hidden="true"></span>
-        </button>
-        <button class="btn btn-success btn-xs" @click="loadExcel()">
-             excel
-             <span class="glyphicon glyphicon glyphicon-file" aria-hidden="true"></span>
-        </button>
-        <button class="btn btn-info btn-xs" @click="loadWord()">
-            word
-             <span class="glyphicon glyphicon glyphicon-file" aria-hidden="true"></span>
-        </button>
-    </div>
-    </div>
-    <div class="panel-body">
-     <div class="row">
-
+            <h2>Filtros</h2>
+            <hr class="red small-margin">
+        </div>
         <div class="col-md-12">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt nisi dolores, omnis dicta distinctio possimus illo nulla totam magnam. Deleniti porro officia suscipit repudiandae, blanditiis magnam ipsam est culpa qui!
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Doloremque voluptatem eum non, error nihil repellendus commodi, velit mollitia, quas ut dolores omnis cupiditate praesentium neque perspiciatis libero ex id consequatur?
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga dicta provident, corrupti quis, non doloribus omnis id nobis expedita explicabo error beatae excepturi asperiores quos ex vitae laboriosam, eveniet consequuntur.
+             <span class="glyphicon glyphicon-list-alt" ></span> Total: 4
         </div>
-
-
         <div class="col-md-12">
-          {{json}}
+           <div class="row">
+                <div v-for="(item,index) in names" :key="index" class="col-md-2">
+                    <h5 v-text="item.label"></h5>
+                    <ul>
+                        <li v-for="(i, indexx) in changeNamesValues(item)" :key="indexx">
+                            <span v-if="item.id === 0" v-text="i.year"></span>
+                            <span v-else v-text="i.name"></span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
-
-        <div class="col-md-12 pull-right" style="padding: 20px;">
-            <router-link :to="{ name:'PublicHome' }" >
-            <button class="btn btn-success pull-right btn-sm" type="button">
-                Regresar <span class="glyphicon glyphicon glyphicon-share-alt" aria-hidden="true"></span>
-            </button>
-            </router-link>
-        </div>
-     </div>
-    </div>
-  </div>
-</div>
-
-
-
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Titulo de la recomendación
+                    <div class="pull-right">
+                        <span style="float: left; padding-right: 20px;">
+                            <span class="icon-calendar" aria-hidden="true"></span> 12/12/2019 &nbsp; &nbsp;
+                        </span>
+                        <button class="btn btn-info btn-xs" @click="loadPdf()">
+                            PDF <span class="glyphicon glyphicon glyphicon-file" aria-hidden="true"></span>
+                        </button>
+                        <button class="btn btn-success btn-xs" @click="loadExcel()">
+                            EXCEL <span class="glyphicon glyphicon glyphicon-file" aria-hidden="true"></span>
+                        </button>
+                        <button class="btn btn-info btn-xs" @click="loadWord()">
+                            WORD <span class="glyphicon glyphicon glyphicon-file" aria-hidden="true"></span>
+                        </button>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt nisi dolores, omnis dicta distinctio possimus illo nulla totam magnam. Deleniti porro officia suscipit repudiandae, blanditiis magnam ipsam est culpa qui!
+                            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Doloremque voluptatem eum non, error nihil repellendus commodi, velit mollitia, quas ut dolores omnis cupiditate praesentium neque perspiciatis libero ex id consequatur?
+                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga dicta provident, corrupti quis, non doloribus omnis id nobis expedita explicabo error beatae excepturi asperiores quos ex vitae laboriosam, eveniet consequuntur.
+                        </div>
+                        <div class="col-md-12 pull-right" style="padding: 20px;">
+                            <router-link :to="{ name:'PublicHome' }" >
+                                <button class="btn btn-success pull-right btn-sm" type="button">
+                                    Regresar <span class="glyphicon glyphicon glyphicon-share-alt" aria-hidden="true"></span>
+                                </button>
+                            </router-link>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -66,10 +69,39 @@
    export default {
       data(){
          return {
-           json:[]
+           json:[],
+           check:[],
+           names:[]
          }
       },
       methods:{
+       changeNamesValues(value){
+        let me = this;
+        if(value.id === 0){
+          return value.data;
+        }else{
+           console.log("ARREGLO: ",value);
+
+           let data = [];
+
+           for (let i = 0; i < value.data.length; i++){
+             console.log("ID:",value.data[i].id);
+             console.log("name:",value.data[i].name);
+
+
+
+
+           }
+
+
+           console.log("DATA: ",me.check);
+
+           return data;
+
+        }
+
+
+       },
        loadPdf(){
            let me = this;
            console.log("descarga pdf..");
@@ -93,13 +125,16 @@
         },
         mounted(){
             let me = this;
-            me.json = me.$route.params.json;
+                me.json = me.$route.params.json;
+                me.check= me.json.check;
+                me.names = me.json.names;
+                me.names = me.names.filter(item => {
+                    return item.label != "Buscar Recomendación";
+                });
 
+                console.log("CHEKS: ",me.check);
 
-             console.log("Este es el json: ",me.json);
-
-
-
+           // console.log("ARREGLO SELECCIONADOS: ",me.json);
         }
     }
 </script>
