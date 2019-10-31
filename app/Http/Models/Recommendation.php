@@ -8,6 +8,7 @@ use App\Http\Models\Cats\CatOds;
 use App\Http\Models\Cats\CatDate;
 use App\Http\Models\Cats\CatPopulation;
 use App\Http\Models\Cats\CatSolidarityAction;
+use App\Http\Models\Cats\CatSubRights;
 use App\Http\Models\Cats\CatSubtopic;
 use App\Http\Models\Cats\CatTopic;
 use App\User;
@@ -107,6 +108,26 @@ class Recommendation extends Model
         return $this->belongsToMany(
             CatAttending::class,
             'attendig_recommendation'
+        );
+    }
+
+    public function right()
+    {
+        return $this->belongsToMany(
+            CatRightsRecommendation::class,
+            'recommendation_right_subright',
+            'recommendation_id',
+            'right_id'
+        );
+    }
+
+    public function subright()
+    {
+        return $this->belongsToMany(
+            CatSubRights::class,
+            'recommendation_right_subright',
+            'recommendation_id',
+            'subrigth_id'
         );
     }
 

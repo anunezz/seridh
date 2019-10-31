@@ -124,7 +124,6 @@
                         </el-select>
                     </el-form-item>
                 </el-col>
-
                 <el-col :span="8">
                     <el-form-item :label="lang.form && lang.form.population? lang.form.population : 'Población'"
                                   prop="cat_population_id"
@@ -214,10 +213,19 @@
                     </el-form-item>
                 </el-col>
             </el-row>
-
             <el-row :gutter="20">
-                <el-col :span="24">
-
+                <el-col :span="12">
+                    <el-tree
+                        ref="rights"
+                        :data="rights"
+                        show-checkbox
+                        node-key="id"
+                        :props="defaultProps"
+                        :default-checked-keys="[]"
+                        @check="rightsTree">
+                    </el-tree>
+                </el-col>
+                <el-col :span="12">
                     <el-tree
                         ref="themes"
                         :data="tree"
@@ -226,7 +234,6 @@
                         :props="defaultProps"
                         :default-checked-keys="[]"
                         @check="themesTree">
-
                     </el-tree>
 
                 </el-col>
@@ -306,7 +313,6 @@
                     label: 'label'
                 },
 
-
                 lang: {
                     "header": {
                         "title": "Agregar Recomendación"
@@ -316,6 +322,7 @@
                 orders: [],
                 powers: [],
                 attendings: [],
+                rights: [],
                 populations: [],
                 actions: [],
                 topics: [],
@@ -344,6 +351,7 @@
                     cat_date_id: null,
                     //cat_topic_id: null,
                     comments: '',
+                    listRights: [],
                     listThemes: [],
 
 
@@ -382,13 +390,13 @@
         created() {
             this.startLoading();
             axios.get('/api/recommendations/create').then(response => {
-                //this.recommendationForm.recommendation = '<p style="font-family: Montserrat; font-size: 14px; font-style: normal; font-weight: normal;">No gritar</p>';
-
                 this.ods = response.data.ods;
                 this.entities = response.data.entities;
                 this.orders = response.data.orders;
                 this.powers = response.data.powers;
                 this.attendings = response.data.attendings;
+                this.rights = response.data.rights;
+                console.log(response.data);
                 this.populations = response.data.populations;
                 this.actions = response.data.actions;
                 this.topics = response.data.topics;
@@ -398,7 +406,6 @@
                 this.tree = response.data.tree;
 
                 this.stopLoading();
-
                 if (this.indexEdit!=null){
                     this.errorData(this.indexEdit);
                 }
@@ -436,8 +443,20 @@
                 }
             },
 
+            rightsTree(){
+                let ids = this.$refs.rights.getCheckedNodes();
+                this.recommendationForm.listRights=[];
+                console.log(ids);
+                if (ids.length!==0){
+                    let $this = this;
+                    ids.forEach(function(el) {
+                        if (el.right_id!==undefined){
+                            $this.recommendationForm.listRights.push(el);
+                        }
+                    });
+                }
+            },
             errorData(e){
-                console.log('en metodo',this.indexEdit);
                 let edit = this.editRow(this.index);
                 this.recommendationForm.recommendation = edit.recommendation;
                 this.recommendationForm.cat_entity_id = edit.entity ? edit.entity.id : null;
