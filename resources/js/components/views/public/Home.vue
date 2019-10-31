@@ -475,12 +475,14 @@
                             'attendig_id':me.checkedNames[4].check
                             };
 
+                  me.filters();
+                  return;
                   axios.post('/api/public/recommendationFilter', data).then(function (response){
                        // console.log("RECOMMENDATION FILTER:",response.data);
-                        me.results = response;
-                        console.log("REULTADOS: ",me.results);
-                        return;
-                        me.filters();
+                        // me.results = response;
+                        // console.log("REULTADOS: ",me.results);
+                        // return;
+
 
                         if( response.data.lResults.data.length > 0 ){
                             me.results = response.data.lResults.data;
