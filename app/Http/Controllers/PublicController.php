@@ -11,7 +11,7 @@ use App\Http\Models\Cats\CatAttending; //Entidad encargada de attender
 use App\Http\Models\Cats\CatRightsRecommendation; //Derechos de la recomendacion 4
 use App\Http\Models\Cats\CatPopulation; //Poblacion 5
 use App\Http\Models\Cats\CatSolidarityAction; //Accion solidaria 6
-use App\Http\Models\Cats\CatReviewRight; // Revision de los derechos de la recocmendacion 8
+//use App\Http\Models\Cats\CatReviewRight; // Revision de los derechos de la recocmendacion 8
 use App\Http\Models\Cats\CatReviewTopic; // Revision de tema(s) 9
 use App\Http\Models\Cats\CatSubtopic; // Revision de subtema(s) 10
 use App\Http\Models\Cats\CatOds; //ODS(Objetivo de Desarrollo Sostenible) 10
@@ -54,8 +54,8 @@ class PublicController extends Controller
         $CatPopulation   = CatPopulation::where('isActive', 1)->get(['id', 'name']);
         $CatSolidarityAction = CatSolidarityAction::where('isActive', 1)->get(['id', 'name']);
         $CatRightsRecommendation = CatRightsRecommendation::where('isActive', 1)->get(['id', 'name']);
-        $CatReviewRight  = CatReviewRight::where('isActive', 1)->get(['id', 'name']);
-        $CatReviewTopic   = CatReviewTopic::where('isActive', 1)->get(['id', 'name']);
+       // $CatReviewRight  = CatReviewRight::where('isActive', 1)->get(['id', 'name']);
+      //  $CatReviewTopic   = CatReviewTopic::where('isActive', 1)->get(['id', 'name']);
         $CatSubtopic     = CatSubtopic::where('isActive', 1)->get(['id', 'name']);
         $years            = DB::table('recommendations')->select(DB::raw('YEAR(created_at) as year'))
                                                        ->where('isActive', 1)
@@ -69,7 +69,7 @@ class PublicController extends Controller
             "0" => array("id"=> 0,"name"=>"Año","data"=> $years),
             "1" => array("id"=> 1,"name"=>"Entidad emisora","data"=>$CatEntity),
             "2" => array("id"=> 2,"name"=>"Población","data"=> $CatPopulation),
-            "3" => array("id"=> 3,"name"=>"Revisión de tema(s)","data"=> $CatReviewTopic),
+            "3" => array("id"=> 3,"name"=>"Revisión de tema(s)","data"=> ''),
             "4" => array("id"=> 4,"name"=>"Entidad encargada de atender","data"=>$CatAttending),
             "5" => array("id"=> 5,"name"=>"ODS","data"=> $CatOds),
             '6' => array("id"=> 6,"name"=>"Buscar Recomendación","data"=>'')//,
@@ -84,25 +84,8 @@ class PublicController extends Controller
 
       public function recommendationFilter(Request $request){
 
-        //$request->entity_id;
-        // $recommendation = DB::table('recommendations')->select('id','created_at','cat_entity_id',
-        // 'cat_population_id','cat_review_topic_id','cat_attendig_id','cat_ods_id')
-        // ->where('isActive','=', 1)->where('isPublished','=', 1)
-        //   ->where(function ($query) use($request){
-        //       $query->orWhereIn('cat_entity_id',$request->entity_id)
-        //             ->orWhereIn('cat_population_id',$request->population_id)
-        //             ->orWhereIn('cat_review_topic_id',$request->review_topic_id)
-        //             ->orWhereIn('cat_attendig_id',$request->attendig_id);
-        //         foreach($request->date as $value){
-        //           $query->orWhereYear('created_at',$value);
-        //         }
-        //     })->orderBy('id', 'desc')->paginate(2);
-
-
-
-
-
-            $recommendation = Recommendation::with('ods','population')->orWhere(function ($query) use($request){
+            $recommendation = Recommendation::with('ods')->where('isActive','=', 1)->where('isPublished','=', 1)
+                    ->orWhere(function ($query) use($request){
                         foreach($request->date as $created_at_value){
                           $query->orWhereYear('created_at',$created_at_value);
                         }
@@ -110,28 +93,16 @@ class PublicController extends Controller
                           foreach($request->entity_id as $entity_id_value){
                             $query->orWhere('cat_entity_id',$entity_id_value);
                           }
-                    })->orderBy('id', 'desc')->get();
+                    })->get();
 
-            dd($recommendation);
+                    // dd($recommendation);
 
                     return response()->json([
                         'success' => true,
                         'lResults'=> $recommendation
                     ],200);
-
-                    // return response()->json([
-                    //     'success' => true,
-                    //     'lResults'=> $recommendation,
-                    //     'pagination' => [
-                    //         'total'        => $recommendation->total(),
-                    //         'current_page' => $recommendation->currentPage(),
-                    //         'per_page'     => $recommendation->perPage(),
-                    //         'last_page'    => $recommendation->lastPage(),
-                    //         'from'         => $recommendation->firstItem(),
-                    //         'to'           => $recommendation->lastItem(),
-                    //     ]
-                    // ],200);
       }
+
 
       public function listPdf(Request $request){
         $recommendation = Recommendation::where('isActive','=', 1)->where('isPublished','=', 1)->get();

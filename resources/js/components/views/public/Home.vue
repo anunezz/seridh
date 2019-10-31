@@ -151,14 +151,14 @@
                             <div v-text="item.label" style="float:left; width: 85%;"> {{item.label}} </div>
                             <div style="float:left; width: 10%;" class="text-right"><span v-bind:class="[item.btn === false ? 'glyphicon glyphicon-chevron-up' : 'glyphicon glyphicon-chevron-down']" aria-hidden="true"></span></div>
                         </div>
-                        <div v-else class="first firstSearch" style="padding: 5px!important;" @click="recommendationFilter(1)">
+                        <div v-else class="first firstSearch" style="padding: 5px!important;" @click="recommendationFilter()">
                             <div v-text="item.label" style="float:left; width: 85%;"> {{item.label}} </div>
                             <div style="float:left; width: 10%;" class="text-right"><span class="icon-search" aria-hidden="true"></span></div>
                         </div>
                     </div>
 
 
-                   <button class="btn btn-danger"  @click="filters()"   type="button">Buscar</button>
+                   <!-- <button class="btn btn-danger"  @click="filters()"   type="button">Buscar</button> -->
 
 
 
@@ -379,6 +379,7 @@
               }else{
                  data.check = me.checkedNames;
                  data.names = me.arrayFilter;
+                /// data.response = me.results;
                  me.$router.push({name:'PublicFilter', params: {json: data }});
                  //me.$router.push({path: '/publico/filtros', params: {json:me.checkedNames }});
               }
@@ -474,11 +475,17 @@
                             'attendig_id':me.checkedNames[4].check
                             };
 
-                  axios.post(url, data).then(function (response){
+                  axios.post('/api/public/recommendationFilter', data).then(function (response){
+                       // console.log("RECOMMENDATION FILTER:",response.data);
+                        me.results = response;
+                        console.log("REULTADOS: ",me.results);
+                        return;
+                        me.filters();
+
                         if( response.data.lResults.data.length > 0 ){
                             me.results = response.data.lResults.data;
                             console.log("RESPONSE: ",me.results);
-                            me.pagination= response.data.pagination;
+                           // me.pagination= response.data.pagination;
                  }else{
                     me.message('warning','Sin results.');
                  }

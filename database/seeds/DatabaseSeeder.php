@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
             CatSubtopicSeeder::class,
             CatLanguageSeeder::class,
             CatDateSeeder::class,
+            CatRightRecommendationSeeder::class,
 
 
             VisitsSeeder::class,

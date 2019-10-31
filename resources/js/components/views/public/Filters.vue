@@ -23,6 +23,17 @@
             </div>
         </div>
         <div class="col-md-12">
+            <button class="pull-right btn btn-info btn-xs" @click="loadPdf()">
+                PDF <span class="glyphicon glyphicon glyphicon-file" aria-hidden="true"></span>
+            </button>
+            <button class="pull-right btn btn-success btn-xs" @click="loadExcel()">
+                EXCEL <span class="glyphicon glyphicon glyphicon-file" aria-hidden="true"></span>
+            </button>
+            <button class="pull-right btn btn-info btn-xs" @click="loadWord()">
+                WORD <span class="glyphicon glyphicon glyphicon-file" aria-hidden="true"></span>
+            </button>
+        </div>
+        <div class="col-md-12" v-for="(item,index) in texto" :key="index">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     Titulo de la recomendación
@@ -30,34 +41,24 @@
                         <span style="float: left; padding-right: 20px;">
                             <span class="icon-calendar" aria-hidden="true"></span> 12/12/2019 &nbsp; &nbsp;
                         </span>
-                        <button class="btn btn-info btn-xs" @click="loadPdf()">
-                            PDF <span class="glyphicon glyphicon glyphicon-file" aria-hidden="true"></span>
-                        </button>
-                        <button class="btn btn-success btn-xs" @click="loadExcel()">
-                            EXCEL <span class="glyphicon glyphicon glyphicon-file" aria-hidden="true"></span>
-                        </button>
-                        <button class="btn btn-info btn-xs" @click="loadWord()">
-                            WORD <span class="glyphicon glyphicon glyphicon-file" aria-hidden="true"></span>
-                        </button>
                     </div>
                 </div>
                 <div class="panel-body">
                     <div class="row">
                         <div class="col-md-12">
-                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt nisi dolores, omnis dicta distinctio possimus illo nulla totam magnam. Deleniti porro officia suscipit repudiandae, blanditiis magnam ipsam est culpa qui!
-                            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Doloremque voluptatem eum non, error nihil repellendus commodi, velit mollitia, quas ut dolores omnis cupiditate praesentium neque perspiciatis libero ex id consequatur?
-                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga dicta provident, corrupti quis, non doloribus omnis id nobis expedita explicabo error beatae excepturi asperiores quos ex vitae laboriosam, eveniet consequuntur.
-                        </div>
-                        <div class="col-md-12 pull-right" style="padding: 20px;">
-                            <router-link :to="{ name:'PublicHome' }" >
-                                <button class="btn btn-success pull-right btn-sm" type="button">
-                                    Regresar <span class="glyphicon glyphicon glyphicon-share-alt" aria-hidden="true"></span>
-                                </button>
-                            </router-link>
+                          <span v-text="showString(item.txt,index,true)"></span> <button @click="btnshow(item.txt, index
+                          )">+</button>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="col-md-12 pull-right" style="padding: 20px;">
+            <router-link :to="{ name:'PublicHome' }" >
+                <button class="btn btn-success pull-right btn-sm" type="button">
+                    Regresar <span class="glyphicon glyphicon glyphicon-share-alt" aria-hidden="true"></span>
+                </button>
+            </router-link>
         </div>
     </div>
 </div>
@@ -71,10 +72,47 @@
          return {
            json:[],
            check:[],
-           names:[]
+           names:[],
+           jsonTxt:[],
+           texto:[{txt: '1 texto agregado ... Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt nisi dolores, omnis dicta distinctio possimus illo nulla totam magnam. Deleniti porro officia suscipit repudiandae, blanditiis magnam ipsam est culpa qLorem ipsum dolor sit, amet consectetur adipisicing elit. Doloremque voluptatem eum non, error nihil repellendus commodi, velit mollitia, quas ut dolores omnis cupiditate praesentium neque perspiciatis libero ex id consequatur? Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga dicta provident, corrupti quis, non doloribus omnis id nobis expedita explicabo error beatae excepturi asperiores quos ex vitae laboriosam, eveniet consequuntur.'},
+                  {txt: '2 texto agregado ... Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt nisi dolores, omnis dicta distinctio possimus illo nulla totam magnam. Deleniti porro officia suscipit repudiandae, blanditiis magnam ipsam est culpa qLorem ipsum dolor sit, amet consectetur adipisicing elit. Doloremque voluptatem eum non, error nihil repellendus commodi, velit mollitia, quas ut dolores omnis cupiditate praesentium neque perspiciatis libero ex id consequatur? Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga dicta provident, corrupti quis, non doloribus omnis id nobis expedita explicabo error beatae excepturi asperiores quos ex vitae laboriosam, eveniet consequuntur.'}],
+
          }
       },
       methods:{
+       btnshow(string,index){
+           let me = this;
+           let buscar = me.jsonTxt.find(item.id === index);
+
+           if(buscar){
+
+
+
+           }else{
+               console.error("error");
+           }
+
+
+
+       },
+       showString(string,index,bool){
+        let me = this;
+        let buscar =  me.jsonTxt.find(item => {  return item.id === index });
+
+         if(buscar){
+
+           if(buscar.show === true){
+               return buscar.text.substr(0,160);
+           }else{
+               return buscar.original;
+           }
+
+
+         }else{
+            me.jsonTxt.push({id: index, text:string, show: bool, original: string});
+            return string.substr(0,160);
+         }
+       },
        changeNamesValues(value){
         let me = this;
         if(value.id === 0){
@@ -126,6 +164,10 @@
         mounted(){
             let me = this;
                 me.json = me.$route.params.json;
+
+               console.log("JSON FILTER: ",me.json);
+
+
                 me.check= me.json.check;
                 me.names = me.json.names;
                 me.names = me.names.filter(item => {

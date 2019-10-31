@@ -9,6 +9,7 @@ use App\Http\Models\Cats\CatGobPower;
 use App\Http\Models\Cats\CatOds;
 use App\Http\Models\Cats\CatDate;
 use App\Http\Models\Cats\CatPopulation;
+use App\Http\Models\Cats\CatRightsRecommendation;
 use App\Http\Models\Cats\CatSolidarityAction;
 use App\Http\Models\Cats\CatSubtopic;
 use App\Http\Models\Cats\CatTopic;
@@ -18,6 +19,7 @@ use App\Imports\RecommendationsImport;
 use DB;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Http\Traits\RightsTrait;
 
 class RecommendationsController extends Controller
 {
@@ -67,6 +69,8 @@ class RecommendationsController extends Controller
             $attendings = CatAttending::where('isActive', 1)
                 ->orderBy('name')
                 ->get(['id', 'name']);
+
+            $rights = RightsTrait::orderRights(null);
 
             $populations = CatPopulation::where('isActive', 1)
                 ->orderBy('name')
@@ -126,6 +130,7 @@ class RecommendationsController extends Controller
                 'populations' => $populations,
                 'actions'     => $actions,
                 'topics'      => $topics,
+                'rights'      => $rights,
                 'ods'         => $ods,
                 'dates'       => $dates,
                 'powers'      => $powers,
@@ -156,6 +161,17 @@ class RecommendationsController extends Controller
             $recommendation->user_id = auth()->user()->id;
             $recommendation->fill($data);
             $recommendation->save();
+
+            $listRights=[];
+            foreach ($data['listRights'] as $item){
+                $listRights[$item['id']]=[
+                    'right_id' => $item['right_id']
+                ];
+            }
+
+            $recommendation->subright()->sync($listRights);
+
+
 
             if ( count($data['cat_ods_id']) > 0 ) {
                 $recommendation->ods()->sync($data['cat_ods_id']);
@@ -242,6 +258,9 @@ class RecommendationsController extends Controller
                 ->orderBy('name')
                 ->get(['id', 'name']);
 
+            $rights = CatRightsRecommendation::where('isActive', 1)
+                ->orderBy('name')
+                ->get(['id', 'name']);
 
             $populations = CatPopulation::where('isActive', 1)
                 ->orderBy('name')
@@ -270,6 +289,9 @@ class RecommendationsController extends Controller
                 ->orderBy('name')
                 ->get(['id', 'name']);
 
+            $recommendation = Recommendation::with('documents', 'ods','subright')->find(decrypt($id));
+
+            $rights = RightsTrait::orderRights($recommendation->subright->all());
 
 
 
