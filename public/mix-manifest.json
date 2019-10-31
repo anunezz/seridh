@@ -1,3 +1,7 @@
 {
+<<<<<<< refs/remotes/origin/test
     "/js/app.js": "/js/app.js?id=ecdc59bbdf9d8a688203"
+=======
+    "/js/app.js": "/js/app.js?id=1068d29b9f0812678b81"
+>>>>>>> edit tree
 }
