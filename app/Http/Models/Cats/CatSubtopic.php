@@ -22,8 +22,11 @@ use Illuminate\Database\Eloquent\Model;
  */
 class CatSubtopic extends Model
 {
+    protected $table = 'cat_subtopics';
+
     public function topic()
     {
         return $this->belongsTo(CatTopic::class, 'topic_id');
+
     }
 }

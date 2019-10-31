@@ -4,15 +4,12 @@ use App\Http\Models\Cats\CatAttending;
 use App\Http\Models\Cats\CatEntity;
 use App\Http\Models\Cats\CatGobOrder;
 use App\Http\Models\Cats\CatGobPower;
-use App\Http\Models\Cats\CatIde;
 use App\Http\Models\Cats\CatOds;
 use App\Http\Models\Cats\CatDate;
 use App\Http\Models\Cats\CatPopulation;
-use App\Http\Models\Cats\CatReviewRight;
-use App\Http\Models\Cats\CatReviewTopic;
-use App\Http\Models\Cats\CatRightsRecommendation;
 use App\Http\Models\Cats\CatSolidarityAction;
 use App\Http\Models\Cats\CatSubtopic;
+use App\Http\Models\Cats\CatTopic;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 
@@ -24,11 +21,8 @@ use Illuminate\Database\Eloquent\Model;
 
  * @property int|null $cat_entitie_id
  * @property int|null $cat_gob_order_id
- * @property int|null $cat_rights_recommendation_id
  * @property int|null $cat_population_id
  * @property int|null $cat_solidarity_action_id
- * @property int|null $cat_review_right_id
- * @property int|null $cat_review_topic_id
  * @property int|null $cat_date_id
  * @property int|null $user_id
  * @property int|null $cat_od_id
@@ -70,8 +64,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Recommendation extends Model
 {
-    protected $fillable = ['recommendation', 'cat_entity_id', 'cat_rights_recommendation_id', 'cat_date_id',
-        'cat_review_right_id', 'cat_review_topic_id', 'cat_subtopic_id', 'comments', 'isPublished'];
+    protected $fillable = ['recommendation', 'cat_entity_id', 'cat_date_id', 'themes_recommendation', 'cat_topic_id',
+        'cat_subtopic_id', 'comments', 'isPublished'];
 
     protected $appends = ['hash', 'is_creator', 'implode_ods', 'implode_order', 'implode_power', 'implode_attendig',
         'implode_population', 'implode_action'];
@@ -116,14 +110,6 @@ class Recommendation extends Model
         );
     }
 
-    public function right()
-    {
-        return $this->belongsTo(
-            CatRightsRecommendation::class,
-            'cat_rights_recommendation_id'
-        );
-    }
-
     public function population()
     {
         return $this->belongsToMany(
@@ -148,22 +134,6 @@ class Recommendation extends Model
         );
     }
 
-    public function reviewTopic()
-    {
-        return $this->belongsTo(
-            CatReviewTopic::class,
-            'cat_review_topic_id'
-        );
-    }
-
-    public function subtopic()
-    {
-        return $this->belongsTo(
-            CatSubtopic::class,
-            'cat_subtopic_id'
-        );
-    }
-
     public function ods()
     {
         return $this->belongsToMany(
@@ -172,6 +142,15 @@ class Recommendation extends Model
         );
     }
 
+    public function subtopic()
+    {
+        return $this->belongsToMany(
+            CatTopic::class,
+            'themes_recommendation',
+            'recommendation_id',
+            'cat_subtopic_id'
+        );
+    }
 
 
     public function documents()
@@ -242,5 +221,6 @@ class Recommendation extends Model
     {
         return implode(', ', $this->action->pluck('name')->toArray());
     }
+
 }
 

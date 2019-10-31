@@ -99,9 +99,8 @@ class PublicController extends Controller
         //     })->orderBy('id', 'desc')->paginate(2);
 
 
-            $request->population_id;
 
-             $d = ['1','2','3'];
+
 
             $recommendation = Recommendation::with('ods','population')->orWhere(function ($query) use($request){
                         foreach($request->date as $created_at_value){

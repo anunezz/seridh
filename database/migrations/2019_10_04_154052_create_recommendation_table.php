@@ -21,11 +21,9 @@ class CreateRecommendationTable extends Migration {
             $table->unsignedBigInteger('cat_gob_order_id')->nullable();
             $table->unsignedBigInteger('cat_gob_power_id')->nullable();
             $table->unsignedBigInteger('cat_attendig_id')->nullable();
-            $table->unsignedBigInteger('cat_rights_recommendation_id')->nullable();
             $table->unsignedBigInteger('cat_population_id')->nullable();
             $table->unsignedBigInteger('cat_solidarity_action_id')->nullable();
-            $table->unsignedBigInteger('cat_review_right_id')->nullable();
-            $table->unsignedBigInteger('cat_review_topic_id')->nullable();
+            $table->unsignedBigInteger('cat_topic_id')->nullable();
             $table->unsignedBigInteger('cat_subtopic_id')->nullable();
             $table->unsignedBigInteger('cat_ods_id')->nullable();
             $table->unsignedBigInteger('cat_date_id')->nullable();
@@ -38,13 +36,9 @@ class CreateRecommendationTable extends Migration {
                 ->references('id')
                 ->on('users');
 
-
-
             $table->foreign('cat_entity_id')
                 ->references('id')
                 ->on('cat_entities');
-
-
 
             $table->foreign('cat_gob_order_id')
                 ->references('id')
@@ -58,10 +52,6 @@ class CreateRecommendationTable extends Migration {
                 ->references('id')
                 ->on('cat_attendings');
 
-            $table->foreign('cat_rights_recommendation_id')
-                ->references('id')
-                ->on('cat_rights_recommendations');
-
             $table->foreign('cat_population_id')
                 ->references('id')
                 ->on('cat_populations');
@@ -70,13 +60,9 @@ class CreateRecommendationTable extends Migration {
                 ->references('id')
                 ->on('cat_solidarity_actions');
 
-            $table->foreign('cat_review_right_id')
+            $table->foreign('cat_topic_id')
                 ->references('id')
-                ->on('cat_review_rights');
-
-            $table->foreign('cat_review_topic_id')
-                ->references('id')
-                ->on('cat_review_topics');
+                ->on('cat_topics');
 
             $table->foreign('cat_subtopic_id')
                 ->references('id')
