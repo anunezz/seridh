@@ -212,7 +212,6 @@
                         :data="rights"
                         show-checkbox
                         node-key="id"
-                        default-expand-all
                         :props="defaultProps"
                         :default-checked-keys="showIds"
                         @check="rightsTree">
@@ -317,10 +316,10 @@
                     <el-button type="danger" style="width: 100%" @click="$router.push('/recomendaciones')">Cancelar</el-button>
                 </el-col>
                 <el-col :span="3.5" >
-                    <el-button type="danger" style="width: 100%" @click="submitForm(false)">Actualizar y Quitar de publicado </el-button>
+                    <el-button type="success" style="width: 100%" @click="submitForm(false)">Actualizar y Quitar de publicado </el-button>
                 </el-col>
                 <el-col :span="3.1" >
-                    <el-button type="success" style="width: 100%" @click="submitForm(true)">Actualizar y Publicar</el-button>
+                    <el-button type="primary" style="width: 100%" @click="submitForm(true)">Actualizar y Publicar</el-button>
                 </el-col>
             </el-row>
         </el-form>
@@ -475,7 +474,7 @@
                 if (ids.length!==0){
                     let $this = this;
                     ids.forEach(function(el) {
-                        if (el.right_id!==undefined){
+                        if (el.add===1){
                             $this.recommendationForm.listRights.push(el);
                         }
                     });

@@ -29,7 +29,7 @@ class RecommendationsController extends Controller
             $data = $request->all();
 
             $recommendations = Recommendation::with('user', 'ods', 'entity:id,name',
-                'order', 'power')
+                'order', 'power','date')
                 ->search($data['filters'])
                 ->where('isActive', true)
                 ->orderBy('updated_at', 'DESC')
@@ -70,7 +70,7 @@ class RecommendationsController extends Controller
                 ->orderBy('name')
                 ->get(['id', 'name']);
 
-            $rights = RightsTrait::orderRights(null);
+            $rights = RightsTrait::orderRights(null,null,null);
 
             $populations = CatPopulation::where('isActive', 1)
                 ->orderBy('name')
@@ -164,14 +164,13 @@ class RecommendationsController extends Controller
 
             $listRights=[];
             foreach ($data['listRights'] as $item){
-                $listRights[$item['id']]=[
-                    'right_id' => $item['right_id']
+                $listRights[$item['right_id']]=[
+                    'subrigth_id' => $item['subrights_id'],
+                    'subcategory_subrights_id' => $item['subcategory_id']
                 ];
+                $recommendation->right()->attach($listRights);
+                $listRights=[];
             }
-
-            $recommendation->subright()->sync($listRights);
-
-
 
             if ( count($data['cat_ods_id']) > 0 ) {
                 $recommendation->ods()->sync($data['cat_ods_id']);
@@ -312,9 +311,9 @@ class RecommendationsController extends Controller
                 'children' => $topics
             ];
 
-            $recommendation = Recommendation::with('documents', 'ods', 'order', 'power', 'attendig', 'population','subright')->find(decrypt($id));
+            $recommendation = Recommendation::with('documents', 'ods', 'order', 'power', 'attendig', 'population','right','subright','subcategory')->find(decrypt($id));
 
-            $rights = RightsTrait::orderRights($recommendation->subright->all());
+            $rights = RightsTrait::orderRights($recommendation->right->all(),$recommendation->subright->all(),$recommendation->subcategory->all());
 
             $recommendationForm = [
                 'recommendation'               => $recommendation->recommendation,
@@ -374,15 +373,17 @@ class RecommendationsController extends Controller
             $recommendation->fill($data);
             $recommendation->save();
 
+            $recommendation->right()->detach();
+
             $listRights=[];
             foreach ($data['listRights'] as $item){
-                $listRights[$item['subright_id']]=[
-                    'right_id' => $item['right_id']
+                $listRights[$item['right_id']]=[
+                    'subrigth_id' => $item['subrights_id'],
+                    'subcategory_subrights_id' => $item['subcategory_id']
                 ];
+                $recommendation->right()->attach($listRights);
+                $listRights=[];
             }
-
-            $recommendation->subright()->sync($listRights);
-
 
             if ( count($data['cat_ods_id']) > 0 ) {
                 $recommendation->ods()->sync($data['cat_ods_id']);
