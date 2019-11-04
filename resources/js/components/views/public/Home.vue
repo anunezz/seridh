@@ -147,7 +147,7 @@
             <div class="card">
                 <div class="card-body" style="padding: 5px;">
                     <div class="col-md-3" v-for="(item,index) in arrayFilter" :key="index" style="padding: 5px;">
-                        <div v-if="item.label !== 'Buscar Recomendación'" class="first" v-bind:class="[item.btn === false ? '' :'firstClik']" style="padding: 5px!important;" @click="panelBusqueda(item)" if>
+                        <div v-if="item.label !== 'Buscar'" class="first" v-bind:class="[item.btn === false ? '' :'firstClik']" style="padding: 5px!important;" @click="panelBusqueda(item)" if>
                             <div v-text="item.label" style="float:left; width: 85%;"> {{item.label}} </div>
                             <div style="float:left; width: 10%;" class="text-right"><span v-bind:class="[item.btn === false ? 'glyphicon glyphicon-chevron-up' : 'glyphicon glyphicon-chevron-down']" aria-hidden="true"></span></div>
                         </div>
@@ -156,23 +156,27 @@
                             <div style="float:left; width: 10%;" class="text-right"><span class="icon-search" aria-hidden="true"></span></div>
                         </div>
                     </div>
-
-
-                   <!-- <button class="btn btn-danger"  @click="filters()"   type="button">Buscar</button> -->
-
-
-
-
-
                 </div>
             </div>
-            <div class="card">
+            <div class="card" v-if="cardCheckbox === true">
                 <div class="card-body col-md-12" style="padding: 20px;">
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h4>Seleccionar</h4>
+                            </div>
+
+                            <div class="form-group col-md-12">
+                                <input type="text" class="form-control" placeholder="Buscar">
+                            </div>
+                        </div>
+
+
                     <div v-for="(item,index) in arrayFilter" :key="index">
                         <div v-if="btnSelect === item.id && item.id !== 0">
                             <div class="form-check animated fadeIn fast" v-for="(i,index) in item.data" :key="index">
                                 <label class="form-check-label">
-                                    <input type="checkbox" class="form-check-input" :value="i.id" v-model="checkedNames[item.id].check">
+                                    <input @change="checkbox(item.id,i.id,i.name)" type="checkbox" class="form-check-input" :value="i.id" v-model="checkedNames[item.id].check">
                                     {{i.name}}
                                 </label>
                             </div>
@@ -193,73 +197,7 @@
 </div>
 
 
-
-
-
-            <!-- <div class="card">
-            <div class="col-md-12" style="padding-top: 10px; padding-left: -8px;">
-                <span class="glyphicon glyphicon-list-alt" ></span> Total: 4
-                            <ul class="pagination pull-right">
-                                <li class="page-item" v-if="pagination.current_page > 1">
-                                    <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1)">Ant</a>
-                                </li>
-                                <li class="page-item" v-for="page in pagesNumber" :key="page" :class="[page == isActived ? 'active' : '']">
-                                    <a class="page-link" href="#" @click.prevent="cambiarPagina(page)" v-text="page"></a>
-                                </li>
-                                <li class="page-item" v-if="pagination.current_page < pagination.last_page">
-                                    <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1)">Sig</a>
-                                </li>
-                            </ul>
-            </div>
-
-                <div class="col-md-12">
-                    <div class="col-md-2" v-for="(item,index) in checkedNames" :key="index">
-                        <ul style="margin-top: -0px; !important">
-                            <li v-for="(i,indexx) in item.check" :key="indexx" v-text="changeValuesNames(i,item)">
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="card-body col-md-12" style="padding: 20px;">
-                    <table class="table table-bordered animated fadeIn fast">
-                        <thead>
-                            <tr>
-                                <th scope="col" v-for="(item,index) in arrayFilter" :key="index" >
-                                    <div v-if="item.label === 'Buscar Recomendación'">
-                                        Ver
-                                    </div>
-                                </th>
-                            </tr>
-                        </thead>
-                            <tbody>
-                                <tr v-for="(item,index) in results" :key="index">
-                                    <td style="width: 145px!important" v-text="transformNamesTableColums(item.created_at,0)"></td>
-                                    <td style="width: 145px!important" v-text="transformNamesTableColums(item.cat_entity_id,1)"></td>
-                                    <td style="width: 145px!important" v-text="transformNamesTableColums(item.cat_population_id,2)"></td>
-                                    <td style="width: 145px!important" v-text="transformNamesTableColums(item.cat_review_topic_id,3)"></td>
-                                    <td style="width: 145px!important" v-text="transformNamesTableColums(item.cat_attendig_id,4)"></td>
-                                    <td style="width: 145px!important" >Sin datos</td>
-                                    <td style="width: 145px!important">
-                                        <router-link :to="{name:'PublicFilter', params: {json:item }}" >
-                                          <button type="button" class="btn btn-success btn-block btn-sm"> Ver <span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></button>
-                                        </router-link>
-                                    </td>
-                                </tr>
-                            </tbody>
-                    </table>
-                </div>
-            </div>  -->
-
-            <!-- TERMINA CARD PARA TABLA DE FILTROS -->
-
-
- <!-- {{results}}
- ----------------------------
-{{checkedNames}} -->
-
-<!-- {{checkedNames}} -->
-
+{{checkedNames}}
 
 	        <h2>Enlaces de interés</h2>
 	        <hr class="red small-margin">
@@ -337,6 +275,7 @@
             return {
               countRecommendations:0,
               idPage: 1,
+              cardCheckbox:false,
               visitas:0,
               issuingEntities: 0,
               arrayFilter:[],
@@ -361,6 +300,11 @@
         created() {
         },
         methods: {
+            checkbox(key,value,name){
+             let me = this;
+             console.log("Estas ern la funcion checkbox: ",key,value,name);
+
+            },
             filters(){
               let me = this;
               let suma = 0;
@@ -379,7 +323,6 @@
               }else{
                  data.check = me.checkedNames;
                  data.names = me.arrayFilter;
-                /// data.response = me.results;
                  me.$router.push({name:'PublicFilter', params: {json: data }});
                  //me.$router.push({path: '/publico/filtros', params: {json:me.checkedNames }});
               }
@@ -392,6 +335,7 @@
                     if(me.arrayFilter[i].id === item.id){
                           me.arrayFilter[i].btn = (me.arrayFilter[i].btn === false)? true : false;
                           me.btnSelect = me.arrayFilter[i].id;
+                          me.cardCheckbox = true;
                     }
                 }
             },
@@ -410,7 +354,7 @@
                 axios.post('/api/public/visits',{
                     'id': me.idPage
                 }).then(function (response){
-                    console.log("RESPONSE VISITS: ",response);
+                   // console.log("RESPONSE VISITS: ",response);
                     me.visitas = response.data.lResults;
                 }).catch(function (error) {
                     console.log(error);
@@ -461,38 +405,29 @@
                 //Envia la petición para visualizar la data de esa página
                 me.recommendationFilter(page);
             },
-            recommendationFilter(page){
+            recommendationFilter(){
               let me = this,url='',data={};
-
-                 console.log("Estas aqui......");
-
-                            url= '/api/public/recommendationFilter?page=' + page;
-                            data={
-                            'date': me.checkedNames[0].check,
-                            'entity_id':me.checkedNames[1].check,
-                            'population_id':me.checkedNames[2].check,
-                            'review_topic_id':me.checkedNames[3].check,
-                            'attendig_id':me.checkedNames[4].check
-                            };
-
-
-
-                  me.filters();
-                  return;
+                    data={
+                        'date': me.checkedNames[0].check,
+                        'entity_id':me.checkedNames[1].check,
+                        'population_id': me.checkedNames[2].check,
+                        'attending_id': me.checkedNames[4].check,
+                        'ods_id': me.checkedNames[5].check
+                    };
                   axios.post('/api/public/recommendationFilter', data).then(function (response){
-                       // console.log("RECOMMENDATION FILTER:",response.data);
-                        // me.results = response;
-                        // console.log("REULTADOS: ",me.results);
-                        // return;
+                     if(response.data.success === true){
+                        console.log("RESPONSErecommendationFilter(): ",response);
+                       // return;
+                        let datos = {};
+                        datos.check = me.checkedNames;
+                       // datos.names = me.arrayFilter;
+                        datos.names = response.data.lResults.checkNames;
+                        datos.count = response.data.lResults.count;
+                        datos.jsonFilters = response.data.lResults.jsonFilters;
+                        me.$router.push({name:'PublicFilter', params: {json: datos }});
+                     }else{
 
-
-                        if( response.data.lResults.data.length > 0 ){
-                            me.results = response.data.lResults.data;
-                            console.log("RESPONSE: ",me.results);
-                           // me.pagination= response.data.pagination;
-                 }else{
-                    me.message('warning','Sin results.');
-                 }
+                     }
                 }).catch(function (error) {
                     me.loading=false;
                     console.log(error);
@@ -629,7 +564,7 @@ a[data-v-2e10a77a]:link{text-decoration:none;color:#fff!important}a[data-v-2e10a
 /* Estilos Adrian Nuñez Alanis  */
 .first{
  width: 100%;
- height: 50px;
+ height: 35px;
  border: 1px solid  #13322B;
  border-radius: 4px;
  padding: 7px;

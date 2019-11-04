@@ -7,58 +7,157 @@
             <hr class="red small-margin">
         </div>
         <div class="col-md-12">
-             <span class="glyphicon glyphicon-list-alt" ></span> Total: 4
+             <span class="glyphicon glyphicon-list-alt" ></span> <strong> <b>Total: {{total}}  </b></strong>
+
+             <router-link :to="{ name:'PublicHome' }" >
+                <button class="btn btn-success pull-right btn-sm" type="button">
+                    Regresar <span class="glyphicon glyphicon glyphicon-share-alt" aria-hidden="true"></span>
+                </button>
+            </router-link>
         </div>
         <div class="col-md-12">
            <div class="row">
-                <div v-for="(item,index) in names" :key="index" class="col-md-2">
-                    <h5 v-text="item.label"></h5>
-                    <ul>
-                        <li v-for="(i, indexx) in changeNamesValues(item)" :key="indexx">
-                            <span v-if="item.id === 0" v-text="i.year"></span>
-                            <span v-else v-text="i.name"></span>
+                <div class="col-md-2"></div>
+                <div class="col-md-8">
+                    <ul style="list-style:none;">
+                        <li v-for="(item,index) in names" :key="index">
+                            <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
+                            <label v-for="(i,ind) in item.years" :key="ind" >
+                                <strong v-if="item.years.length -1 === ind"> {{ i }}. </strong>
+                                <strong v-else> {{ i }}, &nbsp;</strong>
+                            </label>
+                            <label v-for="(i,ind) in item.entity" :key="ind">
+                                <strong v-if="item.entity.length -1 === ind"> {{ i }}. </strong>
+                                <strong v-else> {{ i }},  &nbsp;</strong>
+                            </label>
+                            <label v-for="(i,ind) in item.population" :key="ind">
+                                <strong v-if="item.population.length -1 === ind"> {{ i }}. </strong>
+                                <strong v-else> {{ i }},  &nbsp;</strong>
+                            </label>
                         </li>
                     </ul>
                 </div>
+                <div class="col-md-2"></div>
             </div>
         </div>
         <div class="col-md-12">
-            <button class="pull-right btn btn-info btn-xs" @click="loadPdf()">
-                PDF <span class="glyphicon glyphicon glyphicon-file" aria-hidden="true"></span>
-            </button>
-            <button class="pull-right btn btn-success btn-xs" @click="loadExcel()">
-                EXCEL <span class="glyphicon glyphicon glyphicon-file" aria-hidden="true"></span>
-            </button>
-            <button class="pull-right btn btn-info btn-xs" @click="loadWord()">
+            <button class="pull-right btn btn-info btn-sm" @click="loadWord()">
                 WORD <span class="glyphicon glyphicon glyphicon-file" aria-hidden="true"></span>
             </button>
+            <button class="pull-right btn btn-success btn-sm" @click="loadExcel()">
+                EXCEL <span class="glyphicon glyphicon glyphicon-file" aria-hidden="true"></span>
+            </button>
+            <button class="pull-right btn btn-info btn-sm" @click="loadPdf()">
+                PDF <span class="glyphicon glyphicon glyphicon-file" aria-hidden="true"></span>
+            </button>
         </div>
-        <div class="col-md-12" v-for="(item,index) in texto" :key="index">
+        <div class="col-md-12" v-for="(item,index) in jsonFilters" :key="index">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    Titulo de la recomendación
-                    <div class="pull-right">
-                        <span style="float: left; padding-right: 20px;">
-                            <span class="icon-calendar" aria-hidden="true"></span> 12/12/2019 &nbsp; &nbsp;
-                        </span>
+                    <div class="row">
+                        <div class="col-md-10">
+                          <h5 v-text="item.entity_id"></h5>
+                        </div>
+                        <div class="col-md-2 pull-right" style="padding-top: 11px;">
+                          <span class="icon-calendar" aria-hidden="true"  style="float: left; padding-right: 5px;"></span>
+                          <span v-text="changeNamesValues('date',item.creted_at)" > </span>
+                        </div>
                     </div>
                 </div>
                 <div class="panel-body">
                     <div class="row">
                         <div class="col-md-12">
-                          <span v-text="showString(item.txt,index,true)"></span> <button @click="btnshow(item.txt, index
-                          )">+</button>
+                          <p>
+                               <span v-if="jsonTxt[index].bool === true" v-text="jsonTxt[index].txxt"></span>
+                               <span v-if="jsonTxt[index].bool === false" v-text="jsonTxt[index].txt"></span>
+                               <button class="fast btn btn-default btn-xs" type="button" @click="btn(index)" v-if="jsonTxt[index].btn === true && jsonTxt[index].bool === true" >+</button>
+                               <button class="fast btn btn-default btn-xs" type="button" @click="btn(index)" v-if="jsonTxt[index].btn === true && jsonTxt[index].bool === false" >-</button>
+                          </p>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h5>Entidad emisora</h5>
+                                </div>
+                                <div class="col-md-12">
+                                    <ul style="list-style:none; margin:0; padding:0;">
+                                        <li v-for="(i,indexx) in changeNamesValues('jsonItems',item.entity_id)" :key="indexx">
+                                            <span v-text="i"></span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h5>ODS</h5>
+                                </div>
+                                <div class="col-md-12">
+                                    <ul style="list-style:none; margin:0; padding:0;">
+                                        <li v-for="(i,indexx) in changeNamesValues('jsonItems',item.ods)" :key="indexx">
+                                            <span v-text="i"></span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h5>Población</h5>
+                                </div>
+                                <div class="col-md-12">
+                                    <ul style="list-style:none; margin:0; padding:0;">
+                                        <li v-for="(i,indexx) in changeNamesValues('jsonItems',item.population)" :key="indexx">
+                                            <span v-text="i"></span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h5>Derechos Humanos</h5>
+                                </div>
+                                <div class="col-md-12">
+                                    <ul style="list-style:none; margin:0; padding:0;">
+                                        <li v-for="(i,indexx) in changeNamesValues('jsonItems',item.derechos)" :key="indexx">
+                                            <span v-text="i"></span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h5>Autoridad</h5>
+                                </div>
+                                <div class="col-md-12">
+                                    <ul style="list-style:none; margin:0; padding:0;">
+                                        <li v-for="(i,indexx) in changeNamesValues('jsonItems',item.attendings)" :key="indexx">
+                                            <span v-text="i"></span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h5>Temas</h5>
+                                </div>
+                                <div class="col-md-12">
+                                    <ul style="list-style:none; margin:0; padding:0;">
+                                        <li v-for="(i,indexx) in changeNamesValues('jsonItems',item.themas)" :key="indexx">
+                                            <span v-text="i"></span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <button class="btn btn-success pull-right btn-xs" @click="detail(item.id)" type="button" > Detalle</button>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-12 pull-right" style="padding: 20px;">
-            <router-link :to="{ name:'PublicHome' }" >
-                <button class="btn btn-success pull-right btn-sm" type="button">
-                    Regresar <span class="glyphicon glyphicon glyphicon-share-alt" aria-hidden="true"></span>
-                </button>
-            </router-link>
         </div>
     </div>
 </div>
@@ -70,74 +169,47 @@
    export default {
       data(){
          return {
+           total:0,
+           showTxtRcommendation: false,
+           jsonFilters:[],
            json:[],
            check:[],
            names:[],
-           jsonTxt:[],
-           texto:[{txt: '1 texto agregado ... Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt nisi dolores, omnis dicta distinctio possimus illo nulla totam magnam. Deleniti porro officia suscipit repudiandae, blanditiis magnam ipsam est culpa qLorem ipsum dolor sit, amet consectetur adipisicing elit. Doloremque voluptatem eum non, error nihil repellendus commodi, velit mollitia, quas ut dolores omnis cupiditate praesentium neque perspiciatis libero ex id consequatur? Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga dicta provident, corrupti quis, non doloribus omnis id nobis expedita explicabo error beatae excepturi asperiores quos ex vitae laboriosam, eveniet consequuntur.'},
-                  {txt: '2 texto agregado ... Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt nisi dolores, omnis dicta distinctio possimus illo nulla totam magnam. Deleniti porro officia suscipit repudiandae, blanditiis magnam ipsam est culpa qLorem ipsum dolor sit, amet consectetur adipisicing elit. Doloremque voluptatem eum non, error nihil repellendus commodi, velit mollitia, quas ut dolores omnis cupiditate praesentium neque perspiciatis libero ex id consequatur? Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga dicta provident, corrupti quis, non doloribus omnis id nobis expedita explicabo error beatae excepturi asperiores quos ex vitae laboriosam, eveniet consequuntur.'}],
-
+           jsonTxt:[]
          }
       },
       methods:{
-       btnshow(string,index){
-           let me = this;
-           let buscar = me.jsonTxt.find(item.id === index);
+       detail(id){
+        let me = this;
 
-           if(buscar){
-
-
-
-           }else{
-               console.error("error");
-           }
-
-
+        me.$router.push({name:'PublicDetails', params: {json: id }});
 
        },
-       showString(string,index,bool){
-        let me = this;
-        let buscar =  me.jsonTxt.find(item => {  return item.id === index });
-
-         if(buscar){
-
-           if(buscar.show === true){
-               return buscar.text.substr(0,160);
-           }else{
-               return buscar.original;
-           }
-
-
-         }else{
-            me.jsonTxt.push({id: index, text:string, show: bool, original: string});
-            return string.substr(0,160);
-         }
+       btn(index){
+         let me = this;
+             me.jsonTxt[index].bool = !me.jsonTxt[index].bool;
        },
-       changeNamesValues(value){
+       showRcommendation(){
         let me = this;
-        if(value.id === 0){
-          return value.data;
-        }else{
-           console.log("ARREGLO: ",value);
-
-           let data = [];
-
-           for (let i = 0; i < value.data.length; i++){
-             console.log("ID:",value.data[i].id);
-             console.log("name:",value.data[i].name);
-
-
-
-
-           }
-
-
-           console.log("DATA: ",me.check);
-
-           return data;
-
+            me.showTxtRcommendation = !me.showTxtRcommendation;
+       },
+       changeNamesValues(action,value){
+        let me = this;
+        switch (action) {
+            case 'date':
+            {
+             value = value.substr(0,10);
+             value = value.split('-');
+             return value = `${value[2]}/${value[1]}/${value[0]}`;
+             break;
+            }
+            case 'jsonItems':
+            {
+             value = value.split(',');
+             return value;
+             break;
+            }
         }
-
 
        },
        loadPdf(){
@@ -151,7 +223,7 @@
        },
        loadWord(){
            let me = this;
-          // alert("Estas descargando el documento de word...");
+           alert("Estas descargando el documento de word...");
            window.open('/api/public/listarWord','_blank');
        }
       },
@@ -165,16 +237,33 @@
             let me = this;
                 me.json = me.$route.params.json;
 
-               console.log("JSON FILTER: ",me.json);
+                console.log("JSON------>:   ",me.json);
+
+                me.total = me.json.count;
+                me.jsonFilters = me.json.jsonFilters;
+
+                console.log("FILTROS:   ",me.jsonFilters);
+
+                for (let i = 0; i < me.jsonFilters.length; i++) {
+                    console.log("sssss",me.jsonFilters[i]);
+                 let value = '', bool= true, btn=true;
+                 me.jsonFilters[i].recommendation = me.jsonFilters[i].recommendation.replace('<p style="font-family: Montserrat; font-size: 14px; font-style: normal; font-weight: normal;">', ' ');
+                 //value = me.jsonFilters[i].recommendation.replace('<p style="font-family: Montserrat; font-size: 14px; font-style: normal; font-weight: normal;">', "");
+                 value = me.jsonFilters[i].recommendation.replace('</p>',' ');
+                 bool = (value.length > 160 )? true : false;
+                 btn = (value.length > 160 )? true : false;
+                 me.jsonTxt.push({ id: me.jsonFilters[i].id,
+                                  txt: value,
+                                 txxt: value.substr(0,160),
+                                 bool: bool,
+                                  btn: btn
+                });
+                }
 
 
                 me.check= me.json.check;
                 me.names = me.json.names;
-                me.names = me.names.filter(item => {
-                    return item.label != "Buscar Recomendación";
-                });
-
-                console.log("CHEKS: ",me.check);
+                console.log("CHEKS: ",me.names);
 
            // console.log("ARREGLO SELECCIONADOS: ",me.json);
         }

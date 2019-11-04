@@ -43,6 +43,7 @@ return array(
     'App\\Http\\Models\\Cats\\CatTopic' => $baseDir . '/app/Http/Models/Cats/CatTopic.php',
     'App\\Http\\Models\\Cats\\CatTransactionType' => $baseDir . '/app/Http/Models/Cats/CatTransactionType.php',
     'App\\Http\\Models\\Document' => $baseDir . '/app/Http/Models/Document.php',
+    'App\\Http\\Models\\PublicRecommendation' => $baseDir . '/app/Http/Models/PulicRecommendation.php',
     'App\\Http\\Models\\Recommendation' => $baseDir . '/app/Http/Models/Recommendation.php',
     'App\\Http\\Models\\Transaction' => $baseDir . '/app/Http/Models/Transaction.php',
     'App\\Http\\Models\\Visits' => $baseDir . '/app/Http/Models/Visits.php',

@@ -717,6 +717,7 @@ class ComposerStaticInitaa1e49d2248e0f40390a0ae4fd1fe58b
         'App\\Http\\Models\\Cats\\CatTopic' => __DIR__ . '/../..' . '/app/Http/Models/Cats/CatTopic.php',
         'App\\Http\\Models\\Cats\\CatTransactionType' => __DIR__ . '/../..' . '/app/Http/Models/Cats/CatTransactionType.php',
         'App\\Http\\Models\\Document' => __DIR__ . '/../..' . '/app/Http/Models/Document.php',
+        'App\\Http\\Models\\PublicRecommendation' => __DIR__ . '/../..' . '/app/Http/Models/PulicRecommendation.php',
         'App\\Http\\Models\\Recommendation' => __DIR__ . '/../..' . '/app/Http/Models/Recommendation.php',
         'App\\Http\\Models\\Transaction' => __DIR__ . '/../..' . '/app/Http/Models/Transaction.php',
         'App\\Http\\Models\\Visits' => __DIR__ . '/../..' . '/app/Http/Models/Visits.php',
