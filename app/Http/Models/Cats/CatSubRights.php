@@ -1,8 +1,6 @@
 <?php
 
 namespace App\Http\Models\Cats;
-
-use App\Http\Models\Recommendation;
 use Illuminate\Database\Eloquent\Model;
 
 class CatSubRights extends Model
@@ -16,7 +14,12 @@ class CatSubRights extends Model
 
     public function rigthRecommendation()
     {
-        return $this->belongsTo(CatSubRights::class);
+        return $this->belongsTo(CatRightsRecommendation::class);
+    }
+
+    public function subcategories()
+    {
+        return $this->hasMany(CatSubcategorySubrights::class, 'sub_rights_id');
     }
 }
 

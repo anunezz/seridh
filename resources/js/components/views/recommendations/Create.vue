@@ -447,7 +447,7 @@
                 if (ids.length!==0){
                     let $this = this;
                     ids.forEach(function(el) {
-                        if (el.right_id!==undefined){
+                        if (el.add===1){
                             $this.recommendationForm.listRights.push(el);
                         }
                     });

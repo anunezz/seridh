@@ -26,6 +26,9 @@ class DatabaseSeeder extends Seeder
             CatLanguageSeeder::class,
             CatDateSeeder::class,
             CatRightRecommendationSeeder::class,
+            CatSubRightsTableSeeder::class,
+            CatSubCategorySubRightsTableSeeder::class,
+
 
 
             VisitsSeeder::class,
