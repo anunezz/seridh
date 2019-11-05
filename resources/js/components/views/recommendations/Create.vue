@@ -226,9 +226,10 @@
                     </el-tree>
                 </el-col>
                 <el-col :span="12">
+                    <pre>{{recommendationForm.listThemes}}</pre>
                     <el-tree
-                        ref="themes"
-                        :data="tree"
+                        ref="tree"
+                        :data="topics"
                         show-checkbox
                         node-key="id"
                         :props="defaultProps"
@@ -307,11 +308,12 @@
         data() {
             return {
 
-                tree: null,
-                defaultProps: {
-                    children: 'children',
-                    label: 'label'
-                },
+                tree: [],
+               // tree: null,
+               // defaultProps: {
+               //     children: 'children',
+               //     label: 'label'
+               // },
 
                 lang: {
                     "header": {
@@ -326,7 +328,7 @@
                 populations: [],
                 actions: [],
                 topics: [],
-                subtopics: [],
+               // subtopics: [],
                 ods: [],
                 dates: [],
 
@@ -399,7 +401,7 @@
                 this.populations = response.data.populations;
                 this.actions = response.data.actions;
                 this.topics = response.data.topics;
-                this.subtopics = response.data.subtopics;
+            //    this.subtopics = response.data.subtopics;
                 this.ods = response.data.ods;
                 this.dates = response.data.dates;
                 this.tree = response.data.tree;
@@ -429,9 +431,9 @@
             ...mapActions("bulkLoading", ['deleteRow']),
 
             themesTree(){
-                let ide = this.$refs.themes.getCheckedNodes();
+                let ide = this.$refs.tree.getCheckedNodes();
                 this.recommendationForm.listThemes=[];
-                if (ide.lenght!==0){
+                if (ide.length!==0){
                     let $this = this;
                     ide.forEach(function(el){
                         if(el.cat_topic_id!==undefined){

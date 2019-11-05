@@ -219,13 +219,15 @@
                     </el-tree>
                 </el-col>
                 <el-col :span="12">
+                    <pre>{{recommendationForm.listThemes}}</pre>
                     <el-tree
-                        ref="themes"
-                        :data="tree"
+                        ref="tree"
+                        :data="topics"
                         show-checkbox
                         node-key="id"
+                        default-expand-all
                         :props="defaultProps"
-                        :default-checked-keys="[]"
+                        :default-checked-keys="showIde"
                         @check="themesTree">
                     </el-tree>
                 </el-col>
@@ -340,6 +342,8 @@
         data() {
             return {
                 showIds:[],
+                showIde:[],
+
                 tree: null,
                 defaultProps: {
                     children: 'children',
@@ -356,7 +360,7 @@
                 actions: [],
                 reviews: [],
                 topics: [],
-                subtopics: [],
+             //   subtopics: [],
                 ods: [],
                 dates: [],
 
@@ -380,7 +384,7 @@
                     cat_solidarity_action_id: [],
                     cat_review_right_id: null,
                     cat_review_topic_id: null,
-                    cat_subtopic_id: [],
+                    //cat_subtopic_id: [],
                     cat_ods_id: [],
                     cat_date_id: null,
                     comments: '',
@@ -433,13 +437,14 @@
                 this.actions = response.data.actions;
                 this.reviews = response.data.reviews;
                 this.topics = response.data.topics;
-                this.subtopics = response.data.subtopics;
+         //       this.subtopics = response.data.subtopics;
                 this.ods = response.data.ods;
                 this.dates = response.data.dates;
                 this.tree = response.data.tree;
                 this.recommendationForm = response.data.recommendationForm;
                 this.recommendationForm.files = [];
                 this.showIds = response.data.showIds;
+                this.showIde = response.data.showIde;
 
                 this.stopLoading();
 
@@ -458,9 +463,9 @@
             },
 
             themesTree(){
-                let ide = this.$refs.themes.getCheckedNodes();
+                let ide = this.$refs.tree.getCheckedNodes();
                 this.recommendationForm.listThemes=[];
-                if (ide.lenght!==0){
+                if (ide.length!==0){
                     let $this = this;
                     ide.forEach(function(el){
                         if(el.cat_topic_id!==undefined){
