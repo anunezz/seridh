@@ -173,7 +173,7 @@
 
 
                     <div v-for="(item,index) in arrayFilter" :key="index">
-                        <div v-if="btnSelect === item.id && item.id !== 0">
+                        <div v-if="btnSelect === item.id && item.id !== 0 && item.id !== 6 ">
                             <div class="form-check animated fadeIn fast" v-for="(i,index) in item.data" :key="index">
                                 <label class="form-check-label">
                                     <input @change="checkbox(item.id,i.id,i.name)" type="checkbox" class="form-check-input" :value="i.id" v-model="checkedNames[item.id].check">
@@ -189,6 +189,46 @@
                                 </label>
                             </div>
                         </div>
+
+                        <div v-else-if="btnSelect === item.id && item.id === 6">
+                            <ul>
+                                <li v-for="(itemUno,indexUno) in item.data" :key="indexUno">
+                                    <div class="form-check animated fadeIn fast">
+                                        <label class="form-check-label">
+                                            <input type="checkbox" class="form-check-input" :value="itemUno.id">
+                                            {{itemUno.name}}
+                                        </label>
+                                    </div>
+
+                                    <ul>
+                                        <li v-for="(itemDos,indexDos) in  itemUno.data" :key="indexDos">
+                                            <!-- <span v-text="itemDos.name"></span> -->
+                                                <div class="form-check animated fadeIn fast">
+                                                    <label class="form-check-label">
+                                                        <input type="checkbox" class="form-check-input" :value="itemDos.id" v-model="checkedNames[item.id].check">
+                                                        {{itemDos.name}}
+                                                    </label>
+                                                </div>
+                                            <ul>
+                                                <li v-for="(itemTres,indexTres) in itemDos.data" :key="indexTres">
+                                                    <span v-text="itemTres.name"></span>
+                                                    <ul>
+                                                        <li v-for="(itemCuatro,indexCuatro) in itemTres.data" :key="indexCuatro">
+                                                            <span v-text="itemCuatro.name"></span>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+
+
+
+
+
                     </div>
                 </div>
             </div>
@@ -300,6 +340,9 @@
         created() {
         },
         methods: {
+            treeDerechosHumanos(){
+             let me = this;
+            },
             checkbox(key,value,name){
              let me = this;
              console.log("Estas ern la funcion checkbox: ",key,value,name);
@@ -596,6 +639,45 @@ a[data-v-2e10a77a]:link{text-decoration:none;color:#fff!important}a[data-v-2e10a
 margin: 0px auto !important;
 top: 70px !important;
 }
+
+
+ul, #myUL {
+  list-style-type: none;
+}
+
+#myUL {
+  margin: 0;
+  padding: 0;
+}
+
+.box {
+  cursor: pointer;
+  -webkit-user-select: none; /* Safari 3.1+ */
+  -moz-user-select: none; /* Firefox 2+ */
+  -ms-user-select: none; /* IE 10+ */
+  user-select: none;
+}
+
+.box::before {
+  content: "\2610";
+  color: black;
+  display: inline-block;
+  margin-right: 6px;
+}
+
+.check-box::before {
+  content: "\2611";
+  color: dodgerblue;
+}
+
+.nested {
+  display: none;
+}
+
+.active {
+  display: block;
+}
+
 
 
 </style>

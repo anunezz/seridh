@@ -9,7 +9,13 @@ use App\Http\Models\Cats\CatEntity;//Entidad emisora 1
 use App\Http\Models\Cats\CatGobOrder; //Orden de gobierno 2
 use App\Http\Models\Cats\CatGobPower; //Poder de gobierno 3
 use App\Http\Models\Cats\CatAttending; //Entidad encargada de attender
+
+
 use App\Http\Models\Cats\CatRightsRecommendation; //Derechos de la recomendacion 4
+use App\Http\Models\Cats\CatSubRights;
+use App\Http\Models\Cats\CatSubcategorySubrights;
+
+
 use App\Http\Models\Cats\CatPopulation; //Poblacion 5
 use App\Http\Models\Cats\CatSolidarityAction; //Accion solidaria 6
 use App\Http\Models\Cats\CatReviewTopic; // Revision de tema(s) 9
@@ -60,6 +66,40 @@ class PublicController extends Controller
                                                        ->groupBy('year')
                                                        ->orderBy('year', 'desc')
                                                        ->get();
+
+        $CatRightsRecommendation = CatRightsRecommendation::where('isActive', 1)->get(['id', 'name']); // 1
+        $CatSubRights = CatSubRights::where('isActive', 1)->get(['id', 'name','rights_recommendations_id']); // 2
+        $CatSubcategorySubrights = CatSubcategorySubrights::where('isActive', 1)->get(['id', 'name','sub_rights_id']); //3
+
+        $data = array();
+        $catrigth = array();
+
+        foreach($CatRightsRecommendation as $value){
+
+            $subRights = array();
+
+            foreach ($CatSubRights as $CatSubRights_value){
+                if($CatSubRights_value->rights_recommendations_id === $value->id ){
+                    $SubSubrights = array();
+                        foreach ($CatSubcategorySubrights as $value_categorySubrights){
+                            if($value_categorySubrights->sub_rights_id === $CatSubRights_value->id){
+                                array_push($SubSubrights, array( 'id' => $value_categorySubrights->id,
+                                'sub_rights_id' => $value_categorySubrights->sub_rights_id,
+                                'name' => $value_categorySubrights->name  ) );
+                            }
+                        }
+                        array_push($subRights,array("id"=> $CatSubRights_value->id,
+                        "name"=>$CatSubRights_value->name,
+                        "rights_recommendations_id"=>$CatSubRights_value->rights_recommendations_id,
+                        "data" => $SubSubrights
+                        ));
+                }
+            }
+
+            array_push($catrigth,array( "id" => $value->id, "name"=> $value->name, "data" => $subRights ));
+        }
+        array_push($data,array( 'id'=> 1, 'name' => 'Derechos Humanos', 'data'=> $catrigth ));
+       // dd($data);
         $data = array(
             "0" => array("id"=> 0,"name"=>"Año","data"=> $years),
             "1" => array("id"=> 1,"name"=>"Entidad emisora","data"=>$CatEntity),
@@ -67,7 +107,7 @@ class PublicController extends Controller
             "3" => array("id"=> 3,"name"=>"Temas","data"=> ''),
             "4" => array("id"=> 4,"name"=>"Autoridad","data"=>$CatAttending),
             "5" => array("id"=> 5,"name"=>"ODS","data"=> $CatOds),
-            "6" => array("id"=> 6,"name"=>"Derechos Humanos","data"=> ''),
+            "6" => array("id"=> 6,"name"=>"Derechos Humanos","data"=> $data),
             '7' => array("id"=> 7,"name"=>"Buscar","data"=>'')//,
         );
 
@@ -161,10 +201,13 @@ class PublicController extends Controller
             }
         }
         // dd($sqldata);
-            $recommendation = Recommendation::orWhere(function ($query) use($request){
+            $recommendation = Recommendation::with('right','subright','subcategory')->orWhere(function ($query) use($request){
                         foreach($request->date as $date_value){
                           $query->orWhereYear('created_at',$date_value);
                         }
+                        // foreach($request-> as $date_value){
+                        //     $query->orWhereYear('rigth',$date_value);
+                        // }
             })->where(function ($query) use($request,$sqldata){
                 if( count($request->entity_id) > 0 ){
                     $query->whereIn('cat_entity_id',$request->entity_id);
@@ -175,7 +218,7 @@ class PublicController extends Controller
             })->where('isActive','=', 1)->where('isPublished','=', 1)
               ->orderBy('id', 'desc')
               ->get();
-             //dd($recommendation);
+            // dd($recommendation->rigth->all());
 
             $data = array();
             foreach($recommendation as  $value){
@@ -194,7 +237,7 @@ class PublicController extends Controller
                                         ));
             }
                //  dd(chekNamesOptions($request));
-              // dd($data);
+            // dd($data);
             return response()->json([
                 'success' => true,
                 'lResults'=> ["jsonFilters" => $data,'count' => count($data),"checkNames"=> chekNamesOptions($request)]

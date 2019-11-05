@@ -312,7 +312,7 @@ class RecommendationsController extends Controller
             ];
 
             $recommendation = Recommendation::with('documents', 'ods', 'order', 'power', 'attendig', 'population','right','subright','subcategory')->find(decrypt($id));
-
+             //dd($recommendation->right->all());
             $rights = RightsTrait::orderRights($recommendation->right->all(),$recommendation->subright->all(),$recommendation->subcategory->all());
 
             $recommendationForm = [
