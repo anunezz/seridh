@@ -185,7 +185,7 @@
                 </el-col>
 
                 <el-col :span="8">
-                    <el-form-item label="Fecha de registro"
+                    <el-form-item label="Año de registro"
                                   prop="date"
                                   :rules="[
                                         { required: true, message: 'Este campo es requerido', trigger: 'blur'},
@@ -214,13 +214,11 @@
                     </el-tree>
                 </el-col>
                 <el-col :span="12">
-                    <pre>{{recommendationForm.listThemes}}</pre>
                     <el-tree
                         ref="tree"
                         :data="topics"
                         show-checkbox
                         node-key="id"
-                        default-expand-all
                         :props="defaultProps"
                         :default-checked-keys="showIde"
                         @check="themesTree">

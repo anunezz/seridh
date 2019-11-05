@@ -221,7 +221,6 @@
                     </el-tree>
                 </el-col>
                 <el-col :span="12">
-                    <pre>{{recommendationForm.listThemes}}</pre>
                     <el-tree
                         ref="tree"
                         :data="topics"
