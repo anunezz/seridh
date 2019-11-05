@@ -193,23 +193,18 @@
                 </el-col>
 
                 <el-col :span="8">
-                    <el-form-item :label="lang.form && lang.form.review? lang.form.review : 'Fecha de registro'"
-                                  prop="cat_date_id"
+                    <el-form-item :label="lang.form && lang.form.review? lang.form.review : 'Año de registro'"
+                                  prop="date"
                                   :rules="[
                                         { required: true, message: 'Este campo es requerido', trigger: 'blur'},
                                       ]">
-                        <el-select
-                            v-model="recommendationForm.cat_date_id"
-                            filterable
-                            :placeholder="lang.form && lang.form.elegir? lang.form.elegir : 'Seleccionar'"
-                            style="width: 100%">
-                            <el-option
-                                v-for="(date, index) in dates"
-                                :key="index"
-                                :label="date.name"
-                                :value="date.id">
-                            </el-option>
-                        </el-select>
+                        <el-date-picker
+                            v-model="recommendationForm.date"
+                            type="year"
+                            style="width: 100%"
+                            value-format="yyyy"
+                            placeholder="Seleccione año">
+                        </el-date-picker>
                     </el-form-item>
                 </el-col>
             </el-row>
@@ -350,7 +345,7 @@
                     cat_solidarity_action_id: [],
                     //cat_subtopic_id: null,
                     cat_ods_id: [],
-                    cat_date_id: null,
+                    date: null,
                     //cat_topic_id: null,
                     comments: '',
                     listRights: [],
@@ -449,7 +444,7 @@
                 if (ids.length!==0){
                     let $this = this;
                     ids.forEach(function(el) {
-                        if (el.right_id!==undefined){
+                        if (el.add===1){
                             $this.recommendationForm.listRights.push(el);
                         }
                     });

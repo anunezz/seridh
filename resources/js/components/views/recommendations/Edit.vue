@@ -186,21 +186,17 @@
 
                 <el-col :span="8">
                     <el-form-item label="Fecha de registro"
-                                  prop="cat_date_id"
+                                  prop="date"
                                   :rules="[
                                         { required: true, message: 'Este campo es requerido', trigger: 'blur'},
                                       ]">
-                        <el-select
-                            v-model="recommendationForm.cat_date_id"
-                            filterable
-                            placeholder="Seleccionar"
-                            style="width: 100%">
-                            <el-option
-                                v-for="(date, index) in dates"
-                                :key="index"
-                                :label="date.name"
-                                :value="date.id">
-                            </el-option>
+                        <el-date-picker
+                            v-model="recommendationForm.date"
+                            type="year"
+                            style="width: 100%"
+                            value-format="yyyy"
+                            placeholder="Seleccione año">
+                        </el-date-picker>
                         </el-select>
                     </el-form-item>
                 </el-col>
@@ -212,7 +208,6 @@
                         :data="rights"
                         show-checkbox
                         node-key="id"
-                        default-expand-all
                         :props="defaultProps"
                         :default-checked-keys="showIds"
                         @check="rightsTree">
@@ -319,10 +314,10 @@
                     <el-button type="danger" style="width: 100%" @click="$router.push('/recomendaciones')">Cancelar</el-button>
                 </el-col>
                 <el-col :span="3.5" >
-                    <el-button type="danger" style="width: 100%" @click="submitForm(false)">Actualizar y Quitar de publicado </el-button>
+                    <el-button type="success" style="width: 100%" @click="submitForm(false)">Actualizar y Quitar de publicado </el-button>
                 </el-col>
                 <el-col :span="3.1" >
-                    <el-button type="success" style="width: 100%" @click="submitForm(true)">Actualizar y Publicar</el-button>
+                    <el-button type="primary" style="width: 100%" @click="submitForm(true)">Actualizar y Publicar</el-button>
                 </el-col>
             </el-row>
         </el-form>
@@ -386,7 +381,7 @@
                     cat_review_topic_id: null,
                     //cat_subtopic_id: [],
                     cat_ods_id: [],
-                    cat_date_id: null,
+                    date: null,
                     comments: '',
                     listThemes: [],
                     listRights: []
@@ -480,7 +475,7 @@
                 if (ids.length!==0){
                     let $this = this;
                     ids.forEach(function(el) {
-                        if (el.right_id!==undefined){
+                        if (el.add===1){
                             $this.recommendationForm.listRights.push(el);
                         }
                     });

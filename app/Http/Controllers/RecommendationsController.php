@@ -71,7 +71,7 @@ class RecommendationsController extends Controller
                 ->orderBy('name')
                 ->get(['id', 'name']);
 
-            $rights = RightsTrait::orderRights(null);
+            $rights = RightsTrait::orderRights(null,null,null);
 
             $topics = TopicsTrait::orderTopics(null);
 
@@ -157,7 +157,6 @@ class RecommendationsController extends Controller
     {
         try {
             DB::beginTransaction();
-
             $data = $request->all();
             $recommendation = new Recommendation();
 
@@ -167,12 +166,14 @@ class RecommendationsController extends Controller
 
             $listRights=[];
             foreach ($data['listRights'] as $item){
-                $listRights[$item['id']]=[
-                    'right_id' => $item['right_id']
+                $listRights[$item['right_id']]=[
+                    'subrigth_id' => $item['subrights_id'],
+                    'subcategory_subrights_id' => $item['subcategory_id']
                 ];
+                $recommendation->right()->attach($listRights);
+                $listRights=[];
             }
 
-            $recommendation->subright()->sync($listRights);
 
 
             $listThemes=[];
@@ -316,9 +317,9 @@ class RecommendationsController extends Controller
  //               'children' => $topics
  //           ];
 
-            $recommendation = Recommendation::with('documents', 'ods', 'order', 'power', 'attendig', 'population','subright', 'subtopic')->find(decrypt($id));
+            $recommendation = Recommendation::with('documents', 'ods', 'order', 'power', 'attendig', 'population','right','subright','subcategory')->find(decrypt($id));
 
-            $rights = RightsTrait::orderRights($recommendation->subright->all());
+            $rights = RightsTrait::orderRights($recommendation->right->all(),$recommendation->subright->all(),$recommendation->subcategory->all());
 
             $topics = TopicsTrait::orderTopics($recommendation->subtopic->all());
 
@@ -335,7 +336,7 @@ class RecommendationsController extends Controller
                 'cat_review_topic_id'          => $recommendation->cat_review_topic_id,
                 'cat_subtopic_id'              => $recommendation->cat_subtopic_id,
                 'cat_ods_id'                   => $recommendation->ods->pluck('id')->toArray(),
-                'cat_date_id'                  => $recommendation->cat_date_id,
+                'date'                         => $recommendation->date,
                 'comments'                     => $recommendation->comments,
                 'documents'                    => $recommendation->documents,
                 'listRights'                   => $rights['listR'],
@@ -383,25 +384,26 @@ class RecommendationsController extends Controller
             $recommendation->fill($data);
             $recommendation->save();
 
+            $recommendation->right()->detach();
+
             $listRights=[];
             foreach ($data['listRights'] as $item){
-                $listRights[$item['subright_id']]=[
-                    'right_id' => $item['right_id']
+                $listRights[$item['right_id']]=[
+                    'subrigth_id' => $item['subrights_id'],
+                    'subcategory_subrights_id' => $item['subcategory_id']
+                ];
+                $recommendation->right()->attach($listRights);
+                $listRights=[];
+            }
+
+            $listThemes=[];
+            foreach ($data['listThemes'] as $item){
+                $listThemes[$item['id']]=[
+                    'cat_topic_id' => $item['cat_topic_id']
                 ];
             }
 
-            $recommendation->subright()->sync($listRights);
-
-
-              $listThemes=[];
-              foreach ($data['listThemes'] as $item){
-                  $listThemes[$item['id']]=[
-                      'cat_topic_id' => $item['cat_topic_id']
-                  ];
-              }
-
-              $recommendation->subtopic()->sync($listThemes);
-
+            $recommendation->subtopic()->sync($listThemes);
 
             if ( count($data['cat_ods_id']) > 0 ) {
                 $recommendation->ods()->sync($data['cat_ods_id']);

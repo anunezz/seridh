@@ -169,8 +169,8 @@
                     :data="recommendations"
                     style="width: 100%">
                     <el-table-column
-                        prop="implode_ods"
-                        label="ODS">
+                        prop="date"
+                        label="Fecha">
                     </el-table-column>
                     <el-table-column
                         prop="recommendation"
@@ -182,14 +182,6 @@
                     <el-table-column
                         prop="entity.name"
                         label="Entidad Emisora">
-                    </el-table-column>
-                    <el-table-column
-                        prop="implode_order"
-                        label="Orden de Gobierno">
-                    </el-table-column>
-                    <el-table-column
-                        prop="implode_power"
-                        label="Poder de Gobierno">
                     </el-table-column>
                     <el-table-column
                         prop="isPublished"

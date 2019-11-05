@@ -8,7 +8,9 @@ use App\Http\Models\Cats\CatOds;
 use App\Http\Models\Cats\CatDate;
 use App\Http\Models\Cats\CatPopulation;
 use App\Http\Models\Cats\CatSolidarityAction;
+use App\Http\Models\Cats\CatSubcategorySubrights;
 use App\Http\Models\Cats\CatSubRights;
+use App\Http\Models\Cats\CatRightsRecommendation;
 use App\Http\Models\Cats\CatSubtopic;
 use App\Http\Models\Cats\CatTopic;
 use App\User;
@@ -65,7 +67,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Recommendation extends Model
 {
-    protected $fillable = ['recommendation', 'cat_entity_id', 'cat_date_id', 'themes_recommendation', 'cat_topic_id',
+    protected $fillable = ['recommendation', 'cat_entity_id', 'date', 'themes_recommendation', 'cat_topic_id',
         'cat_subtopic_id', 'comments', 'isPublished'];
 
     protected $appends = ['hash', 'is_creator', 'implode_ods', 'implode_order', 'implode_power', 'implode_attendig',
@@ -128,6 +130,16 @@ class Recommendation extends Model
             'recommendation_right_subright',
             'recommendation_id',
             'subrigth_id'
+        );
+    }
+
+    public function subcategory()
+    {
+        return $this->belongsToMany(
+            CatSubcategorySubrights::class,
+            'recommendation_right_subright',
+            'recommendation_id',
+            'subcategory_subrights_id'
         );
     }
 
