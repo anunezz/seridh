@@ -45,7 +45,11 @@ return array(
     'App\\Http\\Models\\Document' => $baseDir . '/app/Http/Models/Document.php',
     'App\\Http\\Models\\Recommendation' => $baseDir . '/app/Http/Models/Recommendation.php',
     'App\\Http\\Models\\Transaction' => $baseDir . '/app/Http/Models/Transaction.php',
+<<<<<<< HEAD
     'App\\Http\\Models\\Visits' => $baseDir . '/app/Http/Models/Visits.php',
+=======
+    'App\\Http\\Models\\VisitsQuery' => $baseDir . '/app/Http/Models/VisitsQuery.php',
+>>>>>>> 16a26c8e82ecbc57e6896fbfb337488a6c2ffdcf
     'App\\Http\\Traits\\RightsTrait' => $baseDir . '/app/Http/Traits/RightsTrait.php',
     'App\\Imports\\FirstSheetImport' => $baseDir . '/app/Imports/FirstSheetImport.php',
     'App\\Imports\\RecommendationsImport' => $baseDir . '/app/Imports/RecommendationsImport.php',

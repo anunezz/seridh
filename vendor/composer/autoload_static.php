@@ -719,7 +719,11 @@ class ComposerStaticInitaa1e49d2248e0f40390a0ae4fd1fe58b
         'App\\Http\\Models\\Document' => __DIR__ . '/../..' . '/app/Http/Models/Document.php',
         'App\\Http\\Models\\Recommendation' => __DIR__ . '/../..' . '/app/Http/Models/Recommendation.php',
         'App\\Http\\Models\\Transaction' => __DIR__ . '/../..' . '/app/Http/Models/Transaction.php',
+<<<<<<< HEAD
         'App\\Http\\Models\\Visits' => __DIR__ . '/../..' . '/app/Http/Models/Visits.php',
+=======
+        'App\\Http\\Models\\VisitsQuery' => __DIR__ . '/../..' . '/app/Http/Models/VisitsQuery.php',
+>>>>>>> 16a26c8e82ecbc57e6896fbfb337488a6c2ffdcf
         'App\\Http\\Traits\\RightsTrait' => __DIR__ . '/../..' . '/app/Http/Traits/RightsTrait.php',
         'App\\Imports\\FirstSheetImport' => __DIR__ . '/../..' . '/app/Imports/FirstSheetImport.php',
         'App\\Imports\\RecommendationsImport' => __DIR__ . '/../..' . '/app/Imports/RecommendationsImport.php',
