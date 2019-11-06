@@ -49,6 +49,7 @@ return array(
     'App\\Http\\Models\\Transaction' => $baseDir . '/app/Http/Models/Transaction.php',
     'App\\Http\\Models\\Visits' => $baseDir . '/app/Http/Models/Visits.php',
     'App\\Http\\Traits\\RightsTrait' => $baseDir . '/app/Http/Traits/RightsTrait.php',
+    'App\\Http\\Traits\\TopicsTrait' => $baseDir . '/app/Http/Traits/TopicsTrait.php',
     'App\\Imports\\FirstSheetImport' => $baseDir . '/app/Imports/FirstSheetImport.php',
     'App\\Imports\\RecommendationsImport' => $baseDir . '/app/Imports/RecommendationsImport.php',
     'App\\Providers\\AppServiceProvider' => $baseDir . '/app/Providers/AppServiceProvider.php',

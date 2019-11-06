@@ -17,4 +17,5 @@ Route::prefix('public')->group(function () {
     Route::get('listarPdf', 'PublicController@listPdf')->name('listar_pdf');
     Route::get('listarExcel', 'PublicController@listExcel');
     Route::get('listarWord', 'PublicController@listWord');
+    Route::get('treeDerechosHumanos', 'PublicController@derechosHumanos');
 });

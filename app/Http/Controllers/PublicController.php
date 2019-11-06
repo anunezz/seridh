@@ -16,6 +16,7 @@ use App\Http\Models\Cats\CatSubRights;
 use App\Http\Models\Cats\CatSubcategorySubrights;
 
 
+use App\Http\Models\Cats\CatDate;
 use App\Http\Models\Cats\CatPopulation; //Poblacion 5
 use App\Http\Models\Cats\CatSolidarityAction; //Accion solidaria 6
 use App\Http\Models\Cats\CatReviewTopic; // Revision de tema(s) 9
@@ -24,10 +25,29 @@ use App\Http\Models\Cats\CatOds; //ODS(Objetivo de Desarrollo Sostenible) 10
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\RecommendationExport;
+
+use App\Http\Traits\RightsTrait;
+use App\Http\Traits\TopicsTrait;
+
 use Exception;
 
 class PublicController extends Controller
 {
+
+    public function derechosHumanos(){
+
+    $RightsTrait = RightsTrait::orderRights(null,null,null);
+
+    $TopicsTrait = TopicsTrait::orderTopics(null);
+
+
+    return response()->json([
+        'success' => true,
+        'rights'=> $RightsTrait,
+        'topics' => $TopicsTrait
+     ],200);
+    }
+
     public function count(){
         $recommendation = Recommendation::where('isActive','=', 1)->where('isPublished','=', 1)->count();
         $visits = new Visits;
@@ -37,6 +57,7 @@ class PublicController extends Controller
             'recommendation'=>$recommendation,
             'visits' => $visits,
             'issuingEntities' => $CatEntity
+
         ],200);
     }
 
@@ -61,6 +82,9 @@ class PublicController extends Controller
         $CatSolidarityAction = CatSolidarityAction::where('isActive', 1)->get(['id', 'name']);
         $CatRightsRecommendation = CatRightsRecommendation::where('isActive', 1)->get(['id', 'name']);
         $CatSubtopic     = CatSubtopic::where('isActive', 1)->get(['id', 'name']);
+
+        $CatDate          = CatDate::where('isActive', 1)->get(['id', 'name']);
+
         $years            = DB::table('recommendations')->select(DB::raw('YEAR(created_at) as year'))
                                                        ->where('isActive', 1)
                                                        ->groupBy('year')
@@ -100,8 +124,12 @@ class PublicController extends Controller
         }
         array_push($data,array( 'id'=> 1, 'name' => 'Derechos Humanos', 'data'=> $catrigth ));
        // dd($data);
+
+
+
         $data = array(
-            "0" => array("id"=> 0,"name"=>"Año","data"=> $years),
+            //"0" => array("id"=> 0,"name"=>"Año","data"=> $years),
+            "0" => array("id"=> 0,"name"=>"Año","data"=> $CatDate),
             "1" => array("id"=> 1,"name"=>"Entidad emisora","data"=>$CatEntity),
             "2" => array("id"=> 2,"name"=>"Población","data"=> $CatPopulation),
             "3" => array("id"=> 3,"name"=>"Temas","data"=> ''),
@@ -200,10 +228,23 @@ class PublicController extends Controller
               array_push($sqldata, array($value->id));
             }
         }
+
+
         // dd($sqldata);
+
+
             $recommendation = Recommendation::with('right','subright','subcategory')->orWhere(function ($query) use($request){
-                        foreach($request->date as $date_value){
-                          $query->orWhereYear('created_at',$date_value);
+                        // foreach($request->date as $date_value){
+                        //   $query->orWhereYear('created_at',$date_value);
+                        // }
+
+                        if(count($request->date) > 0){
+
+                            foreach($request->date as $date_value){
+                                  $query->orWhere('date',$date_value);
+                            }
+
+                            //$query->whereIn('date',$request->date);
                         }
                         // foreach($request-> as $date_value){
                         //     $query->orWhereYear('rigth',$date_value);
@@ -212,13 +253,33 @@ class PublicController extends Controller
                 if( count($request->entity_id) > 0 ){
                     $query->whereIn('cat_entity_id',$request->entity_id);
                 }
-                if( count($sqldata) > 0 ){
+                if(count($sqldata) > 0){
                     $query->whereIn('id',$sqldata);
                 }
             })->where('isActive','=', 1)->where('isPublished','=', 1)
               ->orderBy('id', 'desc')
               ->get();
-            // dd($recommendation->rigth->all());
+
+            // dd($recommendation);
+            //  $r = Recommendation::with('right','subright','subcategory')->find(7);
+
+            // $d = array();
+            //  foreach ($r->right->subright->all() as  $value) {
+            //      array_push($d, array('name'=>$value->name));
+            //  }
+
+            //  $t = array();
+            //  foreach ($r->subright->all() as  $v) {
+            //      array_push($t, array('name'=>$v->name));
+            //  }
+
+
+            //  dd($d);
+
+
+
+
+
 
             $data = array();
             foreach($recommendation as  $value){

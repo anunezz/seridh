@@ -169,7 +169,7 @@
                     :data="recommendations"
                     style="width: 100%">
                     <el-table-column
-                        prop="date.name"
+                        prop="date"
                         label="Fecha">
                     </el-table-column>
                     <el-table-column

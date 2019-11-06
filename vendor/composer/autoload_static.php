@@ -723,6 +723,7 @@ class ComposerStaticInitaa1e49d2248e0f40390a0ae4fd1fe58b
         'App\\Http\\Models\\Transaction' => __DIR__ . '/../..' . '/app/Http/Models/Transaction.php',
         'App\\Http\\Models\\Visits' => __DIR__ . '/../..' . '/app/Http/Models/Visits.php',
         'App\\Http\\Traits\\RightsTrait' => __DIR__ . '/../..' . '/app/Http/Traits/RightsTrait.php',
+        'App\\Http\\Traits\\TopicsTrait' => __DIR__ . '/../..' . '/app/Http/Traits/TopicsTrait.php',
         'App\\Imports\\FirstSheetImport' => __DIR__ . '/../..' . '/app/Imports/FirstSheetImport.php',
         'App\\Imports\\RecommendationsImport' => __DIR__ . '/../..' . '/app/Imports/RecommendationsImport.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',

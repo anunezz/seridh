@@ -185,23 +185,19 @@
                 </el-col>
 
                 <el-col :span="8">
-                    <el-form-item label="Fecha de registro"
-                                  prop="cat_date_id"
+                    <el-form-item label="Año de registro"
+                                  prop="date"
                                   :rules="[
                                         { required: true, message: 'Este campo es requerido', trigger: 'blur'},
                                       ]">
-                        <el-select
-                            v-model="recommendationForm.cat_date_id"
-                            filterable
-                            placeholder="Seleccionar"
-                            style="width: 100%">
-                            <el-option
-                                v-for="(date, index) in dates"
-                                :key="index"
-                                :label="date.name"
-                                :value="date.id">
-                            </el-option>
-                        </el-select>
+                        <el-date-picker
+                            v-model="recommendationForm.date"
+                            type="year"
+                            style="width: 100%"
+                            value-format="yyyy"
+                            placeholder="Seleccione año">
+                        </el-date-picker>
+
                     </el-form-item>
                 </el-col>
             </el-row>
@@ -219,12 +215,12 @@
                 </el-col>
                 <el-col :span="12">
                     <el-tree
-                        ref="themes"
-                        :data="tree"
+                        ref="tree"
+                        :data="topics"
                         show-checkbox
                         node-key="id"
                         :props="defaultProps"
-                        :default-checked-keys="[]"
+                        :default-checked-keys="showIde"
                         @check="themesTree">
                     </el-tree>
                 </el-col>
@@ -339,6 +335,8 @@
         data() {
             return {
                 showIds:[],
+                showIde:[],
+
                 tree: null,
                 defaultProps: {
                     children: 'children',
@@ -355,7 +353,7 @@
                 actions: [],
                 reviews: [],
                 topics: [],
-                subtopics: [],
+             //   subtopics: [],
                 ods: [],
                 dates: [],
 
@@ -379,9 +377,9 @@
                     cat_solidarity_action_id: [],
                     cat_review_right_id: null,
                     cat_review_topic_id: null,
-                    cat_subtopic_id: [],
+                    //cat_subtopic_id: [],
                     cat_ods_id: [],
-                    cat_date_id: null,
+                    date: null,
                     comments: '',
                     listThemes: [],
                     listRights: []
@@ -432,13 +430,14 @@
                 this.actions = response.data.actions;
                 this.reviews = response.data.reviews;
                 this.topics = response.data.topics;
-                this.subtopics = response.data.subtopics;
+         //       this.subtopics = response.data.subtopics;
                 this.ods = response.data.ods;
                 this.dates = response.data.dates;
                 this.tree = response.data.tree;
                 this.recommendationForm = response.data.recommendationForm;
                 this.recommendationForm.files = [];
                 this.showIds = response.data.showIds;
+                this.showIde = response.data.showIde;
 
                 this.stopLoading();
 
@@ -457,9 +456,9 @@
             },
 
             themesTree(){
-                let ide = this.$refs.themes.getCheckedNodes();
+                let ide = this.$refs.tree.getCheckedNodes();
                 this.recommendationForm.listThemes=[];
-                if (ide.lenght!==0){
+                if (ide.length!==0){
                     let $this = this;
                     ide.forEach(function(el){
                         if(el.cat_topic_id!==undefined){

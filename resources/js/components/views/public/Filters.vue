@@ -56,7 +56,17 @@
                 <div class="panel-heading">
                     <div class="row">
                         <div class="col-md-10">
-                          <h5 v-text="item.entity_id"></h5>
+                          <!-- <h5 v-text="item.entity_id"></h5> -->
+
+
+
+                               <span v-if="jsonTxt[index].bool === true" v-text="jsonTxt[index].txxt"></span>
+                               <span v-if="jsonTxt[index].bool === false" v-text="jsonTxt[index].txt"></span>
+                               <button class="btn btn-default btn-xs" type="button" @click="btn(index)" v-if="jsonTxt[index].btn === true && jsonTxt[index].bool === true" >+</button>
+                               <button class="btn btn-default btn-xs" type="button" @click="btn(index)" v-if="jsonTxt[index].btn === true && jsonTxt[index].bool === false" >-</button>
+
+
+
                         </div>
                         <div class="col-md-2 pull-right" style="padding-top: 11px;">
                           <span class="icon-calendar" aria-hidden="true"  style="float: left; padding-right: 5px;"></span>
@@ -66,14 +76,18 @@
                 </div>
                 <div class="panel-body">
                     <div class="row">
-                        <div class="col-md-12">
+
+
+                        <!-- <div class="col-md-12">
                           <p>
                                <span v-if="jsonTxt[index].bool === true" v-text="jsonTxt[index].txxt"></span>
                                <span v-if="jsonTxt[index].bool === false" v-text="jsonTxt[index].txt"></span>
                                <button class="fast btn btn-default btn-xs" type="button" @click="btn(index)" v-if="jsonTxt[index].btn === true && jsonTxt[index].bool === true" >+</button>
                                <button class="fast btn btn-default btn-xs" type="button" @click="btn(index)" v-if="jsonTxt[index].btn === true && jsonTxt[index].bool === false" >-</button>
                           </p>
-                        </div>
+                        </div> -->
+
+
                         <div class="col-md-4">
                             <div class="row">
                                 <div class="col-md-12">

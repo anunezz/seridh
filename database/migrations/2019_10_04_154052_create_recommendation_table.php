@@ -26,7 +26,7 @@ class CreateRecommendationTable extends Migration {
             $table->unsignedBigInteger('cat_topic_id')->nullable();
             $table->unsignedBigInteger('cat_subtopic_id')->nullable();
             $table->unsignedBigInteger('cat_ods_id')->nullable();
-            $table->unsignedBigInteger('cat_date_id')->nullable();
+            $table->string('date')->nullable();
             $table->text('comments');
             $table->boolean('isActive')->default(1);
             $table->boolean('isPublished')->default(0);
@@ -71,10 +71,6 @@ class CreateRecommendationTable extends Migration {
             $table->foreign('cat_ods_id')
                 ->references('id')
                 ->on('cat_ods');
-
-            $table->foreign('cat_date_id')
-                ->references('id')
-                ->on('cat_dates');
         });
     }
 

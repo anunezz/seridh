@@ -67,11 +67,13 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Recommendation extends Model
 {
-    protected $fillable = ['recommendation', 'cat_entity_id', 'cat_date_id', 'themes_recommendation', 'cat_topic_id',
+    protected $fillable = ['recommendation', 'cat_entity_id', 'date', 'themes_recommendation', 'cat_topic_id',
         'cat_subtopic_id', 'comments', 'isPublished'];
 
     protected $appends = ['hash', 'is_creator', 'implode_ods', 'implode_order', 'implode_power', 'implode_attendig',
         'implode_population', 'implode_action'];
+
+        //,'impode_right'
 
     public function user()
     {
@@ -254,6 +256,12 @@ class Recommendation extends Model
     {
         return implode(', ', $this->action->pluck('name')->toArray());
     }
+
+    // public function getImplodeRightAttribute()
+    // {
+    //     return implode(', ', $this->right->pluck('name')->toArray());
+    // }
+
 
 }
 

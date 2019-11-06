@@ -161,7 +161,7 @@
             <div class="card" v-if="cardCheckbox === true">
                 <div class="card-body col-md-12" style="padding: 20px;">
 
-                        <div class="row">
+                        <!-- <div class="row">
                             <div class="col-md-12">
                                 <h4>Seleccionar</h4>
                             </div>
@@ -169,60 +169,53 @@
                             <div class="form-group col-md-12">
                                 <input type="text" class="form-control" placeholder="Buscar">
                             </div>
-                        </div>
+                        </div> -->
 
 
                     <div v-for="(item,index) in arrayFilter" :key="index">
-                        <div v-if="btnSelect === item.id && item.id !== 0 && item.id !== 6 ">
+                        <!-- && item.id !== 0 -->
+                        <div v-if="btnSelect === item.id  && item.id !== 6  && item.id !== 3 ">
                             <div class="form-check animated fadeIn fast" v-for="(i,index) in item.data" :key="index">
                                 <label class="form-check-label">
-                                    <input @change="checkbox(item.id,i.id,i.name)" type="checkbox" class="form-check-input" :value="i.id" v-model="checkedNames[item.id].check">
-                                    {{i.name}}
+                                    <!-- <input @change="checkbox(item.id,i.id,i.name)" type="checkbox" class="form-check-input" :value="i.id" v-model="checkedNames[item.id].check">
+                                    {{i.name}} -->
+
+                                    <el-checkbox  v-model="checkedNames[item.id].check" :label="i.name" name="type"></el-checkbox>
                                 </label>
                             </div>
                         </div>
-                        <div v-else-if="btnSelect === item.id && item.id === 0">
+                        <!-- <div v-else-if="btnSelect === item.id && item.id === 0">
                             <div class="form-check animated fadeIn fast" v-for="(i,index) in item.data" :key="index">
                                 <label class="form-check-label">
                                     <input type="checkbox" class="form-check-input" :value="i.year" v-model="checkedNames[item.id].check">
                                     {{i.year}}
                                 </label>
                             </div>
+                        </div> -->
+
+                        <div v-else-if="btnSelect === item.id && item.id === 3">
+                            <el-tree
+                                ref="topics"
+                                :data="topics"
+                                show-checkbox
+                                node-key="id"
+                                :props="defaultProps"
+                                default-expand-all
+                                :default-checked-keys="[]"
+                                @check="rightsTree">
+                            </el-tree>
                         </div>
-
                         <div v-else-if="btnSelect === item.id && item.id === 6">
-                            <ul>
-                                <li v-for="(itemUno,indexUno) in item.data" :key="indexUno">
-                                    <div class="form-check animated fadeIn fast">
-                                        <label class="form-check-label">
-                                            <input type="checkbox" class="form-check-input" :value="itemUno.id">
-                                            {{itemUno.name}}
-                                        </label>
-                                    </div>
-
-                                    <ul>
-                                        <li v-for="(itemDos,indexDos) in  itemUno.data" :key="indexDos">
-                                            <!-- <span v-text="itemDos.name"></span> -->
-                                                <div class="form-check animated fadeIn fast">
-                                                    <label class="form-check-label">
-                                                        <input type="checkbox" class="form-check-input" :value="itemDos.id" v-model="checkedNames[item.id].check">
-                                                        {{itemDos.name}}
-                                                    </label>
-                                                </div>
-                                            <ul>
-                                                <li v-for="(itemTres,indexTres) in itemDos.data" :key="indexTres">
-                                                    <span v-text="itemTres.name"></span>
-                                                    <ul>
-                                                        <li v-for="(itemCuatro,indexCuatro) in itemTres.data" :key="indexCuatro">
-                                                            <span v-text="itemCuatro.name"></span>
-                                                        </li>
-                                                    </ul>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                    </ul>
-                                </li>
-                            </ul>
+                            <el-tree
+                                ref="rights"
+                                :data="rights"
+                                show-checkbox
+                                node-key="id"
+                                :props="defaultProps"
+                                default-expand-all
+                                :default-checked-keys="[]"
+                                @check="rightsTree">
+                            </el-tree>
                         </div>
 
 
@@ -238,6 +231,7 @@
 
 
 {{checkedNames}}
+
 
 	        <h2>Enlaces de interés</h2>
 	        <hr class="red small-margin">
@@ -313,6 +307,14 @@
     export default {
         data() {
             return {
+
+               defaultProps: {
+                   children: 'children',
+                   label: 'label'
+               },
+               rights: [],
+               topics:[],
+
               countRecommendations:0,
               idPage: 1,
               cardCheckbox:false,
@@ -338,15 +340,43 @@
         computed: {
         },
         created() {
+            this.getDerechos();
         },
         methods: {
+
+
+            getDerechos(){
+              let me = this;
+     console.log("ESTAS EN GET DERECHOS..");
+            axios.get('/api/public/treeDerechosHumanos').then(function (response) {
+                me.topics = response.data.topics;
+                me.rights = response.data.rights;
+
+              //  console.log("RESPONSE DERECHOS HUMANOS: ",response);
+
+
+                }).catch(function (error) {
+                    console.log(error);
+                });
+
+
+
+            },
+            rightsTree(){
+                let ids = this.$refs.rights.getCheckedNodes();
+                this.recommendationForm.listRights=[];
+                if (ids.length!==0){
+                    let $this = this;
+                    ids.forEach(function(el) {
+                        if (el.add===1){
+                            $this.recommendationForm.listRights.push(el);
+                        }
+                    });
+                }
+            },
+
             treeDerechosHumanos(){
              let me = this;
-            },
-            checkbox(key,value,name){
-             let me = this;
-             console.log("Estas ern la funcion checkbox: ",key,value,name);
-
             },
             filters(){
               let me = this;
@@ -414,8 +444,9 @@
                                           data: response.data.lResults[i].data });
 
                        me.checkedNames.push({id: response.data.lResults[i].id,
-                                          check: []})
+                                          check: []});
                   }
+
 
 
                   console.log("arrayFilter: ",me.arrayFilter);
@@ -448,15 +479,34 @@
                 //Envia la petición para visualizar la data de esa página
                 me.recommendationFilter(page);
             },
+            json(a,b){
+                if( b.length === 0 ){
+                    return [];
+                }
+                 let json = [];
+                    for (let e = 0; e < b.length; e++) {
+                        for (let i = 0; i < a.data.length; i++) {
+                            if (b[e] === a.data[i].name) {
+                              console.log(a.data[i].id);
+                              json.push(a.data[i].id);
+                            }
+                        }
+                    }
+                return json;
+            },
             recommendationFilter(){
               let me = this,url='',data={};
+
                     data={
                         'date': me.checkedNames[0].check,
-                        'entity_id':me.checkedNames[1].check,
-                        'population_id': me.checkedNames[2].check,
-                        'attending_id': me.checkedNames[4].check,
-                        'ods_id': me.checkedNames[5].check
+                        'entity_id': me.json(me.arrayFilter[1], me.checkedNames[1].check),
+                        'population_id': me.json(me.arrayFilter[2], me.checkedNames[2].check),
+                        'attending_id': me.json(me.arrayFilter[4], me.checkedNames[4].check),
+                        'ods_id': me.json(me.arrayFilter[5], me.checkedNames[5].check)
                     };
+
+                    console.log("datos",data );
+
                   axios.post('/api/public/recommendationFilter', data).then(function (response){
                      if(response.data.success === true){
                         console.log("RESPONSErecommendationFilter(): ",response);
