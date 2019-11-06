@@ -83,9 +83,9 @@ class RecommendationsController extends Controller
                 ->orderBy('name')
                 ->get(['id', 'name']);
 
-            $subtopics = CatSubtopic::with('topic')->where('isActive', 1)
-                ->orderBy('name')
-                ->get(['id', 'name']);
+//            $subtopics = CatSubtopic::with('topic')->where('isActive', 1)
+//                ->orderBy('name')
+//                ->get(['id', 'name']);
 
             $ods = CatOds::where('isActive', 1)
                 ->orderBy('name')
@@ -138,7 +138,7 @@ class RecommendationsController extends Controller
                 'dates'       => $dates,
                 'powers'      => $powers,
                 'attendings'  => $attendings,
-                'subtopics'   => $subtopics,
+//                'subtopics'   => $subtopics,
 //                'tree' => $tree,
                 'success'     => true
             ]);
@@ -182,7 +182,7 @@ class RecommendationsController extends Controller
                     'cat_topic_id' => $item['cat_topic_id']
                 ];
             }
-
+           // dd($data['listThemes']);
             $recommendation->subtopic()->sync($listThemes);
 
 
@@ -334,7 +334,7 @@ class RecommendationsController extends Controller
                 'cat_solidarity_action_id'     => $recommendation->action->pluck('id')->toArray(),
                 'cat_review_right_id'          => $recommendation->cat_review_right_id,
                 'cat_review_topic_id'          => $recommendation->cat_review_topic_id,
-                'cat_subtopic_id'              => $recommendation->cat_subtopic_id,
+ //               'cat_subtopic_id'              => $recommendation->cat_subtopic_id,
                 'cat_ods_id'                   => $recommendation->ods->pluck('id')->toArray(),
                 'date'                         => $recommendation->date,
                 'comments'                     => $recommendation->comments,
@@ -404,6 +404,16 @@ class RecommendationsController extends Controller
             }
 
             $recommendation->subtopic()->sync($listThemes);
+
+              $listThemes=[];
+              foreach ($data['listThemes'] as $item){
+                  $listThemes[$item['cat_subtopic_id']]=[
+                      'cat_topic_id' => $item['cat_topic_id']
+                  ];
+              }
+
+              $recommendation->subtopic()->sync($listThemes);
+
 
             if ( count($data['cat_ods_id']) > 0 ) {
                 $recommendation->ods()->sync($data['cat_ods_id']);

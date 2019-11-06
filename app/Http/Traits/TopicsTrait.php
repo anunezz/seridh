@@ -10,7 +10,7 @@ trait TopicsTrait
 {
     public static function orderTopics($items)
     {
-        $newTopics = CatTopic::with('subtopics')
+        $data = CatTopic::with('subtopics')
                 ->where('isActive', 1)
                 ->orderBy('name')
                 ->get(['id', 'name']);
@@ -19,11 +19,10 @@ trait TopicsTrait
 //                ->orderBy('name')
 //                ->get(['id', 'name']);
 
-        $total = count($newTopics);
-       // $tree = [];
+        $total = count($data);
+//        $tree = [];
         $ideEdit = [];
         $topics = [];
-
 
         if ($items!==null){
             foreach ($items as $item){
@@ -32,8 +31,8 @@ trait TopicsTrait
         }
 
         $showIde = [];
-        $list=[];
-        foreach ($newTopics as $topic) {
+        $lists=[];
+        foreach ($data as $topic) {
             $subtopics = [];
 
             foreach ($topic->subtopics as $subtopic) {
@@ -42,13 +41,13 @@ trait TopicsTrait
                     $subtopics[] = [
                         'id' => $total,
                         'label' => $subtopic->name,
-                        'cat_topic_id' => $topic->id,
+                        'cat_topic_id' => $topic -> id,
                         'cat_subtopic_id' => $subtopic->id,
                     ];
                     foreach ($ideEdit as $value){
                         if ($value===$subtopic->id){
-                            array_push($showIde,$subtopic->id);
-                            $list[] = [
+                            array_push($showIde,$total);
+                            $lists[] = [
                                 'id' => $total,
                                 'label' => $subtopic->name,
                                 'cat_topic_id' => $topic->id,
@@ -60,7 +59,7 @@ trait TopicsTrait
                     $subtopics[] = [
                         'id' => $subtopic->id,
                         'label' => $subtopic->name,
-                        'cat_topic_id' => $topic->id
+                        'cat_topic_id' => $topic -> id
                     ];
                 }
 
@@ -81,7 +80,7 @@ trait TopicsTrait
             return $aux = [
                 'tree'            => $tree,
                 'showIde'          => $showIde,
-                'listThemes'        => $list
+                'listThemes'        => $lists
             ];
         }else{
             return $tree;

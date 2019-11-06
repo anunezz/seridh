@@ -1,5 +1,6 @@
 <?php namespace App\Http\Models\Cats;
 
+use App\Http\Models\Recommendation;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -23,6 +24,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class CatTopic extends Model
 {
+    public function recommendations()
+    {
+        return $this->belongsToMany(Recommendation::class);
+
+    }
+
     public function subtopics()
     {
         return $this->hasMany(CatSubtopic::class, 'cat_topic_id');

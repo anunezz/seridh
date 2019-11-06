@@ -230,7 +230,6 @@
                         :default-checked-keys="[]"
                         @check="themesTree">
                     </el-tree>
-
                 </el-col>
             </el-row>
             <br>
@@ -302,12 +301,12 @@
         data() {
             return {
 
-                tree: [],
-               // tree: null,
-               // defaultProps: {
-               //     children: 'children',
-               //     label: 'label'
-               // },
+               // tree: [],
+                tree: null,
+                defaultProps: {
+                    children: 'children',
+                    label: 'label'
+                },
 
                 lang: {
                     "header": {
