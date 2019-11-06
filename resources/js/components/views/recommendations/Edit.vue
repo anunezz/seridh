@@ -197,7 +197,6 @@
                             value-format="yyyy"
                             placeholder="Seleccione año">
                         </el-date-picker>
-                        </el-select>
                     </el-form-item>
                 </el-col>
             </el-row>
