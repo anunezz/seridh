@@ -26,7 +26,7 @@ class CreateRecommendationTable extends Migration {
             $table->unsignedBigInteger('cat_topic_id')->nullable();
             $table->unsignedBigInteger('cat_subtopic_id')->nullable();
             $table->unsignedBigInteger('cat_ods_id')->nullable();
-            $table->string('date')->nullable();
+            $table->string('date')->nullable(); //String inecesario, se trata de una fecha $table->year('date');
             $table->text('comments');
             $table->boolean('isActive')->default(1);
             $table->boolean('isPublished')->default(0);
