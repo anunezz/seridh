@@ -12,6 +12,8 @@ use App\Http\Models\Cats\CatReviewRight;
 use App\Http\Models\Cats\CatReviewTopic;
 use App\Http\Models\Cats\CatRightsRecommendation;
 use App\Http\Models\Cats\CatSolidarityAction;
+use App\Http\Models\Cats\CatSubcategorySubrights;
+use App\Http\Models\Cats\CatSubRights;
 use App\Http\Models\Cats\CatSubtopic;
 use App\Http\Models\Recommendation;
 use Illuminate\Support\Collection;
@@ -33,84 +35,174 @@ class FirstSheetImport implements ToCollection
                 }
 
                 /*obtener ids*/
-                $findRecommendation = '<p style="font-family: Montserrat; font-size: 14px; font-style: normal; font-weight: normal;">'.$row[0].'</p>';
+                $findRecommendation = '<p style="font-family: Montserrat; font-size: 14px; font-style: normal; font-weight: normal;">'.trim($row[0]).'</p>';
                 $existRecommendation = Recommendation::where('recommendation',$findRecommendation)->where('isActive',1)->first();
-                $entity = CatEntity::where('name',trim($row[1]))->where('isActive',1)->first();
-                $gobOrder = CatGobOrder::where('name',trim($row[2]))->where('isActive',1)->first();
-                $gobPower = CatGobPower::where('name',$row[3])->where('isActive',1)->first();
-                $attending = CatAttending::where('name',$row[4])->where('isActive',1)->first();
-                $rightsRe = CatRightsRecommendation::where('name',$row[5])->where('isActive',1)->first();
-                $population = CatPopulation::where('name',$row[6])->where('isActive',1)->first();
-                $solidarityAction = CatSolidarityAction::where('name',$row[7])->where('isActive',1)->first();
-                $reviewRight = CatReviewRight::where('name',$row[8])->where('isActive',1)->first();
-                $review_topic = CatReviewTopic::where('name',$row[9])->where('isActive',1)->first();
-                $subtopic = CatSubtopic::where('name',$row[10])->where('isActive',1)->first();
-                $comments = '<p style="font-family: Montserrat; font-size: 14px; font-style: normal; font-weight: normal;">'.$row[12].'</p>';
-                $isPublished = $row[13]=='Si'?1:0;
-                /************/
+                $entity = CatEntity::where('name',trim($row[1]))->where('isActive',1)->pluck('id')->first();
 
-                /*separar ods del excel y agregar ids*/
-                $odsIds= array();
-                if ($row[11]!=null){
-                    $ods = str_replace(", ",",",$row[11] );
-                    $ods = explode(",", $ods);
-                    foreach ($ods as $od){
-                        $fetchIds = CatOds::where('name',$od)->pluck('id')->first();
-                        if (count($odsIds)>0){
-                            $existID=false;
-                            foreach ($odsIds as $x){
-                                if ($fetchIds===$x) $existID=true;
-                            }
-                            if($existID===false) array_push($odsIds,$fetchIds);
-                        }else{
-                            array_push($odsIds,$fetchIds);
-                        }
+                /*obtener ids Orden de Gobiernos*/
+                $gobOrders = explode("||", $row[2]);
+                $idsGob=[];
+                foreach ($gobOrders as $gob){
+                    $id = CatGobOrder::where('name',trim($gob))->where('isActive',1)->pluck('id')->first();
+                    if (isset($id)){
+                        array_push($idsGob,$id);
                     }
+                    $id=null;
                 }
-                /********************************/
 
-                if (is_null($existRecommendation )) {
-                    if ($col === false) {
-
-                        $recommendation = new Recommendation();
-                        $recommendation->user_id = auth()->user()->id;
-                        $recommendation->recommendation = $findRecommendation;
-                        $recommendation->cat_entity_id = $entity->id;
-                        $recommendation->cat_gob_order_id = $gobOrder->id;
-                        $recommendation->cat_gob_power_id = $gobPower->id;
-                        $recommendation->cat_attendig_id = $attending->id;
-                        $recommendation->cat_rights_recommendation_id = $rightsRe->id;
-                        $recommendation->cat_population_id = $population->id;
-                        $recommendation->cat_solidarity_action_id = $solidarityAction->id;
-                        $recommendation->cat_review_right_id = $reviewRight->id;
-                        $recommendation->cat_review_topic_id = $review_topic->id;
-                        $recommendation->cat_subtopic_id = $subtopic->id;
-                        $recommendation->cat_ods_id = null;
-                        $recommendation->comments = $comments;
-                        $recommendation->isPublished = $isPublished;
-                        $recommendation->save();
-                        $recommendation->ods()->sync($odsIds);
-                    } else {
-
-                        $errorRows = new stdClass();
-                        $errorRows->recommendation = $findRecommendation;
-                        $errorRows->ods = $row[11];
-                        $errorRows->entity = $entity;
-                        $errorRows->gobOrder = $gobOrder;
-                        $errorRows->gobPower = $gobPower;
-                        $errorRows->attending = $attending;
-                        $errorRows->rightsRe = $rightsRe;
-                        $errorRows->population = $population;
-                        $errorRows->solidarityAction = $solidarityAction;
-                        $errorRows->reviewRight = $reviewRight;
-                        $errorRows->review_topic = $review_topic;
-                        $errorRows->subtopic = $subtopic;
-                        $errorRows->comments = $comments;
-                        $errorRows->isPublished = $isPublished;
-                        $errorRows->odsIds = $odsIds;
-                        $newRow = (array)$errorRows;
-                        array_push($errorRe, $newRow);
+                /*obtener ids Poder de Gobierno*/
+                $powerGob = explode("||", $row[3]);
+                $idsPow=[];
+                foreach ($powerGob as $pow){
+                    $id = CatGobPower::where('name',trim($pow))->where('isActive',1)->pluck('id')->first();
+                    if (isset($id)){
+                        array_push($idsPow,$id);
                     }
+                    $id=null;
+                }
+
+                /*obtener ids Entidad encargada de atender*/
+                $entEnc = explode("||", $row[4]);
+                $idsEnt=[];
+                foreach ($entEnc as $en){
+                    $id = CatAttending::where('name',trim($en))->where('isActive',1)->pluck('id')->first();
+                    if (isset($id)){
+                        array_push($idsEnt,$id);
+                    }
+                    $id=null;
+                }
+
+                /*obtener ids Población*/
+                $population = explode("||", $row[5]);
+                $idsPop=[];
+                foreach ($population as $pop){
+                    $id = CatPopulation::where('name',trim($pop))->where('isActive',1)->pluck('id')->first();
+                    if (isset($id)){
+                        array_push($idsPop,$id);
+                    }
+                    $id=null;
+                }
+
+                /*obtener ids Acción solidaria*/
+                $actionS = explode("||", $row[6]);
+                $idsAct=[];
+                foreach ($actionS as $act){
+                    $id = CatSolidarityAction::where('name',trim($act))->where('isActive',1)->pluck('id')->first();
+                    if (isset($id)){
+                        array_push($idsAct,$id);
+                    }
+                    $id=null;
+                }
+
+                /*obtener ids ODS*/
+                $ods = explode("||", $row[7]);
+                $idsOds=[];
+                foreach ($ods as $od){
+                    $id = CatOds::where('name',trim($od))->where('isActive',1)->pluck('id')->first();
+                    if (isset($id)){
+                        array_push($idsOds,$id);
+                    }
+                    $id=null;
+                }
+
+                /*obtener ids Temas*/
+                $themes = explode("||", $row[10]);
+                $listThemes=[];
+                foreach ($themes as $theme){
+                    $them = CatSubtopic::where('name',trim($theme))->where('isActive',1)->first();
+                    if (isset($them)){
+                        $listThemes[$them['id']]=[
+                            'cat_topic_id' => $them['cat_topic_id']
+                        ];
+                    }
+                    $them=null;
+                }
+
+
+                $comments = '<p style="font-family: Montserrat; font-size: 14px; font-style: normal; font-weight: normal;">'.trim($row[11]).'</p>';
+                $anio = (string)$row[12];
+                $isPublished = $row[13]=='Si'?1:0;
+
+
+                //dd($idsOds);
+                /*crear recomendación*/
+                if (is_null($existRecommendation )) {
+                    //if ($col === false) {
+
+                    $recommendation = new Recommendation();
+                    $recommendation->user_id = auth()->user()->id;
+                    $recommendation->recommendation = $findRecommendation;
+                    $recommendation->cat_entity_id = $entity;
+                    $recommendation->date = $anio;
+                    $recommendation->comments = $comments;
+                    $recommendation->isPublished = $isPublished;
+                    $recommendation->save();
+
+                    $recommendation->ods()->sync($idsOds);
+                    $recommendation->order()->sync($idsGob);
+                    $recommendation->power()->sync($idsPow);
+                    $recommendation->attendig()->sync($idsEnt);
+                    $recommendation->population()->sync($idsPop);
+                    $recommendation->action()->sync($idsAct);
+                    $recommendation->subtopic()->sync($listThemes);
+
+
+
+
+
+                    /*obtener ids Derechos*/
+                    $rights = explode("||", $row[8]);
+                    $idsRights=[];
+                    foreach ($rights as $right){
+                        $id = CatSubRights::where('name',trim($right))->where('isActive',1)->first();
+                        if (isset($id)){
+                            $idsRights[$id['rights_recommendations_id']]=[
+                                'subrigth_id' => $id['id'],
+                                'subcategory_subrights_id' => null
+                            ];
+                            $recommendation->right()->attach($idsRights);
+                        }
+                        $id=null;
+                        $idsRights=[];
+                    }
+
+                    /*obtener ids Subderechos y asociar con recomendación*/
+                    $subRights = explode("||", $row[9]);
+                    $idsSubRights=[];
+                    foreach ($subRights as $subright){
+                        $id = CatSubcategorySubrights::where('name',trim($subright))->where('isActive',1)->first();
+                        $idAux = CatSubRights::where('id',trim($id['sub_rights_id']))->where('isActive',1)->pluck('rights_recommendations_id')->first();
+                        if (isset($id)){
+                            $idsSubRights[$idAux ]=[
+                                'subrigth_id' => $id['sub_rights_id'],
+                                'subcategory_subrights_id' => $id['id']
+                            ];
+                            $recommendation->right()->attach($idsSubRights);
+                        }
+                        $id=null;
+                        $idsSubRights=[];
+                    }
+                    /*  } else {
+
+                          $errorRows = new stdClass();
+                          $errorRows->recommendation = $findRecommendation;
+                          $errorRows->ods = $row[11];
+                          $errorRows->entity = $entity;
+                          $errorRows->gobOrder = $gobOrder;
+                          $errorRows->gobPower = $gobPower;
+                          $errorRows->attending = $attending;
+                          $errorRows->rightsRe = $rightsRe;
+                          $errorRows->population = $population;
+                          $errorRows->solidarityAction = $solidarityAction;
+                          $errorRows->reviewRight = $reviewRight;
+                          $errorRows->review_topic = $review_topic;
+                          $errorRows->subtopic = $subtopic;
+                          $errorRows->comments = $comments;
+                          $errorRows->isPublished = $isPublished;
+                          $errorRows->odsIds = $odsIds;
+                          $newRow = (array)$errorRows;
+                          array_push($errorRe, $newRow);
+                      }*/
                 }
             }
         }

@@ -171,10 +171,13 @@
                     style="width: 100%">
                     <el-table-column
                         prop="date"
-                        label="Fecha">
+                        sortable
+                        label="Fecha"
+                        width="100">
                     </el-table-column>
                     <el-table-column
                         prop="recommendation"
+                        sortable
                         label="Recomendación">
                         <template slot-scope="scope">
                             <span v-html="scope.row.recommendation"></span>
@@ -182,11 +185,17 @@
                     </el-table-column>
                     <el-table-column
                         prop="entity.name"
+                        sortable
+                        width="350"
                         label="Entidad Emisora">
                     </el-table-column>
                     <el-table-column
                         prop="isPublished"
-                        label="Estatus">
+                        sortable
+                        label="Estatus"
+                        width="120"
+                        :filters="[{ text: 'Prublicado', value: 1 }, { text: 'Sin publicar', value: 0 }]"
+                        :filter-method="filterEstatus">
                         <template slot-scope="scope">
                             {{ scope.row.isPublished ? 'Publicado' : 'Sin publicar' }}
                         </template>
@@ -348,6 +357,9 @@
             ...mapActions("bulkLoading", ['addRows','indexRow']),
             getFile() {
                 document.location.href = '/template/Recomendaciones.xlsm';
+            },
+            filterEstatus(value, row) {
+                return row.isPublished === value;
             },
 
             submitUpload() {
