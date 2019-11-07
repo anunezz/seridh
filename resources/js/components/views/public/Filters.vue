@@ -22,16 +22,24 @@
                     <ul style="list-style:none;">
                         <li v-for="(item,index) in names" :key="index">
                             <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
-                            <label v-for="(i,ind) in item.years" :key="ind" >
+                            <label v-for="(i,ind) in item.years" :key="ind"  v-show=" item.years.length > 0">
                                 <strong v-if="item.years.length -1 === ind"> {{ i }}. </strong>
                                 <strong v-else> {{ i }}, &nbsp;</strong>
                             </label>
-                            <label v-for="(i,ind) in item.entity" :key="ind">
+                            <label v-for="(i,ind) in item.entity" :key="ind" v-show=" item.entity.length > 0">
                                 <strong v-if="item.entity.length -1 === ind"> {{ i }}. </strong>
                                 <strong v-else> {{ i }},  &nbsp;</strong>
                             </label>
-                            <label v-for="(i,ind) in item.population" :key="ind">
+                            <label v-for="(i,ind) in item.population" :key="ind" v-show=" item.population.length > 0">
                                 <strong v-if="item.population.length -1 === ind"> {{ i }}. </strong>
+                                <strong v-else> {{ i }},  &nbsp;</strong>
+                            </label>
+                            <label v-for="(i,ind) in item.attending" :key="ind" v-show=" item.attending.length > 0">
+                                <strong v-if="item.attending.length -1 === ind"> {{ i }}. </strong>
+                                <strong v-else> {{ i }},  &nbsp;</strong>
+                            </label>
+                            <label v-for="(i,ind) in item.ods" :key="ind" v-show="item.ods.length > 0">
+                                <strong v-if="item.ods.length -1 === ind"> {{ i }}. </strong>
                                 <strong v-else> {{ i }},  &nbsp;</strong>
                             </label>
                         </li>
@@ -40,7 +48,12 @@
                 <div class="col-md-2"></div>
             </div>
         </div>
-        <div class="col-md-12">
+        <div class="col-md-12" v-if="jsonFilters.length === 0" style="padding-bottom: 50px !important;">
+            <div class="alert alert-danger">
+                Sin recomendaciones.
+            </div>
+        </div>
+        <div class="col-md-12" v-if="jsonFilters.length > 0">
             <button class="pull-right btn btn-info btn-sm" @click="loadWord()">
                 WORD <span class="glyphicon glyphicon glyphicon-file" aria-hidden="true"></span>
             </button>
@@ -58,25 +71,26 @@
                         <div class="col-md-10">
                           <!-- <h5 v-text="item.entity_id"></h5> -->
 
+                               <span v-text="txtRecommendation(jsonTxt[index].txt)" ></span>
 
-
-                               <span v-if="jsonTxt[index].bool === true" v-text="jsonTxt[index].txxt"></span>
+                               <!-- <span v-if="jsonTxt[index].bool === true" v-text="jsonTxt[index].txxt"></span>
                                <span v-if="jsonTxt[index].bool === false" v-text="jsonTxt[index].txt"></span>
                                <button class="btn btn-default btn-xs" type="button" @click="btn(index)" v-if="jsonTxt[index].btn === true && jsonTxt[index].bool === true" >+</button>
                                <button class="btn btn-default btn-xs" type="button" @click="btn(index)" v-if="jsonTxt[index].btn === true && jsonTxt[index].bool === false" >-</button>
-
+ -->
 
 
                         </div>
                         <div class="col-md-2 pull-right" style="padding-top: 11px;">
                           <span class="icon-calendar" aria-hidden="true"  style="float: left; padding-right: 5px;"></span>
-                          <span v-text="changeNamesValues('date',item.creted_at)" > </span>
+                          <span v-text="item.date" > </span>
                         </div>
                     </div>
                 </div>
                 <div class="panel-body">
                     <div class="row">
 
+                        <!-- <span v-text="txtRecommendation(jsonTxt[index].txt)" ></span> -->
 
                         <!-- <div class="col-md-12">
                           <p>
@@ -167,7 +181,7 @@
                             </div>
                         </div>
                         <div class="col-md-12">
-                            <button class="btn btn-success pull-right btn-xs" @click="detail(item.id)" type="button" > Detalle</button>
+                            <button class="btn btn-success pull-right btn-sm" @click="detail(item.id)" type="button" >Ver más detalles.</button>
                         </div>
                     </div>
                 </div>
@@ -193,6 +207,12 @@
          }
       },
       methods:{
+        txtRecommendation(txt){
+            return txt = txt.substr(0,160);
+        },
+        scrollToTop() {
+            window.scrollTo(0,0);
+        },
        detail(id){
         let me = this;
 
@@ -210,13 +230,6 @@
        changeNamesValues(action,value){
         let me = this;
         switch (action) {
-            case 'date':
-            {
-             value = value.substr(0,10);
-             value = value.split('-');
-             return value = `${value[2]}/${value[1]}/${value[0]}`;
-             break;
-            }
             case 'jsonItems':
             {
              value = value.split(',');
@@ -244,12 +257,22 @@
         computed: {
         },
         created(){
+            let me = this;
+            let db = JSON.parse(localStorage.getItem('cache'));
+            if(db === null){
+              me.json = [];
+            }else{
+              me.json =  db;
+            }
+            console.log("datos de la db ",db);
         },
         computed:{
         },
         mounted(){
             let me = this;
                 me.json = me.$route.params.json;
+                localStorage.getItem('cache', JSON.stringify( me.json ) );
+                me.scrollToTop();
 
                 console.log("JSON------>:   ",me.json);
 

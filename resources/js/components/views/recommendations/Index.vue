@@ -143,11 +143,12 @@
         <el-row :gutter="20">
             <el-col :span="6">
                 <el-pagination
-                    @size-change="handleSizeChange"
-                    :current-page.sync="pagination.currentPage"
-                    :page-sizes="[10, 20, 50, 100]"
                     :page-size="parseInt(pagination.perPage)"
-                    layout="sizes">
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
+                    layout="total"
+                    :current-page.sync="pagination.currentPage"
+                    :total="pagination.total">
                 </el-pagination>
             </el-col>
             <el-col :span="6" :offset="12">
@@ -251,11 +252,11 @@
                 </el-table>
                 <br>
                 <el-pagination
-                    :page-size="parseInt(pagination.perPage)"
                     @size-change="handleSizeChange"
-                    @current-change="handleCurrentChange"
-                    layout="total, ->, prev, pager, next"
                     :current-page.sync="pagination.currentPage"
+                    :page-sizes="[10, 20, 50, 100]"
+                    :page-size="parseInt(pagination.perPage)"
+                    layout="sizes, ->, prev, pager, next"
                     :total="pagination.total">
                 </el-pagination>
             </el-col>

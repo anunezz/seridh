@@ -90,7 +90,7 @@
                     <div class="media office-sm-structure circle-quotes">
                         <a href="#estados">
                             <figure>
-                                <h2>32</h2>
+                                <h2 v-text="countTopics"></h2>
                                 <p>Temas</p>
                             </figure>
                         </a>
@@ -123,6 +123,15 @@
                         cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
                         proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
                     </p>
+
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-md-12">
+                    <h2>Mensaje de la Subsecretaria</h2>
+                    <hr class="red small-margin">
                     <p>
                         Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
                         tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
@@ -134,8 +143,20 @@
                 </div>
             </div>
 
-
-
+            <div class="row">
+                <div class="col-md-12">
+                    <h2>Mensaje de la DGDHD</h2>
+                    <hr class="red small-margin">
+                    <p>
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+                        cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+                        proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                    </p>
+                </div>
+            </div>
 
 <div class="row">
     <div class="col-md-12">
@@ -158,56 +179,44 @@
                     </div>
                 </div>
             </div>
-            <div class="card" v-if="cardCheckbox === true">
+            <div class="card" v-if="cardCheckbox === true && btnSelect !== 3 && btnSelect !== 6" >
                 <div class="card-body col-md-12" style="padding: 20px;">
-
-                        <!-- <div class="row">
-                            <div class="col-md-12">
-                                <h4>Seleccionar</h4>
-                            </div>
-
-                            <div class="form-group col-md-12">
-                                <input type="text" class="form-control" placeholder="Buscar">
-                            </div>
-                        </div> -->
-
-
                     <div v-for="(item,index) in arrayFilter" :key="index">
-                        <!-- && item.id !== 0 -->
-                        <div v-if="btnSelect === item.id  && item.id !== 6  && item.id !== 3 ">
+                        <div v-if="btnSelect === item.id && item.id !== 0 && item.id !== 6  && item.id !== 3 ">
                             <div class="form-check animated fadeIn fast" v-for="(i,index) in item.data" :key="index">
                                 <label class="form-check-label">
-                                    <!-- <input @change="checkbox(item.id,i.id,i.name)" type="checkbox" class="form-check-input" :value="i.id" v-model="checkedNames[item.id].check">
-                                    {{i.name}} -->
-
                                     <el-checkbox  v-model="checkedNames[item.id].check" :label="i.name" name="type"></el-checkbox>
                                 </label>
                             </div>
                         </div>
-                        <!-- <div v-else-if="btnSelect === item.id && item.id === 0">
+                        <div v-else-if="btnSelect === item.id && item.id === 0">
                             <div class="form-check animated fadeIn fast" v-for="(i,index) in item.data" :key="index">
                                 <label class="form-check-label">
-                                    <input type="checkbox" class="form-check-input" :value="i.year" v-model="checkedNames[item.id].check">
-                                    {{i.year}}
+                                    <el-checkbox  v-model="checkedNames[item.id].check" :label="i" name="type"></el-checkbox>
                                 </label>
                             </div>
-                        </div> -->
-
-                        <div v-else-if="btnSelect === item.id && item.id === 3">
-                            <el-tree
-                                ref="topics"
-                                :data="topics"
-                                show-checkbox
-                                node-key="id"
-                                :props="defaultProps"
-                                default-expand-all
-                                :default-checked-keys="[]"
-                                @check="rightsTree">
-                            </el-tree>
                         </div>
-                        <div v-else-if="btnSelect === item.id && item.id === 6">
+                    </div>
+                </div>
+            </div>
+            <div class="card" v-show="cardCheckbox === true && btnSelect === 3">
+                 <div class="card-body col-md-12" style="padding: 20px;">
+                               <el-tree
+                                     ref="top"
+                                     :data="topics"
+                                     show-checkbox
+                                     node-key="id"
+                                     :props="defaultProps"
+                                     default-expand-all
+                                     :default-checked-keys="[]"
+                                     @check="TopTree">
+                               </el-tree>
+                 </div>
+            </div>
+            <div class="card" v-show="cardCheckbox === true && btnSelect === 6">
+                 <div class="card-body col-md-12" style="padding: 20px;">
                             <el-tree
-                                ref="rights"
+                                ref="derechosHumanos"
                                 :data="rights"
                                 show-checkbox
                                 node-key="id"
@@ -216,22 +225,15 @@
                                 :default-checked-keys="[]"
                                 @check="rightsTree">
                             </el-tree>
-                        </div>
-
-
-
-
-
-                    </div>
-                </div>
+                 </div>
             </div>
         </div>
     </div>
 </div>
 
 
-{{checkedNames}}
-
+<!-- {{checkedNames}}
+ -->
 
 	        <h2>Enlaces de interés</h2>
 	        <hr class="red small-margin">
@@ -307,16 +309,16 @@
     export default {
         data() {
             return {
-
+                filterText: '',
                defaultProps: {
                    children: 'children',
                    label: 'label'
                },
                rights: [],
                topics:[],
-
               countRecommendations:0,
               idPage: 1,
+              countTopics:0,
               cardCheckbox:false,
               visitas:0,
               issuingEntities: 0,
@@ -326,15 +328,6 @@
               loading:false,
               tableData:[],
               results:{},
-                pagination : {
-                    'total' : 0,
-                    'current_page' : 0,
-                    'per_page' : 0,
-                    'last_page' : 0,
-                    'from' : 0,
-                    'to' : 0,
-                },
-                offset : 3,
             };
         },
         computed: {
@@ -342,64 +335,45 @@
         created() {
             this.getDerechos();
         },
+        watch: {
+            filterText(val){
+                let me = this;
+                me.$refs.top.filter(val);
+            }
+        },
         methods: {
-
-
+            TopTree(){
+             let me = this;
+             console.log(  me.$refs.top.getCheckedNodes() );
+            },
+            filterNode(value, data) {
+                if (!value) return true;
+                return data.label.indexOf(value) !== -1;
+            },
             getDerechos(){
               let me = this;
-     console.log("ESTAS EN GET DERECHOS..");
-            axios.get('/api/public/treeDerechosHumanos').then(function (response) {
-                me.topics = response.data.topics;
-                me.rights = response.data.rights;
-
-              //  console.log("RESPONSE DERECHOS HUMANOS: ",response);
-
-
+                axios.get('/api/public/treeDerechosHumanos').then(function (response) {
+                    me.topics = response.data.topics;
+                    me.rights = response.data.rights;
                 }).catch(function (error) {
                     console.log(error);
                 });
-
-
-
             },
             rightsTree(){
-                let ids = this.$refs.rights.getCheckedNodes();
-                this.recommendationForm.listRights=[];
-                if (ids.length!==0){
-                    let $this = this;
-                    ids.forEach(function(el) {
-                        if (el.add===1){
-                            $this.recommendationForm.listRights.push(el);
-                        }
-                    });
-                }
+               // let ids = this.$refs.derechosHumanos.getCheckedNodes();
+                console.log(this.$refs.derechosHumanos.getCheckedNodes());
+               // this.recommendationForm.listRights=[];
+                // if (ids.length!==0){
+                //     let $this = this;
+                //     ids.forEach(function(el) {
+                //         if (el.add===1){
+                //             $this.recommendationForm.listRights.push(el);
+                //         }
+                //     });
+                // }
             },
-
             treeDerechosHumanos(){
              let me = this;
-            },
-            filters(){
-              let me = this;
-              let suma = 0;
-              let data = {};
-
-              for (let i = 0; i < me.checkedNames.length; i++) {
-                  if(me.checkedNames[i].check.length > 0){
-                    suma = suma + 1;
-                  }else{
-                     suma = suma + 0;
-                  }
-              }
-
-              if(suma === 0 ){
-                  me.message("warning","Sin results.");
-              }else{
-                 data.check = me.checkedNames;
-                 data.names = me.arrayFilter;
-                 me.$router.push({name:'PublicFilter', params: {json: data }});
-                 //me.$router.push({path: '/publico/filtros', params: {json:me.checkedNames }});
-              }
-
             },
             panelBusqueda(item){
                 let me = this;
@@ -417,6 +391,10 @@
                 axios.get('/api/public/recommendations/count').then(function (response) {
                     me.countRecommendations = response.data.recommendation;
                     me.issuingEntities = response.data.issuingEntities;
+                    me.countTopics = response.data.topics;
+
+
+
                 }).catch(function (error) {
                     console.log(error);
                 });
@@ -427,57 +405,29 @@
                 axios.post('/api/public/visits',{
                     'id': me.idPage
                 }).then(function (response){
-                   // console.log("RESPONSE VISITS: ",response);
                     me.visitas = response.data.lResults;
                 }).catch(function (error) {
                     console.log(error);
                 });
             },
             labelForm(){
-             let me = this;
-                axios.get('/api/public/recommendations/labelsForm').then(function (response) {
-                  console.log("LabelsForm: ",response.data.lResults);
-                  for (let i = 0; i < response.data.lResults.length; i++){
-                      me.arrayFilter.push({ id: response.data.lResults[i].id,
-                                         label: response.data.lResults[i].name,
-                                           btn: false,
-                                          data: response.data.lResults[i].data });
+                 let me = this;
+                 axios.get('/api/public/recommendations/labelsForm').then(function (response) {
+                    // console.log("LabelsForm: ",response.data.lResults);
+                        for (let i = 0; i < response.data.lResults.length; i++){
+                            me.arrayFilter.push({ id: response.data.lResults[i].id,
+                                                label: response.data.lResults[i].name,
+                                                btn: false,
+                                                data: response.data.lResults[i].data });
 
-                       me.checkedNames.push({id: response.data.lResults[i].id,
-                                          check: []});
-                  }
-
-
-
+                            me.checkedNames.push({id: response.data.lResults[i].id,
+                                                check: []});
+                        }
                   console.log("arrayFilter: ",me.arrayFilter);
 
                 }).catch(function (error) {
                     console.log(error);
                 });
-            },
-            viewRecommendations(data){
-                let me = this;
-                console.log("Nueva funcion de recomendaciones....",data);
-                $("#modalFilter").modal('hide');
-
-                setTimeout(item =>{
-                 this.$router.push( '/publico/filtros' );
-              //  me.$router.push({path: '/publico/filtros',array:1});
-                // /publico/filtros/
-                //, params: { array: data}
-                // me.$router.push({
-                //     name: 'PublicFilter',
-                //     id: data });
-                },500);
-
-
-            },
-            cambiarPagina(page,buscar,criterio){
-                let me = this;
-                //Actualiza la página actual
-                me.pagination.current_page = page;
-                //Envia la petición para visualizar la data de esa página
-                me.recommendationFilter(page);
             },
             json(a,b){
                 if( b.length === 0 ){

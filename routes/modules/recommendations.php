@@ -18,4 +18,5 @@ Route::prefix('public')->group(function () {
     Route::get('listarExcel', 'PublicController@listExcel');
     Route::get('listarWord', 'PublicController@listWord');
     Route::get('treeDerechosHumanos', 'PublicController@derechosHumanos');
+    Route::post('detailsRecommendation', 'PublicController@detailsRecommendation');
 });

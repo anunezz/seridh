@@ -5,20 +5,19 @@ use Illuminate\Http\Request;
 use App\Http\Models\Recommendation;
 use App\Http\Models\PublicRecommendation;
 use App\Http\Models\Visits;
-use App\Http\Models\Cats\CatEntity;//Entidad emisora 1
-use App\Http\Models\Cats\CatGobOrder; //Orden de gobierno 2
-use App\Http\Models\Cats\CatGobPower; //Poder de gobierno 3
-use App\Http\Models\Cats\CatAttending; //Entidad encargada de attender
-
+use App\Http\Models\Cats\CatEntity;//Entidad emisora
+use App\Http\Models\Cats\CatGobOrder; //Orden de gobierno
+use App\Http\Models\Cats\CatGobPower; //Poder de gobierno
+use App\Http\Models\Cats\CatAttending; //Autoridad
+use App\Http\Models\Cats\CatSolidarityAction; // Accion solidaria
 
 use App\Http\Models\Cats\CatRightsRecommendation; //Derechos de la recomendacion 4
 use App\Http\Models\Cats\CatSubRights;
 use App\Http\Models\Cats\CatSubcategorySubrights;
-
+use App\Http\Models\Cats\CatTopic;
 
 use App\Http\Models\Cats\CatDate;
 use App\Http\Models\Cats\CatPopulation; //Poblacion 5
-use App\Http\Models\Cats\CatSolidarityAction; //Accion solidaria 6
 use App\Http\Models\Cats\CatReviewTopic; // Revision de tema(s) 9
 use App\Http\Models\Cats\CatSubtopic; // Revision de subtema(s) 10
 use App\Http\Models\Cats\CatOds; //ODS(Objetivo de Desarrollo Sostenible) 10
@@ -36,10 +35,8 @@ class PublicController extends Controller
 
     public function derechosHumanos(){
 
-    $RightsTrait = RightsTrait::orderRights(null,null,null);
-
-    $TopicsTrait = TopicsTrait::orderTopics(null);
-
+        $RightsTrait = RightsTrait::orderRights(null,null,null);
+        $TopicsTrait = TopicsTrait::orderTopics(null);
 
     return response()->json([
         'success' => true,
@@ -52,12 +49,13 @@ class PublicController extends Controller
         $recommendation = Recommendation::where('isActive','=', 1)->where('isPublished','=', 1)->count();
         $visits = new Visits;
         $CatEntity = CatEntity::where('isActive','=', 1)->count();
+        $CatTopic  = CatTopic::where('isActive','=', 1)->count();
         return response()->json([
             'success' => true,
             'recommendation'=>$recommendation,
             'visits' => $visits,
+            'topics' =>  $CatTopic,
             'issuingEntities' => $CatEntity
-
         ],200);
     }
 
@@ -83,13 +81,16 @@ class PublicController extends Controller
         $CatRightsRecommendation = CatRightsRecommendation::where('isActive', 1)->get(['id', 'name']);
         $CatSubtopic     = CatSubtopic::where('isActive', 1)->get(['id', 'name']);
 
-        $CatDate          = CatDate::where('isActive', 1)->get(['id', 'name']);
+        $CatDate = Recommendation::select('date')->where('isActive','=', 1)->where('isPublished','=', 1)
+        ->groupBy('date')
+        ->orderBy('date', 'desc')
+        ->get(['date']);
 
-        $years            = DB::table('recommendations')->select(DB::raw('YEAR(created_at) as year'))
-                                                       ->where('isActive', 1)
-                                                       ->groupBy('year')
-                                                       ->orderBy('year', 'desc')
-                                                       ->get();
+        $arrayaDate = array();
+        foreach ($CatDate as  $date) {
+          array_push($arrayaDate, $date->date  );
+        }
+
 
         $CatRightsRecommendation = CatRightsRecommendation::where('isActive', 1)->get(['id', 'name']); // 1
         $CatSubRights = CatSubRights::where('isActive', 1)->get(['id', 'name','rights_recommendations_id']); // 2
@@ -129,7 +130,7 @@ class PublicController extends Controller
 
         $data = array(
             //"0" => array("id"=> 0,"name"=>"Año","data"=> $years),
-            "0" => array("id"=> 0,"name"=>"Año","data"=> $CatDate),
+            "0" => array("id"=> 0,"name"=>"Año","data"=> $arrayaDate),
             "1" => array("id"=> 1,"name"=>"Entidad emisora","data"=>$CatEntity),
             "2" => array("id"=> 2,"name"=>"Población","data"=> $CatPopulation),
             "3" => array("id"=> 3,"name"=>"Temas","data"=> ''),
@@ -147,54 +148,103 @@ class PublicController extends Controller
 
     public function recommendationFilter(Request $request){
 
-                            function CatEntity($id){
-                                $CatEntity       = CatEntity::where('isActive', 1)->get(['id', 'name']);
-                                foreach ($CatEntity as  $value) {
-                                    if($value->id === $id){
-                                        return $value->name.$id;
-                                    }
-                                }
-                            }
+        function CatEntity($id){
+            $CatEntity       = CatEntity::where('isActive', 1)->get(['id', 'name']);
+            foreach ($CatEntity as  $value) {
+                if($value->id === $id){
+                    return $value->name.$id;
+                }
+            }
+        }
 
-                            function chekNamesOptions($r){
-                                $jsonCheck =  array();
-                                if(  count($r->date) > 0  ){ //Año
-                                    $checkYears = array();
-                                    foreach($r->date as $years){
-                                    array_push($checkYears,$years);
-                                    }
-                                    array_push( $jsonCheck,array("years"=>$checkYears));
-                                }
+        function chekNamesOptions($r){
+            $jsonCheck =  array();
+            if(  count($r->date) > 0  ){ //Año
+                $checkYears = array();
+                foreach($r->date as $years){
+                array_push($checkYears,$years);
+                }
+                array_push( $jsonCheck,array("years"=>$checkYears));
+            }
 
-                                if( count($r->entity_id) > 0){ //Entidad emisora
-                                    $CatEntity = CatEntity::where('isActive', 1)->get(['id', 'name']);
-                                    $checkEntity = array();
-                                    foreach ($CatEntity as  $v){
-                                        foreach($r->entity_id as $entity_value){
-                                            if($v->id === $entity_value){
-                                                array_push($checkEntity,$v->name);
-                                            }
-                                        }
-                                    }
-                                    array_push( $jsonCheck,array("entity"=>$checkEntity));
-                                }
+            if( count($r->entity_id) > 0){ //Entidad emisora
+                $CatEntity = CatEntity::where('isActive', 1)->get(['id', 'name']);
+                $checkEntity = array();
+                foreach ($CatEntity as  $v){
+                    foreach($r->entity_id as $entity_value){
+                        if($v->id === $entity_value){
+                            array_push($checkEntity,$v->name);
+                        }
+                    }
+                }
+                array_push( $jsonCheck,array("entity"=>$checkEntity));
+            }
 
-                                if( count($r->population_id) > 0){ //Población
-                                    $CatPopulation   = CatPopulation::where('isActive', 1)->get(['id', 'name']);
-                                    $checkPopulation = array();
-                                    foreach ($CatPopulation as  $v){
-                                        foreach($r->population_id as $population_value){
-                                            if($v->id === $population_value){
-                                                array_push($checkPopulation,$v->name);
-                                            }
-                                        }
-                                    }
-                                    array_push( $jsonCheck,array("population"=>$checkPopulation));
-                                }
-                                return $jsonCheck;
-                            }
-                            //dd(chekNamesOptions($request));
+            if( count($r->population_id) > 0){ //Población
+                $CatPopulation   = CatPopulation::where('isActive', 1)->get(['id', 'name']);
+                $checkPopulation = array();
+                foreach ($CatPopulation as  $v){
+                    foreach($r->population_id as $population_value){
+                        if($v->id === $population_value){
+                            array_push($checkPopulation,$v->name);
+                        }
+                    }
+                }
+                array_push( $jsonCheck,array("population"=>$checkPopulation));
+            }
 
+            if( count($r->attending_id) > 0){ //Entidad emisora
+                $CatAttending   = CatAttending::where('isActive', 1)->get(['id', 'name']);
+                $checkCatAttending = array();
+                foreach ($CatAttending as  $v){
+                    foreach($r->attending_id as $attending_value){
+                        if($v->id === $attending_value){
+                            array_push($checkCatAttending,$v->name);
+                        }
+                    }
+                }
+
+                array_push( $jsonCheck,array("attending"=> $checkCatAttending));
+            }
+            if( count($r->attending_id) > 0){ //ODS
+                $CatOds   = CatOds::where('isActive', 1)->get(['id', 'name']);
+                $checkCatOds = array();
+                foreach ($CatOds as  $v){
+                    foreach($r->ods_id as $ods_id_value){
+                        if($v->id === $ods_id_value){
+                            array_push($checkCatOds,$v->name);
+                        }
+                    }
+                }
+
+                array_push( $jsonCheck,array("ods"=> $checkCatOds));
+            }
+            return $jsonCheck;
+        }
+        //dd(chekNamesOptions($request));
+
+
+
+            function derechosHumanos($id){
+
+                $j = Recommendation::with('subcategory.subRight.rigthRecommendation')->find($id);
+
+                // $arrayRights = array();
+                // foreach ($j->right as $value) {
+                //   array_push($arrayRights, array($value->name,$value->id, $value->pivot->right) );
+                // }
+
+
+                $data = [
+                     'rigth'=>$j->right//,
+                    // 'subright'=> $j->subright,
+                    // 'subcategory'=>$j->subcategory
+                ];
+
+                return $j;
+            }
+
+            //dd(derechosHumanos(4));
         $sqldata = [];
        //          Población                             Autoridad
         if( count($request->population_id) > 0 || count($request->attending_id) > 0 || count($request->ods_id) > 0 ){
@@ -234,21 +284,12 @@ class PublicController extends Controller
 
 
             $recommendation = Recommendation::with('right','subright','subcategory')->orWhere(function ($query) use($request){
-                        // foreach($request->date as $date_value){
-                        //   $query->orWhereYear('created_at',$date_value);
-                        // }
-
                         if(count($request->date) > 0){
-
-                            foreach($request->date as $date_value){
-                                  $query->orWhere('date',$date_value);
-                            }
-
-                            //$query->whereIn('date',$request->date);
+                          //  foreach($request->date as $date_value){
+                               //   $query->where('date',$date_value);
+                                  $query->whereIn('date',$request->date);
+                        //    }
                         }
-                        // foreach($request-> as $date_value){
-                        //     $query->orWhereYear('rigth',$date_value);
-                        // }
             })->where(function ($query) use($request,$sqldata){
                 if( count($request->entity_id) > 0 ){
                     $query->whereIn('cat_entity_id',$request->entity_id);
@@ -260,21 +301,8 @@ class PublicController extends Controller
               ->orderBy('id', 'desc')
               ->get();
 
-            // dd($recommendation);
-            //  $r = Recommendation::with('right','subright','subcategory')->find(7);
+           ///  dd($recommendation);
 
-            // $d = array();
-            //  foreach ($r->right->subright->all() as  $value) {
-            //      array_push($d, array('name'=>$value->name));
-            //  }
-
-            //  $t = array();
-            //  foreach ($r->subright->all() as  $v) {
-            //      array_push($t, array('name'=>$v->name));
-            //  }
-
-
-            //  dd($d);
 
 
 
@@ -288,7 +316,7 @@ class PublicController extends Controller
                 $attendings  = Recommendation::find($value->id)->implode_attendig;
                 array_push($data,array( "id" =>  $value->id
                                         ,"recommendation" =>  $value->recommendation
-                                        ,"creted_at" =>  $value->created_at
+                                        ,"date" =>  $value->date
                                         ,"entity_id" => CatEntity($value->cat_entity_id) // nameAttending($value->cat_entity_id)
                                         ,"population" => $populations
                                         ,"themas" => "PENDIENTE"
@@ -298,12 +326,70 @@ class PublicController extends Controller
                                         ));
             }
                //  dd(chekNamesOptions($request));
-            // dd($data);
+             //dd($data);
             return response()->json([
                 'success' => true,
                 'lResults'=> ["jsonFilters" => $data,'count' => count($data),"checkNames"=> chekNamesOptions($request)]
             ],200);
     }
+
+    public function detailsRecommendation(Request $request){
+
+    function explodeRecommendations( $data ){
+        return  $data = explode(",", $data);
+    }
+
+    $recommendation = Recommendation::find($request->details);
+    $populations = explodeRecommendations(Recommendation::find($request->details)->implode_population);
+    $CatGobPower = explodeRecommendations(Recommendation::find($request->details)->implode_order);
+    $CatAttending = explodeRecommendations(Recommendation::find($request->details)->implode_attendig);
+    $CatSolidarityAction = explodeRecommendations(Recommendation::find($request->details)->implode_action);
+  //  $populations = explode(",", $populations);
+   // dd($CatGobPower );
+
+    $words = ['<p style="font-family: Montserrat; font-size: 14px; font-style: normal; font-weight: normal;">'
+              ,'</p>'];
+
+    foreach ($words as $word) {
+        $recommendation->recommendation = str_replace($word,
+        '',
+        $recommendation->recommendation);
+    }
+
+            function CatEntity($id){
+                $CatEntity       = CatEntity::where('isActive', 1)->get(['id', 'name']);
+                foreach ($CatEntity as  $value) {
+                    if($value->id === $id){
+                        return $value->name.$id;
+                    }
+                }
+            }
+
+    $data = [ 'recommendation' =>  $recommendation->recommendation,
+              'entity' => CatEntity($recommendation->cat_entity_id),
+              'population' => $populations,
+              'catGobOrder' => $CatGobPower,
+              'CatGobPower' => $CatGobPower,
+              'CatAttending' => $CatAttending,
+              'CatSolidarityAction' => $CatSolidarityAction
+                 ];
+
+
+
+
+   // dd( $data );
+
+
+    return response()->json([
+        'success' => true,
+        'lResults'=>  $data
+    ],200);
+
+   // dd($recommendation);
+
+    }
+
+
 
     public function listPdf(Request $request){
         $recommendation = Recommendation::where('isActive','=', 1)->where('isPublished','=', 1)->get();

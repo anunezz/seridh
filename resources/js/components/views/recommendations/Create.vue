@@ -230,7 +230,6 @@
                         :default-checked-keys="[]"
                         @check="themesTree">
                     </el-tree>
-
                 </el-col>
             </el-row>
             <br>

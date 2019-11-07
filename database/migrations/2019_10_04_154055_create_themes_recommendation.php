@@ -15,9 +15,23 @@ class CreateThemesRecommendation extends Migration
     {
         Schema::create('themes_recommendation', function (Blueprint $table) {
 
-            $table->integer('recommendation_id');
-            $table->integer('cat_topic_id');
-            $table->integer('cat_subtopic_id');
+            $table->unsignedBigInteger('recommendation_id')->nullable();
+            $table->unsignedBigInteger('cat_topic_id')->nullable();
+            $table->unsignedBigInteger('cat_subtopic_id')->nullable();
+
+
+            $table->foreign('recommendation_id')
+                ->references('id')
+                ->on('recommendations');
+
+            $table->foreign('cat_topic_id')
+                ->references('id')
+                ->on('cat_topics');
+
+            $table->foreign('cat_subtopic_id')
+                ->references('id')
+                ->on('cat_subtopics');
+
 
 
         });

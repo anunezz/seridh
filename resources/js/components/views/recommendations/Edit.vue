@@ -337,7 +337,8 @@
                 showIds:[],
                 showIde:[],
 
-                tree: null,
+                tree: [],
+               // tree: null,
                 defaultProps: {
                     children: 'children',
                     label: 'label'
@@ -373,6 +374,7 @@
                     cat_gob_power_id: [],
                     cat_attendig_id: [],
                     cat_rights_recommendation_id: null,
+                    cat_topics_id: null,
                     cat_population_id: [],
                     cat_solidarity_action_id: [],
                     cat_review_right_id: null,
