@@ -140,6 +140,70 @@
             </span>
         </el-dialog>
 
+        <el-card shadow="never">
+            <div slot="header">
+                <span class="title">Filtros de Búsqueda</span>
+            </div>
+            <el-row :gutter="20">
+                <el-col :span="24">
+                    <el-form ref="search" :model="search" label-width="120px" label-position="top">
+                        <el-row :gutter="20">
+                            <el-col :span="6">
+                                <el-form-item label="Fecha">
+                                    <el-date-picker
+                                        style="width: 100%"
+                                        v-model="search.date"
+                                        type="year"
+                                        placeholder="Seleccione un año">
+                                    </el-date-picker>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="6">
+                                <el-form-item label="Recomendación">
+                                    <el-input v-model="search.recommendation"/>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="6">
+                                <el-form-item label="Entidad">
+                                    <el-select
+                                        v-model="search.cat_entity_id"
+                                        filterable
+                                        clearable
+                                        placeholder="Seleccionar"
+                                        style="width: 100%">
+                                        <el-option
+                                            v-for="(entitie, index) in catEntity"
+                                            :key="index"
+                                            :label="entitie.name"
+                                            :value="entitie.id">
+                                        </el-option>
+                                    </el-select>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="6">
+                                <el-form-item label="Estatus">
+                                    <el-checkbox-group v-model="search.isPublished" :max="1">
+                                        <el-checkbox :label="1">Publicado</el-checkbox>
+                                        <el-checkbox :label="0">Sin publicar</el-checkbox>
+                                    </el-checkbox-group>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                    </el-form>
+                </el-col>
+            </el-row>
+            <el-row>
+                <div align="right">
+                    <el-button type="primary" size="small" @click="getByFilter">
+                        Buscar
+                    </el-button>
+                    <el-button type="danger" size="small" plain @click="cleanFilters">
+                        Limpiar
+                    </el-button>
+                </div>
+            </el-row>
+        </el-card>
+
         <el-row :gutter="20">
             <el-col :span="6">
                 <el-pagination
@@ -152,13 +216,15 @@
                 </el-pagination>
             </el-col>
             <el-col :span="6" :offset="12">
-                <el-button
-                    size="medium"
-                    icon="fas fa-search"
-                    style="width: 100%"
-                    @click="showFilters = true">
-                    Filtros
-                </el-button>
+                <!--     <el-button
+                         size="medium"
+                         icon="fas fa-search"
+                         style="width: 100%"
+                         @click="showFilters = true">
+                         Filtros
+                     </el-button>
+                -->
+
             </el-col>
         </el-row>
         <br>
@@ -262,6 +328,7 @@
                 <br>
                 <el-pagination
                     @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
                     :current-page.sync="pagination.currentPage"
                     :page-sizes="[10, 20, 50, 100]"
                     :page-size="parseInt(pagination.perPage)"
@@ -342,6 +409,18 @@
                 errorCarga:false,
                 errorRecommendations:[],
                 totalErrors: 0,
+                checkList: [],
+                catEntity: [],
+                checked: false,
+                checked2: false,
+                search: {
+                    date: null,
+                    recommendation: null,
+                    cat_entity_id: null,
+                    isPublished: []
+                }
+
+
             }
         },
 
@@ -366,6 +445,32 @@
                 this.$refs.upload.submit();
                 this.dialogVisible = false;
 
+            },
+
+            cleanFilters(){
+                this.search.recommendation = null;
+                this.search.isPublished = [];
+                this.search.date = null;
+                this.search.cat_entity_id = null;
+
+            },
+
+            getByFilter(){
+                let _search = {
+                    filters: this.search,
+                    page: 1,
+                    perPage: this.pagination.perPage,
+                };
+
+
+               axios.get('/api/filter-recommendations',{params: _search}).then(response => {
+                   if(response.data.success){
+                       this.recommendations = response.data.recommendations.data;
+                       this.pagination.total = response.data.recommendations.total;
+                       this.pagination.currentPage = response.data.recommendations.current_page;
+                       this.pagination.perPage = response.data.recommendations.per_page;
+                   }
+               })
             },
 
             onError(err, file, fileList){
@@ -530,14 +635,17 @@
                 };
 
                 axios.get('/api/recommendations', data).then(response => {
-                    this.recommendations = response.data.recommendations.data;
-                    this.pagination.total = response.data.recommendations.total;
-                    this.pagination.currentPage = response.data.recommendations.current_page;
-                    this.pagination.perPage = response.data.recommendations.per_page;
 
-                    this.showFilters = false;
+                    if(response.data.success){
+                        this.recommendations = response.data.recommendations.data;
+                        this.pagination.total = response.data.recommendations.total;
+                        this.pagination.currentPage = response.data.recommendations.current_page;
+                        this.pagination.perPage = response.data.recommendations.per_page;
+                        this.catEntity = response.data.entity;
+                        this.showFilters = false;
+                        this.stopLoading();
+                    }
 
-                    this.stopLoading();
                 }).catch(error => {
                     this.stopLoading();
 

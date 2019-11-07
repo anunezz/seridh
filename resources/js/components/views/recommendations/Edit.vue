@@ -311,11 +311,11 @@
                 <el-col :span="3" :offset="13">
                     <el-button type="danger" style="width: 100%" @click="$router.push('/recomendaciones')">Cancelar</el-button>
                 </el-col>
-                <el-col :span="3.5" >
-                    <el-button type="success" style="width: 100%" @click="submitForm(false)">Actualizar y Quitar de publicado </el-button>
+                <el-col :span="3" >
+                    <el-button type="primary" style="width: 100%" @click="saveForm(false)">Guardar </el-button>
                 </el-col>
                 <el-col :span="3.1" >
-                    <el-button type="primary" style="width: 100%" @click="submitForm(true)">Actualizar y Publicar</el-button>
+                    <el-button type="success" style="width: 100%" @click="submitForm(true)">Actualizar y Publicar</el-button>
                 </el-col>
             </el-row>
         </el-form>
@@ -554,14 +554,14 @@
                 });
             },
 
-            submitForm(type) {
+            submitForm() {
                 this.startLoading();
                 let recommendationId = this.$route.params.id;
 
                 this.$refs['recommendationForm'].validate((valid) => {
                     if (valid) {
 
-                        this.recommendationForm.isPublished = type;
+                        this.recommendationForm.isPublished = true;
 
                         axios.put(`/api/recommendations/${recommendationId}`, this.recommendationForm).then(response => {
                             this.stopLoading();
@@ -569,7 +569,39 @@
                             this.$message({
                                 type: "success",
                                 title: 'Éxito',
-                                message: "Se actualizo la información correctamente"
+                                message: "Se actualizo y se Publico la información correctamente"
+                            });
+
+                            this.$router.push('/recomendaciones');
+                        }).catch(error => {
+                            this.stopLoading();
+
+                            this.$message({
+                                type: "warning",
+                                message: "No fue posible completar la acción, intente nuevamente."
+                            });
+                        })
+                    }
+                    else {
+                        this.stopLoading();
+                    }
+                });
+            },
+
+            saveForm() {
+                this.startLoading();
+                let recommendationId = this.$route.params.id;
+
+                this.$refs['recommendationForm'].validate((valid) => {
+                    if (valid) {
+
+                        axios.put(`/api/recommendations/${recommendationId}`, this.recommendationForm).then(response => {
+                            this.stopLoading();
+
+                            this.$message({
+                                type: "success",
+                                title: 'Éxito',
+                                message: "Se Guardo correctamente la informacion"
                             });
 
                             this.$router.push('/recomendaciones');

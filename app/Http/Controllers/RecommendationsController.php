@@ -36,6 +36,37 @@ class RecommendationsController extends Controller
                 ->orderBy('updated_at', 'DESC')
                 ->paginate($data['perPage']);
 
+            $entity = CatEntity::select(['name','id'])->get();
+
+            return response()->json([
+                'recommendations' => $recommendations,
+                'entity' => $entity,
+                'success'         => true
+            ]);
+
+        }
+        catch ( \Exception $e ){
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+
+    public function getGonsult(Request $request){
+        try {
+             $data = $request->all();
+             $search = json_decode($data['filters']);
+
+            $recommendations = Recommendation::with('user', 'ods', 'entity:id,name',
+                'order', 'power')
+                ->consult($search)
+                ->where('isActive', true)
+                ->orderBy('updated_at', 'DESC')
+                ->paginate($data['perPage']);
+
+
             return response()->json([
                 'recommendations' => $recommendations,
                 'success'         => true
@@ -83,9 +114,9 @@ class RecommendationsController extends Controller
                 ->orderBy('name')
                 ->get(['id', 'name']);
 
-//            $subtopics = CatSubtopic::with('topic')->where('isActive', 1)
-//                ->orderBy('name')
-//                ->get(['id', 'name']);
+            $subtopics = CatSubtopic::with('topic')->where('isActive', 1)
+                ->orderBy('name')
+                ->get(['id', 'name']);
 
             $ods = CatOds::where('isActive', 1)
                 ->orderBy('name')
@@ -138,7 +169,7 @@ class RecommendationsController extends Controller
                 'dates'       => $dates,
                 'powers'      => $powers,
                 'attendings'  => $attendings,
-//                'subtopics'   => $subtopics,
+                'subtopics'   => $subtopics,
 //                'tree' => $tree,
                 'success'     => true
             ]);
@@ -153,6 +184,7 @@ class RecommendationsController extends Controller
         }
     }
 
+
     public function store(Request $request)
     {
         try {
@@ -163,6 +195,7 @@ class RecommendationsController extends Controller
             $recommendation->user_id = auth()->user()->id;
             $recommendation->fill($data);
             $recommendation->save();
+
 
             $listRights=[];
             foreach ($data['listRights'] as $item){
@@ -177,13 +210,13 @@ class RecommendationsController extends Controller
 
 
             $listThemes=[];
-            foreach ($data['listThemes'] as $item){
-                $listThemes[$item['id']]=[
+            foreach ($data['listThemes'] as $item) {
+                $listThemes[$item['id']] = [
                     'cat_topic_id' => $item['cat_topic_id']
                 ];
             }
-           // dd($data['listThemes']);
-            $recommendation->subtopic()->sync($listThemes);
+                // dd($data['listThemes']);
+                $recommendation->subtopic()->sync($listThemes);
 
 
 
@@ -317,7 +350,7 @@ class RecommendationsController extends Controller
  //               'children' => $topics
  //           ];
 
-            $recommendation = Recommendation::with('documents', 'ods', 'order', 'power', 'attendig', 'population','right','subright','subcategory')->find(decrypt($id));
+            $recommendation = Recommendation::with('documents', 'ods', 'order', 'power', 'attendig', 'population','right','subright','subcategory', 'subtopic')->find(decrypt($id));
 
             $rights = RightsTrait::orderRights($recommendation->right->all(),$recommendation->subright->all(),$recommendation->subcategory->all());
 
@@ -396,23 +429,13 @@ class RecommendationsController extends Controller
                 $listRights=[];
             }
 
-            $listThemes=[];
-            foreach ($data['listThemes'] as $item){
-                $listThemes[$item['id']]=[
-                    'cat_topic_id' => $item['cat_topic_id']
-                ];
-            }
-
-            $recommendation->subtopic()->sync($listThemes);
-
               $listThemes=[];
-              foreach ($data['listThemes'] as $item){
-                  $listThemes[$item['cat_subtopic_id']]=[
+              foreach ($data['listThemes'] as $item) {
+                  $listThemes[$item['cat_subtopic_id']] = [
                       'cat_topic_id' => $item['cat_topic_id']
                   ];
               }
-
-              $recommendation->subtopic()->sync($listThemes);
+                  $recommendation->subtopic()->sync($listThemes);
 
 
             if ( count($data['cat_ods_id']) > 0 ) {

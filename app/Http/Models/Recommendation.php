@@ -14,6 +14,7 @@ use App\Http\Models\Cats\CatRightsRecommendation;
 use App\Http\Models\Cats\CatSubtopic;
 use App\Http\Models\Cats\CatTopic;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -213,6 +214,33 @@ class Recommendation extends Model
 //                        $q->where('cat_topic_id', $filters->cat_topic_id);
 //                    }
 //                });
+            });
+        });
+    }
+
+    public function scopeConsult($query, $search){
+        return $query->when(!empty($search), function ($query) use ($search){
+            return $query->where(function ($q) use ($search){
+
+                $q->when(!empty($search->date), function ($q) use ($search){
+                    $parseDate = Carbon::parse($search->date)->format('Y');
+
+                    return $q->where('date',$parseDate);
+                });
+                $q->when(!empty($search->isPublished), function ($q) use ($search){
+
+                    return $q->where('isPublished',$search->isPublished[0]);
+                });
+                $q->when(!empty($search->recommendation), function ($q) use ($search){
+                    return $q->where('recommendation','like','%'.$search->recommendation.'%');
+                });
+
+                $q->when(!empty($search->cat_entity_id), function ($q) use ($search){
+                    return $q->whereHas('entity', function ($qq) use ($search) {
+                        return $qq->where('id',$search->cat_entity_id);
+                    });
+                });
+
             });
         });
     }
