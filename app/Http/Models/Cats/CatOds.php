@@ -1,7 +1,7 @@
 <?php namespace App\Http\Models\Cats;
 
 use Illuminate\Database\Eloquent\Model;
-
+use App\Http\Models\Recommendation;
 /**
  * App\Http\Models\Cats\CatOds
  *
@@ -23,4 +23,42 @@ use Illuminate\Database\Eloquent\Model;
 class CatOds extends Model
 {
     protected $table = 'cat_ods';
+
+
+
+    public function goalsOds()
+    {
+        return $this->hasMany(CatGoalsOds::class, 'ods_id');
+    }
+
+    protected $appends = ['hash'];
+
+    public function getHashAttribute()
+    {
+        return encrypt($this->id);
+    }
+
+    public function getIsCreatorAttribute(): bool
+    {
+        return true;
+        //return $this->user_id === auth()->user()->id;
+    }
+
+    //Create by Adrian Núñez Alanis ------------------------------>
+    public function recommendations()
+    {
+        return $this->belongsToMany(Recommendation::class);
+    }
+
+    public function subOds()
+    {
+        return $this->belongsToMany(
+            CatSubtopic::class,
+            'ods_recommendation',
+            'ods_id',
+            'goals_ods_id'
+        )->distinct('goals_ods_id');
+    }
+
+
 }

@@ -23,12 +23,13 @@ trait TopicsTrait
 //        $tree = [];
         $ideEdit = [];
         $topics = [];
-
         if ($items!==null){
             foreach ($items as $item){
                 array_push($ideEdit, $item->id);
             }
         }
+
+
 
         $showIde = [];
         $lists=[];
@@ -36,55 +37,53 @@ trait TopicsTrait
             $subtopics = [];
 
             foreach ($topic->subtopics as $subtopic) {
-                if ($items!==null){
-                    $total++;
-                    $subtopics[] = [
-                        'id' => $total,
-                        'label' => $subtopic->name,
-                        'cat_topic_id' => $topic -> id,
-                        'cat_subtopic_id' => $subtopic->id,
-                    ];
-                    foreach ($ideEdit as $value){
-                        if ($value===$subtopic->id){
-                            array_push($showIde,$total);
-                            $lists[] = [
-                                'id' => $total,
-                                'label' => $subtopic->name,
-                                'cat_topic_id' => $topic->id,
-                                'cat_subtopic_id' => $subtopic->id,
-                            ];
+                        $total++;
+                        $name = '';
+                        $validName= strpos($subtopic->name, '.-');
+                        if ($validName==false) {
+                            $name = $subtopic->name;
+                        }else{
+                            $aux = explode(".-", $subtopic->name);
+                            $name = $aux[1];
                         }
-                    }
-                }else{
-                    $subtopics[] = [
-                        'id' => $subtopic->id,
-                        'label' => $subtopic->name,
-                        'cat_topic_id' => $topic -> id
-                    ];
-                }
 
+                        $subtopics[] = [
+                            'id' => $total,
+                            'label' => $subtopic->name,
+                            'name' => $name,
+                            'cat_topic_id' => $topic -> id,
+                            'cat_subtopic_id' => $subtopic->id,
+                        ];
+                        foreach ($ideEdit as $value){
+                            if ($value===$subtopic->id){
+                                array_push($showIde,$total);
+                                $lists[] = [
+                                    'id' => $total,
+                                    'label' => $subtopic->name,
+                                    'name' => $name,
+                                    'cat_topic_id' => $topic->id,
+                                    'cat_subtopic_id' => $subtopic->id,
+                                ];
+                            }
+                        }
             }
             $topics[] = [
                 'id' => $topic->id,
-                'label' => $topic->name,
+                'name' => $topic->name,
                 'children' => $subtopics
             ];
         }
         $tree[]=[
             'id' => 0,
-            'label' => 'Tema(s)',
+            'name' => 'Tema(s)',
             'children' => $topics
         ];
 
-        if ($items!==null){
-            return $aux = [
-                'tree'            => $tree,
-                'showIde'          => $showIde,
-                'listThemes'        => $lists
-            ];
-        }else{
-            return $tree;
-        }
+        return $tree = [
+            'tree'            => $tree,
+            'showIde'          => $showIde,
+            'listThemes'        => $lists
+        ];
 
     }
 }

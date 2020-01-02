@@ -1,11 +1,17 @@
 <template>
 <div>
+    <header-section icon="el-icon-edit" title="Módulo para la edición de multilenguaje SERIDH">
+        <template slot="buttons">
+            <el-button
+                size="small"
+                type="danger"
+                icon="el-icon-arrow-left"
+                @click="$router.push('/administracion/')">
+                Regresar
+            </el-button>
+        </template>
+    </header-section>
 
-    <div style="margin-bottom: 20px;">
-
-        <h5>Módulo para la edición de multilenguaje SERIDH.</h5>
-
-    </div>
         <el-form ref="tabform" :model="tabform" label-width="120px" label-position="top" >
             <el-form-item label="Crear nuevo idioma"
                           prop="newTabName"
@@ -50,8 +56,12 @@
 </template>
 
 <script>
+    import HeaderSection from "../../layouts/partials/HeaderSection";
 
     export default {
+        components: {
+            HeaderSection
+        },
         data() {
             return {
                 data: {},

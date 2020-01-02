@@ -28,11 +28,14 @@ class DatabaseSeeder extends Seeder
             CatRightRecommendationSeeder::class,
             CatSubRightsTableSeeder::class,
             CatSubCategorySubRightsTableSeeder::class,
-
-
+            CatIndicatorSeeder::class,
+            CatLevelAttentionSeeder::class,
+            CatAttentionclassificationSeeder::class,
+            CatGoalsOdsSeeder::class,
+            CarouselImagesSeeder::class,
 
             VisitsSeeder::class,
-
+            PublicSeeder::class,
             UsersTableSeeder::class,
         ]);
     }

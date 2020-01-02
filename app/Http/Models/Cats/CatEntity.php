@@ -22,5 +22,18 @@ use Illuminate\Database\Eloquent\Model;
  */
 class CatEntity extends Model
 {
-    //
+    protected $fillable = ['name', 'cat', 'acronym'];
+
+    protected $appends = ['hash'];
+
+    public function getHashAttribute()
+    {
+        return encrypt($this->id);
+    }
+
+    public function getIsCreatorAttribute(): bool
+    {
+        return true;
+        //return $this->user_id === auth()->user()->id;
+    }
 }

@@ -7,6 +7,10 @@ import Menu from "./components/views/layouts/Menu";
 import Admin from "./routes/Admin";
 import Recommendations from "./routes/Recommendations";
 import Public from "./routes/Public";
+import Files from "./routes/files";
+import Reports from "./routes/Reports";
+import Catalogs from "./routes/Catalogs";
+
 
 export const routes = [
     {
@@ -53,7 +57,9 @@ export const routes = [
 
             { ...Admin },
             { ...Recommendations },
-            //{ ...Reports },
+            { ...Files},
+            { ...Reports },
+            { ...Catalogs},
             // { ...Minister },
             // { ...Organism },
         ],

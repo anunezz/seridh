@@ -2,9 +2,10 @@
 
 use App\Http\Models\Cats\CatAttending;
 use App\Http\Models\Cats\CatEntity;
+use App\Http\Models\Cats\CatGoalsOds;
+use App\Http\Models\Cats\CatOds;
 use App\Http\Models\Cats\CatGobOrder;
 use App\Http\Models\Cats\CatGobPower;
-use App\Http\Models\Cats\CatOds;
 use App\Http\Models\Cats\CatDate;
 use App\Http\Models\Cats\CatPopulation;
 use App\Http\Models\Cats\CatSolidarityAction;
@@ -13,6 +14,8 @@ use App\Http\Models\Cats\CatSubRights;
 use App\Http\Models\Cats\CatRightsRecommendation;
 use App\Http\Models\Cats\CatSubtopic;
 use App\Http\Models\Cats\CatTopic;
+use App\Http\Models\Cats\DataControl;
+use App\Http\Traits\CustomModelLogic;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -22,6 +25,8 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property int $id
  * @property string $name
+ * @property string $title
+ * @property string $description
 
  * @property int|null $cat_entitie_id
  * @property int|null $cat_gob_order_id
@@ -68,13 +73,15 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Recommendation extends Model
 {
-    protected $fillable = ['recommendation', 'cat_entity_id', 'date', 'themes_recommendation', 'cat_topic_id',
-        'cat_subtopic_id', 'comments', 'isPublished'];
+    use CustomModelLogic;
 
-    protected $appends = ['hash', 'is_creator', 'implode_ods', 'implode_order', 'implode_power', 'implode_attendig',
-        'implode_population', 'implode_action'];
 
-        //,'impode_right'
+    protected $fillable = ['recommendation','validity','directed', 'cat_entity_id', 'date',
+        'comments','invoice', 'isPublished', 'typeIndicator','levelAttention','attentionClassification', 'isType'];
+
+    protected $appends = ['hash', 'is_creator', 'implode_order', 'implode_power', 'implode_attendig',
+        'implode_population', 'implode_action','implode_attendigacronym'];
+
 
     public function user()
     {
@@ -115,6 +122,7 @@ class Recommendation extends Model
             'attendig_recommendation'
         );
     }
+
 
     public function right()
     {
@@ -170,18 +178,42 @@ class Recommendation extends Model
         );
     }
 
-    public function ods()
-    {
+    public function ods(){
         return $this->belongsToMany(
             CatOds::class,
-            'ods_recommendation'
-        );
+            'ods_recommendation',
+            'recommendation_id',
+            'ods_id'
+        )->distinct('ods_id');
     }
+
+
+    public function goalsOds()
+    {
+        return $this->belongsToMany(
+            CatGoalsOds::class,
+            'ods_recommendation',
+            'recommendation_id',
+            'goals_ods_id'
+        )->distinct('goals_ods_id');
+    }
+
+
+    public function topic()
+    {
+        return $this->belongsToMany(
+            CatTopic::class,
+            'themes_recommendation',
+            'recommendation_id',
+            'cat_topic_id'
+        )->distinct('cat_topic_id');
+    }
+
 
     public function subtopic()
     {
         return $this->belongsToMany(
-            CatTopic::class,
+            CatSubTopic::class,
             'themes_recommendation',
             'recommendation_id',
             'cat_subtopic_id'
@@ -197,6 +229,29 @@ class Recommendation extends Model
         )->where('isActive', true);
     }
 
+    public function reportedaction()
+    {
+        return $this->hasMany(
+            ReportedAction::class,
+            'recommendation_id'
+        )->where('isActive', true);
+    }
+
+    public function dataControl()
+    {
+        return $this->hasOne(DataControl::class,
+            'recommendation_id');
+    }
+
+    public function docs(){
+        return $this->belongsToMany(
+            DocumentRecommendation::class,
+            'recommendation_docs',
+            'recommendation_id',
+            'document_id'
+        );
+    }
+
     public function scopeSearch($query, $filters)
     {
         return $query->when(! empty ($filters), function ($query) use ($filters) {
@@ -208,17 +263,12 @@ class Recommendation extends Model
                 if ($filters->recommendation) {
                     $q->where('recommendation', 'like', '%' . $filters->recommendation . '%');
                 }
-
-//                $q->whereHas('topics', function($q) use ($filters) {
-//                    if ($filters->cat_topic_id) {
-//                        $q->where('cat_topic_id', $filters->cat_topic_id);
-//                    }
-//                });
             });
         });
     }
 
     public function scopeConsult($query, $search){
+
         return $query->when(!empty($search), function ($query) use ($search){
             return $query->where(function ($q) use ($search){
 
@@ -245,19 +295,102 @@ class Recommendation extends Model
         });
     }
 
+    public function scopePublicConsult($query, $search){
+        return $query->when(!empty($search), function ($query) use ($search){
+            return $query->where(function ($q) use ($search){
+
+                $q->when(!empty($search['year']) && count($search['year']) > 0, function ($q) use ($search){
+
+                    return $q->whereIn('date',$search['year']);
+                });
+                $q->when(!empty($search['entities']) && count($search['entities']) > 0, function ($q) use ($search){
+                    return $q->whereIn('cat_entity_id',$search['entities']);
+                });
+                $q->when(!empty($search['populations']) && count($search['populations']) > 0, function ($q) use ($search){
+                    return $q->whereHas('population', function ($qq) use ($search) {
+                        return $qq->whereIn('cat_population_id',$search['populations']);
+                    });
+                });
+                $q->when(!empty($search['authorities']) && count($search['authorities']) > 0, function ($q) use ($search){
+                    return $q->whereHas('attendig', function ($qq) use ($search) {
+                        return $qq->whereIn('cat_attending_id',$search['authorities']);
+                    });
+                });
+                $q->when(!empty($search['ods']) && count($search['ods']) > 0, function ($q) use ($search){
+
+                    return $q->whereHas('ods', function ($qq) use ($search) {
+                        $ods = [];
+                        $subOds = [];
+                        foreach($search['ods'] as $item){
+                            if( count($item) > 0 ){
+                                array_push($ods,$item['ods_id']);
+                                array_push($subOds,$item['cat_goal_id']);
+                            }
+
+                        }
+                        // dd($ods,$subOds);
+                        return $qq->whereIn('ods_id',$ods)
+                            ->whereIn('goals_ods_id',$subOds);
+
+                    });
+                });
+                $q->when(!empty($search['topics']) && count($search['topics']) > 0, function ($q) use ($search){
+                    return $q->whereHas('topic', function ($qq) use ($search) {
+                        $topic = [];
+                        $subtopic = [];
+                        foreach($search['topics'] as $item){
+                            if( count($item) > 0 ){
+                                array_push($topic,$item['cat_topic_id']);
+                                array_push($subtopic,$item['cat_subtopic_id']);
+                            }
+
+                        }
+                        return $qq->whereIn('cat_topic_id',$topic)
+                            ->whereIn('cat_subtopic_id',$subtopic);
+
+                    });
+                });
+                $q->when(!empty($search['rights']) && count($search['rights']) > 0, function ($q) use ($search){
+                    return $q->whereHas('right', function ($qq) use ($search) {
+                        $righIds = [];
+                        $subIds = [];
+                        $subCatIds = [];
+
+                        foreach($search['rights'] as $item){
+                            if(count($item) > 0 ){
+                                array_push($righIds,$item['right_id']);
+                                array_push($subIds,$item['subrights_id']);
+                                array_push($subCatIds,$item['subcategory_id']);
+                            }
+                        }
+                        return $qq->whereIn('right_id',$righIds)
+                            ->whereIn('subrigth_id',$subIds)
+                            ->whereIn('subcategory_subrights_id',$subCatIds);
+
+                    });
+                });
+                $q->when(!empty($search['actions']) && count($search['actions']) > 0, function ($q) use ($search){
+                    return $q->whereHas('action', function ($qq) use ($search) {
+                        return $qq->whereIn('cat_solidarity_action_id',$search['actions']);
+                    });
+                });
+
+
+            });
+        });
+    }
+
     public function getHashAttribute()
     {
         return encrypt( $this->id );
     }
 
-    public function getIsCreatorAttribute(): bool
+    public function getIsCreatorAttribute()
     {
-        return $this->user_id === auth()->user()->id;
-    }
+        if(\Auth::check()){
+            return $this->user_id === auth()->user()->id;
+        }
 
-    public function getImplodeOdsAttribute()
-    {
-        return implode(', ', $this->ods->pluck('name')->toArray());
     }
 
     public function getImplodeOrderAttribute()
@@ -275,6 +408,11 @@ class Recommendation extends Model
         return implode(', ', $this->attendig->pluck('name')->toArray());
     }
 
+    public function getImplodeAttendigacronymAttribute()
+    {
+        return implode(', ', $this->attendig->pluck('acronym')->toArray());
+    }
+
     public function getImplodePopulationAttribute()
     {
         return implode(', ', $this->population->pluck('name')->toArray());
@@ -282,14 +420,12 @@ class Recommendation extends Model
 
     public function getImplodeActionAttribute()
     {
-        return implode(', ', $this->action->pluck('name')->toArray());
+        return implode('| ', $this->action->pluck('name')->toArray());
     }
 
     // public function getImplodeRightAttribute()
     // {
     //     return implode(', ', $this->right->pluck('name')->toArray());
     // }
-
-
 }
 

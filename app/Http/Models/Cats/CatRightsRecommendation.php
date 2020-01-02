@@ -32,4 +32,17 @@ class CatRightsRecommendation extends Model
     {
         return $this->hasMany(CatSubRights::class, 'rights_recommendations_id');
     }
+
+    protected $appends = ['hash'];
+
+    public function getHashAttribute()
+    {
+        return encrypt($this->id);
+    }
+
+    public function getIsCreatorAttribute(): bool
+    {
+        return true;
+        //return $this->user_id === auth()->user()->id;
+    }
 }

@@ -16,6 +16,7 @@ class CreateCatEntitiesTable extends Migration
         Schema::create('cat_entities', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name');
+            $table->string('acronym');
             $table->boolean('isActive')->default(1);
             $table->timestamps();
         });

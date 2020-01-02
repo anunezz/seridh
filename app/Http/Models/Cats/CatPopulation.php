@@ -23,4 +23,17 @@ use Illuminate\Database\Eloquent\Model;
 class CatPopulation extends Model
 {
     protected $table = 'cat_populations';
+
+    protected $appends = ['hash'];
+
+    public function getHashAttribute()
+    {
+        return encrypt($this->id);
+    }
+
+    public function getIsCreatorAttribute(): bool
+    {
+        return true;
+        //return $this->user_id === auth()->user()->id;
+    }
 }

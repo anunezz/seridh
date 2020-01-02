@@ -13,9 +13,26 @@ class CatSubcategorySubrights extends Model
         return $this->belongsToMany(Recommendation::class);
     }
 
-    public function subRight()
+    public function rigthRecommendation()
     {
-        return $this->belongsTo(CatSubRights::class);
+        return $this->belongsTo(CatRightsRecommendation::class, 'rights_recommendations_id', 'id');
     }
 
+    public function subRight()
+    {
+        return $this->belongsTo(CatSubRights::class, 'sub_rights_id', 'id');
+    }
+
+    protected $appends = ['hash'];
+
+    public function getHashAttribute()
+    {
+        return encrypt($this->id);
+    }
+
+    public function getIsCreatorAttribute(): bool
+    {
+        return true;
+        //return $this->user_id === auth()->user()->id;
+    }
 }

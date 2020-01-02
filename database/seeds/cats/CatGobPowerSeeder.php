@@ -30,7 +30,13 @@ class CatGobPowerSeeder extends Seeder
                 'name' => 'Judicial',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
-            ]
+            ],
+        [
+            'id' => 4,
+            'name' => 'Organismos Constitucionales Autónomos',
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
+        ]
         ]);
     }
 }

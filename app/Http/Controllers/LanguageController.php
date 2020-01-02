@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Session;
 
-use App\Models\Language\CatLanguage;
+use App\Http\Models\Cats\CatLanguage;
 
 
 class LanguageController extends Controller

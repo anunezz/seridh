@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateOdsRecommendation extends Migration
+class CreateCatGoalsOdsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,19 +13,17 @@ class CreateOdsRecommendation extends Migration
      */
     public function up()
     {
-        Schema::create('ods_recommendation', function (Blueprint $table) {
+        Schema::create('cat_goals_ods', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('cat_ods_id')->nullable();
-            $table->unsignedBigInteger('recommendation_id')->nullable();
+            $table->unsignedBigInteger('ods_id')->nullable();
+            $table->longText('name');
+            $table->string('acronym')->nullable();
+            $table->boolean('isActive')->default(1);
             $table->timestamps();
 
-            $table->foreign('cat_ods_id')
+            $table->foreign('ods_id')
                 ->references('id')
                 ->on('cat_ods');
-
-            $table->foreign('recommendation_id')
-                ->references('id')
-                ->on('recommendations');
         });
     }
 
@@ -36,6 +34,6 @@ class CreateOdsRecommendation extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('ods_recommendation');
+        Schema::dropIfExists('cat_goals_ods');
     }
 }

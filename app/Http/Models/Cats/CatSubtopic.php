@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property int $id
  * @property string $name
+ * @property string $cat_topic_id
  * @property int $isActive
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -23,7 +24,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class CatSubtopic extends Model
 {
-    protected $fillable = ['cat_subtopic_id', 'name','isActive'];
+
+    protected $fillable = ['name', 'cat', 'cat_topic_id'];
 
     public function recommendations()
     {
@@ -34,5 +36,23 @@ class CatSubtopic extends Model
     {
         return $this->belongsTo(CatSubtopic::class);
 
+    }
+    public function topics()
+    {
+        return $this->belongsTo(CatTopic::class, 'cat_topic_id', 'id');
+
+    }
+
+    protected $appends = ['hash'];
+
+    public function getHashAttribute()
+    {
+        return encrypt($this->id);
+    }
+
+    public function getIsCreatorAttribute(): bool
+    {
+        return true;
+        //return $this->user_id === auth()->user()->id;
     }
 }

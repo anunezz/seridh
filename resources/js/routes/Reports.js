@@ -1,8 +1,10 @@
 import {RouterView} from './RouterView.js';
 import Index from '../components/views/reports/Index';
-import DaysReport from '../components/views/reports/DaysReport';
-import AverageReport from '../components/views/reports/AverageReport';
-import SendReport from '../components/views/reports/SendReport';
+import publicIndex from '../components/views/reports/public/index';
+import recommendationIndex from '../components/views/reports/recommendation/index'
+//import DaysReport from '../components/views/reports/DaysReport';
+//import AverageReport from '../components/views/reports/AverageReport';
+//import SendReport from '../components/views/reports/SendReport';
 import store from "../store";
 import {Message} from "element-ui";
 
@@ -26,19 +28,29 @@ export default {
             name: 'ReportsIndex',
         },
         {
-            path: 'dias',
-            component: DaysReport,
-            name: 'DaysReport',
+            path: 'reportes',
+            component: publicIndex,
+            name: 'publicIndex',
         },
         {
-            path: 'promedio',
-            component: AverageReport,
-            name: 'AverageReport',
+            path: 'recomendaciones',
+            component: recommendationIndex,
+            name: 'recommendationIndex',
         },
-        {
-            path: 'enviados',
-            component: SendReport,
-            name: 'SendReport',
-        }
+ //       {
+ //           path: 'dias',
+ //           component: DaysReport,
+ //           name: 'DaysReport',
+ //       },
+ //       {
+ //           path: 'promedio',
+ //           component: AverageReport,
+ //           name: 'AverageReport',
+ //       },
+ //       {
+ //           path: 'enviados',
+ //           component: SendReport,
+ //           name: 'SendReport',
+ //       }
     ],
 }

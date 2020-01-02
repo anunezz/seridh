@@ -25,7 +25,7 @@ export default {
             path:'/editar/:id',
             component: RecommendationEdit,
             name: 'RecommendationEdit',
-            propd: true
+            props: true
         }
     ],
 }

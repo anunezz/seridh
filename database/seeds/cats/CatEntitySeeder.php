@@ -15,25 +15,29 @@ class CatEntitySeeder extends Seeder
         DB::table('cat_entities')->insert([
             [
                 'id' => 1,
-                'name' => 'A1.1 CAT- Comité contra la Tortura',
+                'name' => 'Comité contra la Tortura',
+                'acronym' => 'CAT',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
             [
                 'id' => 2,
-                'name' => 'A1.2 CED- Comité contra las Desapariciones Forzadas',
+                'name' => 'Comité contra las Desapariciones Forzadas',
+                'acronym' => 'CED',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
             [
                 'id' => 3,
-                'name' => 'A1.3 CEDAW- Comité para la Eliminación de la Discriminación Racial',
+                'name' => 'Comité para la Eliminación de la Discriminación Racial',
+                'acronym' => 'CEDAW',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
             [
                 'id' => 4,
-                'name' => 'A1.4 CERD- Comité para la Protección de los Derechos de todos los Trabajadores Migratorios y de sus Familiares',
+                'name' => 'Comité para la Protección de los Derechos de todos los Trabajadores Migratorios y de sus Familiares',
+                'acronym' => 'CERD',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ]

@@ -16,19 +16,19 @@ class CreateDocumentsTable extends Migration
         Schema::create('documents', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('recommendation_id')->nullable();
+            $table->longText('invoice')->nullable();
             $table->text('fileName');
             $table->text('fileNameHash');
             $table->boolean('isActive')->default(0);
+            $table->integer('isType')->default(0);
+            $table->boolean('isPublished')->default(0);
+            $table->bigInteger('downloadCount')->default(0);
             $table->timestamps();
 
             $table->foreign('user_id')
                 ->references('id')
                 ->on('users');
 
-            $table->foreign('recommendation_id')
-                ->references('id')
-                ->on('recommendations');
         });
     }
 

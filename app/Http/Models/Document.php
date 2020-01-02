@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $fileName
  * @property string $fileNameHash
  * @property int $isActive
+ * @property int $isType
+ * @property int $downloadCount
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Models\Document newModelQuery()
@@ -28,7 +30,9 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Document extends Model
 {
-    protected $appends = ['hash', 'is_creator'];
+    protected $appends = ['hash'];
+
+    protected $fillable = ['invoice', 'cat_entity_id', 'date', 'fileName'];
 
     public function getHashAttribute()
     {
@@ -37,6 +41,7 @@ class Document extends Model
 
     public function getIsCreatorAttribute(): bool
     {
-        return $this->user_id === auth()->user()->id;
+        return true;
+        //return $this->user_id === auth()->user()->id;
     }
 }

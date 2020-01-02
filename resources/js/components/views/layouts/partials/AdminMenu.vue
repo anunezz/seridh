@@ -12,7 +12,7 @@
                 <span>Bandeja de entrada de Recomendaciones</span>
             </el-col>
 
-            <el-col :span="8">
+            <el-col :span="6">
                 <a class="links"
                    @click="goTo('AdminIndex', {cat_transaction_type_id : 1, action: 'Ingresa a Administración'})">
                     Administración
@@ -20,13 +20,21 @@
                 <br><br>
                 <span>Configuraciones</span>
             </el-col>
-            <el-col :span="8">
+            <el-col :span="5">
                 <a class="links"
                    @click="goTo('ReportsIndex', {cat_transaction_type_id : 1, action: 'Ingresa a Reportes'})">
                     Reportes
                 </a>
                 <br><br>
                 <span>Reportes</span>
+            </el-col>
+            <el-col :span="2">
+                <a class="links"
+                   @click="goTo('filesIndex', {cat_transaction_type_id : 1, action: 'Subir Documentos e imagenes'})">
+                    Archivos
+                </a>
+                <br><br>
+                <span>Bandeja de Documentos</span>
             </el-col>
         </el-row>
         <br><br>

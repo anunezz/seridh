@@ -22,6 +22,7 @@ trait RightsTrait
                 array_push($idsEdit, $item->id);
             }
         }
+
         if ($itemRight!==null){
             foreach ($itemRight as $itemR){
                 $var = true;
@@ -35,6 +36,7 @@ trait RightsTrait
                 }
             }
         }
+
         if ($itemSubRight!==null){
             foreach ($itemSubRight as $itemS){
                 $var = true;
@@ -137,7 +139,7 @@ trait RightsTrait
             'label' => 'Derechos Humanos',
             'children' => $grandfather
         ];
-        if ($items!==null){
+        if ($items!==null||$itemRight!==null||$itemSubRight!==null){
             return $aux = [
                 'rights'           => $rights,
                 'showIds'          => $showIds,

@@ -5,20 +5,22 @@
                        element-loading-background="rgba(255, 255, 255, 0.75)">
             <el-header style="background-color: rgb(157, 36, 56);">
                 <el-row type="flex" justify="space-between">
+
                     <el-col :span="2">
                         <img
-                            src="/img/sre_header_logo.png"
-                            class="image"
-                            width="75px"
-                            height="40px"
+                            src="/img/sre_header_logo2.png"
+                            class="logo-sre2"
                             alt="header"
                             style="margin-top: 10px; margin-left: 5px;">
+
                     </el-col>
                     <el-col :span="8">
                         <div class="header-title-home" @click="$router.push('/')" style="cursor: pointer">
-                            SERIDH
+                            SERIDH <small>v 1.1</small>
                         </div>
                     </el-col>
+
+
                     <el-col :span="14">
                         <el-menu
                             :router="true"
@@ -162,13 +164,9 @@
     }
 
     .logo-sre2 {
-        /*background: url(/img/SRE_HORIZONTAL_FCFT.png) no-repeat;*/
-        background-size: contain;
-        height: 40px;
-        width: 100px;
-        overflow: hidden;
-        margin-top: 10px;
-        margin-left: 5px;
+        width: 80px;
+        height: 50px;
+        display: block;
     }
 
     .bannerMain {

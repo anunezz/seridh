@@ -22,5 +22,17 @@ use Illuminate\Database\Eloquent\Model;
  */
 class CatGobOrder extends Model
 {
-    protected $table = 'cat_gob_orders';
+
+    protected $appends = ['hash'];
+
+    public function getHashAttribute()
+    {
+        return encrypt($this->id);
+    }
+
+    public function getIsCreatorAttribute(): bool
+    {
+        return true;
+        //return $this->user_id === auth()->user()->id;
+    }
 }

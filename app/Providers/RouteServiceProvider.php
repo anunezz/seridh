@@ -15,6 +15,7 @@ class RouteServiceProvider extends ServiceProvider
      * @var string
      */
     protected $namespace = 'App\Http\Controllers';
+    protected $namespaceTypeIndicator = 'App\Http\Controllers\Administrador\Catalogos';
 
     /**
      * Define your route model bindings, pattern filters, etc.
@@ -37,6 +38,8 @@ class RouteServiceProvider extends ServiceProvider
     {
         $this->mapApiRoutes();
         $this->mapRecommendationsRoutes();
+        $this->mapTypeIndicatorRoutes();
+        $this->mapAdminRoutes();
 
         $this->mapWebRoutes();
 
@@ -78,5 +81,19 @@ class RouteServiceProvider extends ServiceProvider
             ->middleware('api')
             ->namespace($this->namespace)
             ->group(base_path('routes/modules/recommendations.php'));
+    }
+    protected function mapTypeIndicatorRoutes()
+    {
+        Route::prefix('api')
+            ->middleware('api')
+            ->namespace($this->namespaceTypeIndicator)
+            ->group(base_path('routes/modules/catalogs.php'));
+    }
+    protected function mapAdminRoutes()
+    {
+        Route::prefix('api')
+            ->middleware('api')
+            ->namespace($this->namespace)
+            ->group(base_path('routes/modules/admin.php'));
     }
 }

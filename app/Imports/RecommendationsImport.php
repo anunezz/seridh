@@ -12,7 +12,9 @@ class RecommendationsImport implements WithMultipleSheets
     public function sheets(): array
     {
         return [
-            0 => new FirstSheetImport()
+            'AccionesReportadas' => new SecondSheetImport(),
+            'Recomendaciones' => new FirstSheetImport(),
+
         ];
     }
 }

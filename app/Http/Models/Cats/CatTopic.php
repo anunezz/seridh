@@ -34,4 +34,29 @@ class CatTopic extends Model
     {
         return $this->hasMany(CatSubtopic::class, 'cat_topic_id');
     }
+
+    public function subtop()
+    {
+        return $this->belongsToMany(
+            CatSubtopic::class,
+            'themes_recommendation',
+            'cat_topic_id',
+            'cat_subtopic_id'
+        )->distinct('cat_subtopic_id');
+    }
+
+    protected $appends = ['hash'];
+
+    public function getHashAttribute()
+    {
+        return encrypt($this->id);
+    }
+
+    public function getIsCreatorAttribute(): bool
+    {
+        return true;
+        //return $this->user_id === auth()->user()->id;
+    }
+
+
 }

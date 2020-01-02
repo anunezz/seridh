@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Http\Models\Cats\CatProfile;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -40,11 +41,21 @@ use Laravel\Passport\HasApiTokens;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereUsername($value)
  * @mixin \Eloquent
+
+
+
+ * @property-read \App\Http\Models\Cats\CatProfile $profile
+ * @method static \Illuminate\Database\Eloquent\Builder|User search($search)
+
+
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereCatMissionId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereCatOrganismId($value)
  */
 class User extends Authenticatable
 {
     use HasApiTokens, Notifiable;
 
+    protected $fillable = ['cat_profile_id', 'name', 'firstName', 'secondName'];
     protected $appends = ['full_name', 'hash'];
 
     public function getFullNameAttribute()
@@ -55,5 +66,31 @@ class User extends Authenticatable
     public function getHashAttribute()
     {
         return encrypt( $this->id );
+    }
+
+    public function profile()
+    {
+        return $this->belongsTo(
+            CatProfile::class,
+            'cat_profile_id'
+        )->where( 'isActive', 1 );
+    }
+
+    public function scopeSearch($query, $search)
+    {
+        return $query->when( !empty ( $search ), function ($query) use ($search) {
+
+            return $query->where( function ($q) use ($search) {
+                $q->where( 'username', 'like', '%' . $search . '%' );
+                $q->orWhere( 'name', 'like', '%' . $search . '%' );
+                $q->orWhere( 'firstName', 'like', '%' . $search . '%' );
+                $q->orWhere( 'secondName', 'like', '%' . $search . '%' );
+
+                $q->orWhereHas('profile', function($q) use ($search) {
+                    $q->where('name', 'like', '%' .$search . '%');
+                });
+
+            });
+        } );
     }
 }
