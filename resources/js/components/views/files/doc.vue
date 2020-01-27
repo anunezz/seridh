@@ -45,7 +45,7 @@
 
             <el-row :gutter="10">
                 <el-col :span="24">
-                    <el-form-item label="Agrege un documento PDF"
+                    <el-form-item label="Agregar un documento PDF"
                                   prop="files"
                                   :rules="[
                                     { required: true, message: 'Este campo es requerido', trigger: 'blur'},

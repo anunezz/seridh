@@ -22,7 +22,17 @@ class UsersTableSeeder extends Seeder
             'secondName'        => 'gomez',
             'created_at'        => Carbon::now(),
             'updated_at'        => Carbon::now(),
-        ]
+        ],
+            [
+                'id'                => 2,
+                'username'          =>'jrojo',
+                'cat_profile_id'    => 2,
+                'name'              => 'juan',
+                'firstName'         => 'rojo',
+                'secondName'        => 'marquez',
+                'created_at'        => Carbon::now(),
+                'updated_at'        => Carbon::now(),
+            ],
         ]);
 
     }

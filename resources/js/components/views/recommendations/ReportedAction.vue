@@ -45,7 +45,7 @@
                 </el-col>
             </el-row>
             <el-row :gutter="20">
-                <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
+                <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
                     <el-form-item label="Población beneficiaria" prop="cat_population_id" :rules="[
                                     { required: true, message: 'Este campo es requerido', trigger: 'blur'},
                                   ]">
@@ -54,7 +54,7 @@
                             filterable
                             multiple
                             placeholder="Seleccionar"
-                            style="width: 203%">
+                            style="width: 100%">
                             <el-option
                                 v-for="(population, index) in populations"
                                 :key="index"
@@ -65,9 +65,8 @@
                     </el-form-item>
                 </el-col>
             </el-row>
-f
                 <el-row :gutter="20">
-                <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
+                <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
                     <el-form-item label="Autoridad encargada de atender" prop="cat_attendig_id" :rules="[
                                     { required: true, message: 'Este campo es requerido', trigger: 'blur'},
                                   ]">
@@ -76,7 +75,7 @@ f
                             filterable
                             multiple
                             placeholder="Seleccionar"
-                            style="width: 203%">
+                            style="width: 100%">
                             <el-option
                                 v-for="(attending, index) in attendings"
                                 :key="index"

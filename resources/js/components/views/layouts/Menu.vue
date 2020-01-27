@@ -1,15 +1,14 @@
 <template>
     <div>
         <admin-menu v-if="$store.state.user.profile === 1"/>
-        <multilateral v-if="$store.state.user.profile === 2"/>
-        <commercial v-if="$store.state.user.profile === 3"/>
-        <multi-commercial v-if="$store.state.user.profile === 4"/>
-        <not-assigned-menu v-if="$store.state.user.profile === 5"/>
+        <capturist-menu v-if="$store.state.user.profile === 2"/>
+
     </div>
 </template>
 
 <script>
     import AdminMenu from './partials/AdminMenu';
+    import CapturistMenu from "./partials/CapturistMenu";
     import Multilateral from './partials/Multilateral';
     import Commercial from './partials/Commercial';
     import MultiCommercial from './partials/MultiCommercial';
@@ -18,6 +17,7 @@
     export default {
         components: {
             AdminMenu,
+            CapturistMenu,
             Multilateral,
             Commercial,
             MultiCommercial,

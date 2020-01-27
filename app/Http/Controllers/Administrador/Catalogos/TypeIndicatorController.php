@@ -15,6 +15,8 @@ class TypeIndicatorController extends Controller
     {
         if ($request->wantsJson()) {
             return TypeIndicatorResource::collection(CatIndicator::whereIsactive(1)->get());
+        }else{
+            return view('errors.404');
         }
     }
 

@@ -4,6 +4,13 @@
         <template slot="buttons">
             <el-button
                 size="small"
+                type="success"
+                icon="el-icon-plus"
+                @click="newlanguage">
+                Nuevo
+            </el-button>
+            <el-button
+                size="small"
                 type="danger"
                 icon="el-icon-arrow-left"
                 @click="$router.push('/administracion/')">
@@ -12,41 +19,53 @@
         </template>
     </header-section>
 
+    <el-dialog title="Crear nuevo idioma"
+               :center="true"
+               :visible.sync="newRegisterDialog"
+               width="30%">
+        <el-card shadow="never">
         <el-form ref="tabform" :model="tabform" label-width="120px" label-position="top" >
-            <el-form-item label="Crear nuevo idioma"
-                          prop="newTabName"
+            <el-form-item prop="newTabName"
                           :rules="[ {  required: true, message: 'Este campo es requerido', trigger: 'blur',} ,
                            {  type: 'string', required: false, pattern: /^[a-z]+$/, message: 'el acronimo debe llevar letras minusculas', trigger: 'change'}
                                   ]">
-                <el-input size="small" style="width : 270px" maxlength="2" show-word-limit placeholder="Escribe el Acronimo del idioma" v-model="tabform.newTabName" ></el-input>
+                <el-input :center="true" size="small" style="width : 270px" maxlength="2" show-word-limit placeholder="Escribe el Acronimo del idioma" v-model="tabform.newTabName" ></el-input>
             </el-form-item>
 
             <el-form-item>
-                <el-button
-                    size="small"
-                    v-model="tabform.newTabName"
-                    @click="addTab(tabform.newTabName)"
-                >
-                    añadir tab
-                </el-button>
+                <el-row type="flex" class="row-bg" justify="end">
+                    <el-col :span="15">
+                        <el-button
+                             type="primary"
+                             style="width: 100%"
+                             size="small"
+                             v-model="tabform.newTabName"
+                             @click="addTab(tabform.newTabName)"> Añadir idioma
+                        </el-button>
+                    </el-col>
+                </el-row>
             </el-form-item>
         </el-form>
+        </el-card>
+    </el-dialog>
 
 
     <el-tabs type="border-card" v-model="activeName" @tab-click="getLang(activeName)">
         <el-tab-pane v-for="(lang, index) in langs" :key="index" :label="lang.acronym" :name="lang.acronym" @click="active=lang.acronym" >
             <v-jsoneditor v-model="data" :options="options" height="400px"></v-jsoneditor>
 
+            <p></p>
+            <br>
             <el-row :gutter="10">
                 <el-col :span="3" >
                     <el-button type="success" style="width: 100%" @click="submitForm(lang.acronym)">Guardar</el-button>
                 </el-col>
-                <el-col :span="3" >
+   <!--             <el-col :span="3" >
                     <el-button type="danger" style="width: 100%" @click="disableLang(lang.acronym)">Eliminar</el-button>
                 </el-col>
                 <el-col :span="3" >
                     <el-button type="primary" style="width: 100%" @click="rollback()">Recuperar Anterior</el-button>
-                </el-col>
+                </el-col> -->
 
             </el-row>
         </el-tab-pane>
@@ -79,15 +98,16 @@
                     newTabName: ''
                 },
 
-
-
                 options: {
                     mode: "code",
                     onEditable: function(node) {
                         //console.log("node", node);
                         return true;
                     }
-                }
+                },
+
+                newRegisterDialog: false,
+                newRegisterName: '',
             }
         },
 
@@ -180,6 +200,7 @@
                         });
 
                         this.newTabName = '';
+                        this.newRegisterDialog = false;
 
                     }
 
@@ -249,6 +270,11 @@
                     .catch(err => {
                         console.log(err);
                     });
+            },
+
+            newlanguage(){
+                this.newRegisterName = '';
+                this.newRegisterDialog = true;
             },
 
             }

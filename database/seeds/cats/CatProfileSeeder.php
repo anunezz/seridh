@@ -18,6 +18,12 @@ class CatProfileSeeder extends Seeder
                 'name' => 'Administrador',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
+            ],
+            [
+                'id' => 2,
+                'name' => 'Capturista',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ]
         ]);
     }

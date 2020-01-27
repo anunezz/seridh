@@ -1,6 +1,6 @@
 <template>
 <div>
-    <header-section icon="el-icon-document-add" title="Catalogos">
+    <header-section icon="el-icon-document-add" title="Catálogos">
         <template slot="buttons">
             <el-button
                 size="small"

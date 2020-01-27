@@ -12,7 +12,7 @@
                         <div class="row">
                             <el-tabs tab-position="top">
 
-                                <el-tab-pane label="RIDH por Año">
+                                <el-tab-pane label="Recomendación por año">
                                     <div class="row">
                                         <div class="col-md-2"></div>
                                         <div class="col-md-8">
@@ -22,7 +22,7 @@
                                     </div>
                                 </el-tab-pane>
 
-                                <el-tab-pane label="RIDH por Entidad">
+                                <el-tab-pane label="Recomendación por Entidad Emisora">
                                     <div class="row">
                                         <div class="col-md-2"></div>
                                         <div class="col-md-8">
@@ -32,7 +32,7 @@
                                     </div>
                                 </el-tab-pane>
 
-                                <el-tab-pane label="RIDH por Acción solicitada">
+                                <el-tab-pane label="Recomendación por Acción solicitada">
                                     <div class="col-md-2"></div>
                                     <div class="col-md-8" style="heigth: 500px;">
                                         <canvas width="100%" id="id_acciones"></canvas>
@@ -40,7 +40,7 @@
                                     <div class="col-md-2"></div>
                                 </el-tab-pane>
 
-                                <el-tab-pane label="RIDH por ODS">
+                                <el-tab-pane label="Recomendación por Objetivos de Desarrollo Sostenible">
                                     <div class="col-md-2"></div>
                                     <div class="col-md-8">
                                         <canvas width="100%" id="ODS"></canvas>
@@ -48,7 +48,7 @@
                                     <div class="col-md-2"></div>
                                 </el-tab-pane>
 
-                                <el-tab-pane label="RIDH por Autoridad">
+                                <el-tab-pane label="Total de recomendaciones recibidas por autoridad">
                                     <div class="col-md-2"></div>
                                     <div class="col-md-8" id="divLoadAuthority">
                                         <canvas width="100%" id="loadAuthority"></canvas>
@@ -56,7 +56,7 @@
                                     <div class="col-md-2"></div>
                                 </el-tab-pane>
 
-                                <el-tab-pane label="RIDH por Acción reportada por Autoridad">
+                                <el-tab-pane label="Total de recomendaciones con al menos una acción reportada por autoridad">
                                     <div class="col-md-2"></div>
                                     <div class="col-md-8" id="divLoadReportadasAuthority">
                                         <canvas id="loadReportadasAuthority" width="100%"></canvas>
@@ -80,6 +80,10 @@
                 <hr class="red small-margin">
             </div>
 
+            <!-- <pre>
+                {{ right_topic }}
+            </pre> -->
+
             <div class="col-md-12">
                 <div class="row animated fadeIn fast">
                     <div class="col-md-12">
@@ -97,71 +101,91 @@
                                 <span v-if="params.year.length -1 === ind"> {{ i }}. </span>
                                 <span v-else> {{ i }}, &nbsp;</span>
                             </span>
+                            <br>
                                 </td>
                             </tr>
 
                             <tr v-if="params.entities.length != 0">
                                 <td valign="top"><label >Entidad Emisora:</label></td>
                                 <td valign="top">
-                            <span v-for="(i,ind) in params.entities" :key="ind">
-                                <span v-if="params.entities.length -1 === ind" > {{  namesCat(i,1) }}. </span>
-                                <span v-else> {{ namesCat(i,1) }}, &nbsp;</span>
-                            </span>
+                                    <span v-for="(i,ind) in params.entities" :key="ind">
+                                        <span v-if="params.entities.length -1 === ind" > {{  namesCat(i,1) }}. </span>
+                                        <span v-else> {{ namesCat(i,1) }}, &nbsp;</span>
+                                    </span>
+                                    <br>
                                 </td>
                             </tr>
 
                             <tr v-if="params.populations.length != 0">
                                 <td valign="top"><label >Poblaci&oacute;n:</label></td>
                                 <td valign="top">
-                            <span v-for="(i,ind) in params.populations" :key="ind">
-                                <span v-if="params.populations.length -1 === ind" > {{  namesCat(i,2) }}. </span>
-                                <span v-else> {{ namesCat(i,2) }}, &nbsp;</span>
-                            </span>
+                                    <span v-for="(i,ind) in params.populations" :key="ind">
+                                        <span v-if="params.populations.length -1 === ind" > {{  namesCat(i,2) }}. </span>
+                                        <span v-else> {{ namesCat(i,2) }}, &nbsp;</span>
+                                    </span>
+                                    <br>
                                 </td>
                             </tr>
                             <tr v-if="params.authorities.length != 0">
                                 <td valign="top"><label >Autoridad</label></td>
                                 <td valign="top">
-                            <span v-for="(i,ind) in params.authorities" :key="ind">
-                                <span v-if="params.authorities.length -1 === ind" > {{  namesCat(i,4) }}. </span>
-                                <span v-else> {{ namesCat(i,4) }}, &nbsp;</span>
-                            </span>
+                                    <span v-for="(i,ind) in params.authorities" :key="ind">
+                                        <span v-if="params.authorities.length -1 === ind" > {{  namesCat(i,4) }}. </span>
+                                        <span v-else> {{ namesCat(i,4) }}, &nbsp;</span>
+                                    </span>
+                                    <br>
                                 </td>
                             </tr>
                             <tr v-if="right_topic.ods.length != 0">
                                 <td width="100px" valign="top"><label >ODS</label></td>
                                 <td valign="top">
-                               <span v-for="(i,and) in right_topic.ods" :key="and">
+
+                                    <ul style="list-style:none; margin:0; padding:0;">
+                                        <li v-for="(i,and) in right_topic.ods" :key="and" v-text="i"></li>
+                                    </ul>
+                                    <br>
+                               <!-- <span v-for="(i,and) in right_topic.ods" :key="and">
                                    <span v-if="right_topic.ods.length -1 === and" >&nbsp; {{i}}. </span>
                                    <span v-else> {{ i }}, &nbsp;</span>
-                               </span>
+                               </span> -->
                                 </td>
                             </tr>
                             <tr v-if="right_topic.right.length != 0">
                                 <td width="400px" valign="top"><label >Derechos Humanos</label></td>
                                 <td valign="top">
-                               <span v-for="(i,and) in right_topic.right" :key="and">
-                                   <span v-if="right_topic.right.length -1 === and" >&nbsp; {{i}}. </span>
-                                   <span v-else> {{ i }}, &nbsp;</span>
-                               </span>
+                                    <ul style="list-style:none; margin:0; padding:0;">
+                                        <li v-for="(i,and) in right_topic.right" :key="and">
+                                            {{ i }}
+                                        </li>
+                                    </ul>
+                                    <br>
+                                    <!-- <span v-for="(i,and) in right_topic.right" :key="and">
+                                        <span v-if="right_topic.right.length -1 === and" >&nbsp; {{i}}. </span>
+                                        <span v-else> {{ i }}, &nbsp;</span>
+                                    </span> -->
                                 </td>
                             </tr>
-                            <!-- <tr v-if="right_topic.topic.length != 0">
+                            <tr v-if="right_topic.topic.length != 0">
                                <td width="200px" valign="top"><label >Temas</label></td>
                                <td valign="top">
-                                   <span v-for="(i,and) in right_topic.topic" :key="and">
+                                    <ul style="list-style:none; margin:0; padding:0;">
+                                        <li v-for="(i,and) in right_topic.topic" :key="and" v-text="i"></li>
+                                    </ul>
+                                    <br>
+                                   <!-- <span v-for="(i,and) in right_topic.topic" :key="and">
                                        <span v-if="right_topic.topic.length -1 === and" >&nbsp; {{i}}. </span>
                                        <span v-else> {{ i }}, &nbsp;</span>
-                                   </span>
+                                   </span> -->
                                </td>
-                            </tr> -->
+                            </tr>
                             <tr v-if="params.actions.length != 0">
                                 <td valign="top"><label >Acci&oacute;n solicitada</label></td>
                                 <td valign="top">
-                            <span v-for="(i,ind) in params.actions" :key="ind">
-                                <span v-if="params.actions.length -1 === ind" > {{  namesCat(i,7) }}. </span>
-                                <span v-else> {{ namesCat(i,7) }}, &nbsp;</span>
-                            </span>
+                                    <span v-for="(i,ind) in params.actions" :key="ind">
+                                        <span v-if="params.actions.length -1 === ind" > {{  namesCat(i,7) }}. </span>
+                                        <span v-else> {{ namesCat(i,7) }}, &nbsp;</span>
+                                    </span>
+                                    <br>
                                 </td>
                             </tr>
                         </table>
@@ -215,7 +239,7 @@
 
             <div class="col-md-12" style="padding-bottom: 50px !important;" v-if="pagination.total === 0 && loading == false && numero == 3" >
                 <div class='alert alert-danger'>
-                    No se encontrar&oacute;n recomendaciones.
+                    No se encontraron recomendaciones.
                 </div>
             </div>
 
@@ -223,18 +247,20 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <div class="row">
-                            <div class="col-md-10">
+                            <div class="col-md-9">
                                 <span v-html="cutRecommendation(item.recommendation)"></span>
                             </div>
-                            <div class="col-md-2 pull-right" style="padding-top: 11px;">
+                            <div class="col-md-3 pull-right" style="padding-top: 11px;">
 
                             <span class="icon-calendar" aria-hidden="true"
-                                  style="float: left; padding-right: 5px;"></span>
+                                  style="float: left; padding-right: 5px; margin: 0px 0px 0px 50px;"></span>
                                 <span v-text="item.date"></span>
 
                                 <el-divider direction="vertical"></el-divider>
                                 <span>
-                                {{ index + 1 }} de {{ pagination.total  }}
+
+                                  {{ (from === 1 && index === 0)? from : from + index  }}   de {{ pagination.total  }}
+
                             </span>
 
                             </div>
@@ -287,6 +313,8 @@
                                 </div>
                             </div>
 
+                            <div class="clearfix"></div>
+
                             <div class="col-md-4">
                                 <div class="row">
                                     <div class="col-md-12">
@@ -326,7 +354,39 @@
 
                             <div class="clearfix"></div>
 
-                            <div class="col-md-4">
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                         <h5>ODS</h5>
+                                    </div>
+                                    <div class="col-md-2" v-for="(i,key) in item.Ods" :key="key">
+                                        {{  i.name.split(':')[0] }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                         <h5>Derechos Humanos</h5>
+                                    </div>
+                                    <div class="col-md-4" v-for="(i,key) in item.cat_gob_order_id" :key="key">
+                                        {{  i.name}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                         <h5>Temas</h5>
+                                    </div>
+                                    <div class="col-md-3" v-for="(i,key) in item.topic" :key="key">
+                                        {{  i.name}}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- <div class="col-md-4">
                                 <div class="row">
                                     <div class="col-md-12">
                                         <h5>ODS</h5>
@@ -339,9 +399,9 @@
                                         </ul>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
 
-                            <div class="col-md-4">
+                            <!-- <div class="col-md-4">
                                 <div class="row">
                                     <div class="col-md-12">
                                         <h5>Derechos Humanos</h5>
@@ -350,23 +410,14 @@
                                         <ul style="list-style:none; margin:0; padding:0;">
                                             <li v-for="(i,key) in item.cat_gob_order_id" :key="key">
                                                 {{ i.name}}
-                                                <!-- <ul style="list-style:none;">
-                                                    <li v-for="(ii,keydos) in i.data" :key="keydos">
-                                                        {{ ii.name }}
-                                                        <ul style="list-style:none;">
-                                                            <li v-for="(iii,keytres) in ii.data" :key="keytres">
-                                                            {{ iii.name }}
-                                                            </li>
-                                                        </ul>
-                                                    </li>
-                                                </ul> -->
+
                                             </li>
                                         </ul>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
 
-                            <div class="col-md-4">
+                            <!-- <div class="col-md-4">
                                 <div class="row">
                                     <div class="col-md-12">
                                         <h5>Temas</h5>
@@ -379,7 +430,7 @@
                                         </ul>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
                             <div class="col-md-12">
                                 <button @click="showDetails(item)" class="btn btn-success pull-right btn-sm" type="button">Ver m&aacute;s detalles.</button>
                             </div>
@@ -435,6 +486,8 @@
                     total: 0,
                     perPage: 10
                 },
+                from: 0,
+                to:0
 
             }
         },
@@ -460,18 +513,6 @@
                 let me = this;
                 let childOds = [];
                 let parentOds = [];
-
-
-                //  for (let i = 0; i < item.length; i++) {
-                //     childOds.push({ ods_id: item[i].ods_id, name: item[i].name  });
-
-                //    for (let e = 0; e < item[i].ods.length; e++) {
-                //         parentOds.push({ id: item[i].ods[e].id, name:  });
-                //    }
-
-                //  }
-
-                console.log("Este es fnGoalsOds",item);
             },
             loadEntidades(data){
                 let me = this;
@@ -626,7 +667,7 @@
                 let count = [];
                 let ods = [];
                 let colors = [];
-                console.table(me.colorsOds);
+               // console.table(me.colorsOds);
 
                 for (let e = 0; e < me.colorsOds.length; e++) {
                     for (let i = 0; i < data.length; i++) {
@@ -741,8 +782,6 @@
                 heigth = `height: ${heigth}px;`;
                 ctx.setAttribute('style', heigth);
 
-                console.log("COLORES---> ",colors);
-
                 var densityData = {
                     label: '',
                     data: count,
@@ -803,7 +842,7 @@
 
                     }
                 }).catch(function (error){
-                    console.error('No se pudo completar la acci&oacute;n catSolidarityAction()');
+                  //  console.error('No se pudo completar la acci&oacute;n catSolidarityAction()');
                     // me.$notify.error({
                     //         title: 'Error',
                     //         message: 'No se pudo completar la acci&oacute;n catSolidarityAction()'
@@ -847,7 +886,6 @@
             },
             namesCat(value,num){
                 let me = this;
-                // console.log("hahahahahahahah",value,num );
                 let data = me.cats[num].data;
                 for (let i = 0; i < data.length; i++){
                     if(data[i].id === value){
@@ -875,7 +913,7 @@
                     },200);
 
                 }).catch(function (error) {
-                    console.error("No se pudo completar la acci&oacute;n showInfo()");
+                  //  console.error("No se pudo completar la acci&oacute;n showInfo()");
                     // me.$notify.error({
                     //         title: 'Error',
                     //         message: 'No se pudo completar la acci&oacute;n showInfo()'
@@ -893,8 +931,6 @@
             showInfo(currentPage = 1) {
                 let me = this;
 
-                console.log("ADVANCED: ",me.advancedsearch);
-
                 let data = {
                     params:  me.advancedsearch[0].filters,
                     page: currentPage,
@@ -904,12 +940,14 @@
                 axios.post('/api/public/recommendationFilter', data).then(function (response) {
                     me.activeLoaing(true);
                     if (response.data.success === true) {
-                        console.log("response recommendationFilter(): ", response);
                         me.params = me.advancedsearch[0].filters;
                         me.total = response.data.recommendations.data.length;
                         me.jsonRecommendations = response.data.recommendations.data;
                         me.right_topic = me.advancedsearch[0].right_topic;
                         me.pagination.total = response.data.recommendations.total;
+                        me.from = response.data.recommendations.from;
+                        me.to = response.data.recommendations.to;
+
                         if( me.pagination.total === 0){ me.numero = 3; }
 
                         me.pagination.currentPage = response.data.recommendations.current_page;

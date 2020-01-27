@@ -19,15 +19,15 @@
                 </div>
             </div>
 
-            <!-- <div data-v-ce5e9132="" class="container">
+             <div data-v-ce5e9132="" class="container">
                 <div data-v-ce5e9132="" id="topsearch">
-                    <a data-v-ce5e9132="" href="#" role="button" target="_blank" class="btn btn-top-search">IR AL
-                        CATÁLOGO</a><a data-v-ce5e9132="" href="#" role="button" target="_blank"
-                                       class="btn btn-top-search">ESPAÑOL</a><a data-v-ce5e9132="" href="#"
-                                                                                role="button" target="_blank"
-                                                                                class="btn btn-top-search">ENGLISH</a>
+           <!--         <a data-v-ce5e9132="" href="#" role="button" target="_blank" class="btn btn-top-search">IR AL
+                        CATÁLOGO</a>
+                    <a data-v-ce5e9132="" role="button" target="_blank" class="btn btn-top-search" @click="changeLanguage(2)">ESPAÑOL</a>
+                    <a data-v-ce5e9132="" role="button" target="_blank" class="btn btn-top-search" @click="changeLanguage(1)">ENGLISH</a> -->
+
                 </div>
-            </div> -->
+            </div>
 
 
             <a v-show="carouselImages.length > 1" class="left carousel-control" href="#myCarousel" data-slide="prev" v-if="carouselImages.length>0">
@@ -60,10 +60,10 @@
                     <div class="row">
                         <div class="col-md-3 col-xs-6">
                             <div class="media office-sm-structure circle-quotes">
-                                <a >
+                                <a>
                                     <figure>
-                                        <h2 v-text="visits.recommendation"></h2>
-                                        <p>Recomendaciones</p>
+                                        <h2 :title="lang.header && lang.header.title ? lang.header.title: 'Recomendaciones'" v-text="visits.recommendation"></h2>
+                                        <p>{{lang.header.title}}</p>
                                     </figure>
                                 </a>
                             </div>
@@ -72,8 +72,8 @@
                             <div class="media office-sm-structure circle-quotes">
                                 <a>
                                     <figure>
-                                        <h2 v-text="visits.issuingEntities"></h2>
-                                        <p>Entidades emisoras</p>
+                                        <h2 :title="lang.header && lang.header.entity ? lang.header.entity: 'Entidad Emisora'" v-text="visits.issuingEntities"></h2>
+                                        <p>{{lang.header.entity}}</p>
                                     </figure>
                                 </a>
                             </div>
@@ -82,10 +82,8 @@
                             <div class="media office-sm-structure circle-quotes">
                                 <a>
                                     <figure>
-
-
-                                        <h2 v-text="visits.topic"></h2>
-                                        <p>Temas</p>
+                                        <h2 :title="lang.header && lang.header.topics ? lang.header.topics: 'Temas'" v-text="visits.topic"></h2>
+                                        <p>{{lang.header.topics}}</p>
                                     </figure>
                                 </a>
                             </div>
@@ -104,8 +102,8 @@
                             <div class="media office-sm-structure circle-quotes">
                                 <a>
                                     <figure>
-                                        <h2 v-text='visits.reportedaction'></h2>
-                                        <p>Acciones reportadas</p>
+                                        <h2 :title="lang.header && lang.header.actions ? lang.header.actions: 'Temas'" v-text='visits.reportedaction'></h2>
+                                        <p>{{lang.header.actions}}</p>
                                     </figure>
                                 </a>
                             </div>
@@ -115,17 +113,18 @@
 
                 <div class="row">
                     <div class="col-md-12 col-sm-12">
-                        <h2>B&uacute;squeda Avanzada de Recomendaciones</h2>
+                        <h2 :title="lang.header && lang.header.search ? lang.header.search: 'Búsqueda'">{{lang.header.search}}</h2>
                         <hr class="red small-margin">
                     </div>
 
                     <div class="col-md-12" v-show="advancedsearch.length > 0">
-                        <a  style="margin:20px; cursor:pointer;" @click="advancedSearch()">Limpiar b&uacute;squeda anterior</a>
+                        <a  style="margin:20px; cursor:pointer;" @click="advancedSearch()"
+                            :title="lang.header && lang.header.previous ? lang.header.previous: 'Búsqueda anterior'">{{lang.header.previous}}</a>
                     </div>
                     <div class="col-md-12">
                         <div class="panel-body animated fadeIn fast">
                             <div class="card">
-                                <div class="card-body" style="padding: 7px 10px 7px; 20px; !important">
+                                <div class="card-body" style="padding: 7px 10px 7px 20px; !important">
                                     <div class="row">
                                         <div class="col-md-4" v-for="(item,index) in arrayFilter" :key="index" style="padding-bottom: 5px;">
                                             <button class="btn btn-default btn-sm btn-block"
@@ -282,27 +281,22 @@
 
                 <div class="row" v-if="messages.activeSeridh">
                     <div class="col-md-12">
-                        <h2>¿Qu&eacute; es el SERIDH?</h2>
+                        <h2 :title="lang.header && lang.header.seridh ? lang.header.seridh: '¿Qué es el SERIDH?'">{{lang.header.seridh}}</h2>
                         <hr class="red small-margin text-justify">
-                        <p>
-                            {{messages.seridh}}
+                        <p :title="lang.header && lang.header.messagesSeridh ? lang.header.messagesSeridh: '¿Qué es el SERIDH?'">
+                            <span v-html="messages.seridh"></span>
                         </p>
                     </div>
                 </div>
 
                 <div class="row" v-if="messages.activeUndersecretary">
                     <div class="col-md-12">
-                        <h2>Mensaje de la Subsecretaria</h2>
+                        <h2 :title="lang.header && lang.header.undersecretary ? lang.header.undersecretary: '¿Qué es el SERIDH?'">{{lang.header.undersecretary}}</h2>
                         <hr class="red small-margin">
                     </div>
-
-                    <div class="col-md-2">
-                        <img :src="messages.path_undersecretary[0].url" class="img-responsive" alt="subsecretaria">
-                    </div>
-                    <div class="col-md-10 text-justify">
-                        <p class="text-justify">
-                            {{messages.undersecretary}}
-                        </p>
+                    <div  style="padding: 20px;">
+                        <img style="float:left;margin-right: 25px;" :src="messages.path_undersecretary[0].url" width="165px" height="165px" class="img-responsive" alt="subsecretaria">
+                        <span v-html="messages.undersecretary"></span>
                     </div>
                 </div>
 
@@ -310,23 +304,19 @@
 
                 <div class="row" v-if="messages.activeDgdhd">
                     <div class="col-md-12">
-                        <h2>Mensaje de la DGDHD</h2>
+                        <h2 :title="lang.header && lang.header.dgdhd ? lang.header.dgdhd: 'Mensaje de la DGDHD'">{{lang.header.dgdhd}}</h2>
                         <hr class="red small-margin">
                     </div>
-                    <div class="col-md-2">
-                        <img :src="messages.path_dgdhd[0].url" class="img-responsive" alt="dgdh">
-                    </div>
-                    <div class="col-md-10">
-                        <p class="text-justify">
-                            {{messages.dgdhd}}
-                        </p>
+                    <div style="padding: 20px;">
+                        <img style="float:left;margin-right: 25px;" width="165px" height="165px" :src="messages.path_dgdhd[0].url"  alt="dgdh">
+                        <span v-html="messages.dgdhd"></span>
                     </div>
                 </div>
                 <br>
 
                 <div class="row">
                     <div class="col-md-12">
-                        <h2>Estad&iacute;sticas b&aacute;sicas</h2>
+                        <h2 :title="lang.header && lang.header.statistics ? lang.header.statistics: 'Estadísticas básicas'">{{lang.header.statistics}}</h2>
                         <hr class="red small-margin">
                     </div>
 
@@ -335,7 +325,7 @@
                             <div class="col-md-6">
                                 <div class="row">
                                     <div class="col-md-12 text-center">
-                                        <h5>RIDH por Entidad</h5>
+                                        <h5 :title="lang.header && lang.header.ridhEntity ? lang.header.ridhEntity: 'RIDH por Entidad'">{{lang.header.ridhEntity}}</h5>
                                     </div>
                                 </div>
                                 <canvas id="entidad-emisora" width="80" height="30"></canvas>
@@ -343,7 +333,7 @@
                             <div class="col-md-6">
                                 <div class="row">
                                     <div class="col-md-12 text-center">
-                                        <h5>RIDH por año</h5>
+                                        <h5 :title="lang.header && lang.header.ridhYear ? lang.header.ridhYear: 'RIDH por Año'">{{lang.header.ridhYear}}</h5>
                                     </div>
                                 </div>
                                 <canvas id="Anio" width="80" height="30"></canvas>
@@ -372,10 +362,10 @@
                                 <div class="col-md-12 text-center">
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <h5>Total de recomendaciones recibidas por Autoridad</h5>
+                                            <h5 :title="lang.header && lang.header.recommendationsReceived ? lang.header.recommendationsReceived: 'Recomendación Recibida'">{{lang.header.recommendationsReceived}}</h5>
                                         </div>
                                         <div class="col-md-6">
-                                            <h5>Total de recomendaciones con al menos una acci&oacute;n reportada por Autoridad</h5>
+                                            <h5 :title="lang.header && lang.header.recommendationsReported ? lang.header.recommendationsReported: 'Recomendación Reportada'">{{lang.header.recommendationsReported}}</h5>
                                         </div>
                                     </div>
 
@@ -397,7 +387,7 @@
                             <div class="col-md-12">
                                 <div class="row">
                                     <div class="col-md-12 text-center">
-                                        <h5>RIDH por ODS</h5>
+                                        <h5 :title="lang.header && lang.header.ods ? lang.header.ods: 'ODS'">{{lang.header.ods}}</h5>
                                     </div>
                                 </div>
                                 <canvas id="dashboardODS" width="100%" height="30"></canvas>
@@ -409,7 +399,7 @@
 
                 <br><br>
 
-                <div class="col-md-12">
+                <!--<div class="col-md-12">
 
                     <h2>Aliados</h2>
                     <hr class="red small-margin">
@@ -430,7 +420,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-4"></div>
+                        <div class="col-md-4"></div>-->
 
                         <!-- <div class="col-sm-6 col-md-6 col-lg-3">
                             <div class="card text-center card-gob">
@@ -447,61 +437,63 @@
                                 </div>
                             </div>
                         </div> -->
-                        <!-- <div class="col-sm-6 col-md-6 col-lg-3">
-                            <div class="card text-center card-gob">
-                                <div class="titulocategoria">
-                                    <div style="background: #0468b1;padding: 1em;">
-                                        <img data-v-ce5e9132="" src="img/pnud-logo-30.svg" style="height: 54px;" alt="">
-                                    </div>
-                                    <h4 data-v-ce5e9132="" class="card-title">
-                                        Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                                    </h4>
-                                    <br/>
 
+                   <!-- </div>
+
+
+                </div>-->
+                <div class="col-md-12">
+                    <h2 :title="lang.header && lang.header.allies ? lang.header.allies: 'Estadísticas básicas'">{{lang.header.allies}}</h2>
+                    <hr class="red small-margin">
+                </div>
+                <div v-if="alliesImages.length<5">
+                    <div class="row categorias">
+                        <!-- col-md-offset-3 -->
+                        <div v-bind:class="[offsetAlies('offset',alliesImages.length)]" id="id_of">
+                            <div class="row">
+                                <!-- 'col-sm-8 col-md-8 col-lg-5' -->
+                                <div v-bind:class="[offsetAlies('col',alliesImages.length)]"   v-for="ally in alliesImages">
+                                    <div class="card text-center card-gob center-block">
+                                        <div class="titulocategoria">
+                                            <div style="padding: 1px">
+                                                <img data-v-ce5e9132="" :src="ally.allies" alt="" width="100%" height="88px" style="background: #2769c6;">
+                                            </div>
+                                            <h4 data-v-ce5e9132="" class="card-title">
+                                                {{ally.text}}
+                                            </h4>
+                                            <br/>
+                                            <a target="_blank" :href="ally.link" data-v-ce5e9132="" class="btn btn-categorias">Ir al enlace</a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-6 col-md-6 col-lg-3">
-                            <div class="card text-center card-gob">
-                                <div class="titulocategoria">
-                                    <div style="background: #0468b1;padding: 1em;">
-                                        <img data-v-ce5e9132="" src="img/pnud-logo-30.svg" style="height: 54px;" alt="">
-                                    </div>
-                                    <h4 data-v-ce5e9132="" class="card-title">
-                                        Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                                    </h4>
-                                    <br/>
 
-                                </div>
-                            </div>
-                        </div> -->
                     </div>
-
-
                 </div>
+                <div class="col-md-12" v-if="alliesImages.length>4">
 
-                <div class="col-md-12">
-                    <carousel-3d :height="220" :width="360" :border="1.5" >
-                        <slide :index="0" >
+                        <carousel-3d border="0" display="4" :height="200" :width="360" :autoplay="true" :autoplay-timeout="3500" :disable3d="true" :space="365" :clickable="false" :controls-visible="true">
+                        <slide v-for="(ally, index) in alliesImages" :key="index" :index="index" style="background: white">
                            <div class="row">
-                            <div class="col-md-12 card text-center card-gob">
+                            <div class="col-md-12 text-center card-gob">
 
-                            <div style="background: #2769c6; padding: 1.5em;">
-                                <img src="img/logo-onu.png" style="width: 100% !important; heigth: 300px;">
+                            <div style="background: #2769c6;">
+                                <img :src="ally.allies" style="width: 100% !important; height: 100px;">
                             </div>
-                            <h4 data-v-ce5e9132="" class="card-title">
-                                Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                            </h4>
+                                <div>
+                                    <h4 data-v-ce5e9132="" class="card-title">
+                                        {{ally.text}}
+                                    </h4>
+                                </div>
+
                             <br/>
-                            <a href="https://www.un.org/es" target="_blank" class="btn btn-primary btn-xs pull-center active" style="width:40%; margin: 0px auto 10px auto;">Ir al enlace</a>
+                            <a :href="ally.link" target="_blank" class="btn btn-primary btn-xs pull-center active" style="width:40%; margin: 0px auto 10px auto;">Ir al enlace</a>
                              </div>
                            </div>
                         </slide>
                     </carousel-3d>
-
                 </div>
-
-
             </div>
         </main>
 
@@ -511,9 +503,10 @@
 
 <script>
     import { mapState, mapGetters, mapActions, mapMutations } from "vuex";
+    import HeaderSection from "../layouts/partials/HeaderSection";
     import { Carousel3d, Slide } from 'vue-carousel-3d';
     export default {
-          components: {Carousel3d,Slide},
+          components: {Carousel3d,Slide,HeaderSection,},
         data() {
             return {
                 cacheTopics:[],
@@ -580,7 +573,32 @@
                 ridhYear:[],
                 ridhYearTotal:[],
                 messages:{},
-                carouselImages: {}
+                carouselImages: {},
+                alliesImages: {},
+                offset:0,
+                col:'',
+
+                lang: {
+                    "header": {
+                        "title": "Recomendaciones",
+                        "entity" : "Entidad Emisora",
+                        "topics" : "Temas",
+                        "actions" : "Acciones Reportadas",
+                        "search" : "Búsqueda avanzada de recomendaciones",
+                        "previous" : "Limpiar búsqueda anterior",
+                        "seridh" : "¿Qué es el SERIDH?",
+                        "undersecretary" : "Mensaje de la Subsecretaría para Asuntos Multilaterales y Derechos Humanos",
+                        "dgdhd" : "Mensaje de la Dirección General de Derechos Humanos y Democracia",
+                        "statistics" : "Estadísticas básicas",
+                        "allies" : "Aliados",
+                        "ridhEntity" : "Recomendación por Entidad Emisora",
+                        "ridhYear" : "Recomendación por año",
+                        "recommendationsReceived" : "Total de recomendaciones recibidas por autoridad",
+                        "recommendationsReported" : "Total de recomendaciones con al menos una acción reportada por autoridad",
+                        "ods" : "Recomendación por Objetivos de Desarrollo Sostenible",
+                        "messagesSeridh" : ""
+                    }
+                },
 
             };
         },
@@ -588,11 +606,12 @@
             this.getData();
             this.getCarousel();
             this.getMessages();
+            this.getAllies();
+            this.changeLanguage();
         },
         watch: {
             filterTextOds(val) {
                 let me = this;
-                console.log(me.$refs.Ods.filter(val));
             },
             filterTextRights(val) {
                 let me = this;
@@ -635,7 +654,13 @@
                 me.addAdvancedSearch([]);
             },
             getData() {
-                axios.get('/api/public/index-public/recommendations').then(response => {
+                var config = {
+                    headers:{
+                        'Content-Type':'application/json',
+                        'Accept':'application/json'
+                    }
+                };
+                axios.get('/api/public/index-public/recommendations',config).then(response => {
                     if (response.data.success) {
                         this.catYears = response.data.catYears;
                         this.catEntities = response.data.catEntities;
@@ -661,8 +686,16 @@
             },
             getEntidades() {
                 let me = this;
-                let url = '/api/public/dashboard';
-                axios.get(url).then(function (response) {
+
+                var config = {
+                    headers:{
+                        'Content-Type':'application/json',
+                        'Accept':'application/json',
+                        'url' : '/api/public/dashboard'
+                    }
+
+                }
+                axios.get('/api/public/dashboard', config).then(function (response) {
                     //Obtener datos por dashboard por ODS
                     let Ods = response.data.lResults.dashboardOds;
 
@@ -699,7 +732,7 @@
                     me.loadReportadasAuthority(response.data.lResults.dashboardReportadasAuthority);
 
                 }).catch(function (error) {
-                    console.log(error);
+
                 });
             },
             loadEntidades(data){
@@ -1022,16 +1055,12 @@
             TopTree() {
                 let me = this;
                 me.$refs.top.getCheckedNodes();
-                console.log(me.$refs.top);
-
             },
             OdsTree() {
                 let me = this;
-                console.log(me.$refs.Ods.getCheckedNodes());
             },
             rightsTree() {
                 let me = this;
-                console.log(me.$refs.derechosHumanos);
                 me.$refs.derechosHumanos.getCheckedNodes();
             },
             filterNode(value, data) {
@@ -1097,10 +1126,22 @@
                 };
 
 
+                let d = this.catRights[0].children;
+                    let parent = [];
+                    for (let r = 0; r < d.length; r++) {
+                        parent.push(d[r]);
+                    }
+
                 if (rights && rights.length > 0) {
                     _.forEach(rights, (item, key) => {
+                        for (let p = 0; p < parent.length; p++) {
+                           if(parent[p].id === item.right_id){
+                                right_topic.right.push(parent[p]);
+                           }
+                        }
+
                         this.cacheRights.push(item.id);
-                        right_topic.right.push(item.label);
+
                         consultRights.push({
                             right_id: item.right_id,
                             subcategory_id: item.subcategory_id,
@@ -1111,29 +1152,77 @@
                     this.filters.rights = consultRights;
                 }
 
+                _.uniqBy(data, function (e) {
+                     return e.id;
+                });
+
+                let padreRigth = _.uniqBy(right_topic.right, 'label');
+                         right_topic.right = [];
+                    for (let y = 0; y < padreRigth.length; y++) {
+                         right_topic.right.push(padreRigth[y].label);
+                    }
+
                 if (topics && topics.length > 0) {
+
+                      let temmas = this.catTopics.tree[0].children;
+
                     _.forEach(topics, (item, key) => {
                         this.cacheTopics.push(item.id);
-                        right_topic.topic.push( item.name );
+
+                        for (let j = 0; j < temmas.length; j++) {
+                            if( item.hasOwnProperty('children') ) {
+
+                            }else{
+                                 if(item.cat_topic_id === temmas[j].id){
+                                    right_topic.topic.push( temmas[j] );
+                                 }
+                            }
+
+
+                        }
+
                         consultTopic.push({
                             cat_topic_id: item.cat_topic_id,
                             cat_subtopic_id: item.cat_subtopic_id,
                         })
 
                     });
+
+                        let padreTopic = _.uniqBy(right_topic.topic, 'name');
+                            right_topic.topic = [];
+                        for (let y = 0; y < padreTopic.length; y++) {
+                            right_topic.topic.push(padreTopic[y].name);
+                        }
+
                     this.filters.topics = consultTopic;
                 }
 
                 if (odss && odss.length > 0) {
+                      let padreOdss = this.goalsOds.tree[0].children;
+
                     _.forEach(odss, (item, key) => {
+                        for (let h = 0; h < padreOdss.length; h++) {
+                            if(item.ods_id === padreOdss[h].id){
+
+                                 right_topic.ods.push( padreOdss[h] );
+                            }
+                        }
+
                         this.cacheOds.push(item.id);
-                        right_topic.ods.push( item.label );
+
                         consultOds.push({
                             ods_id: item.ods_id,
                             cat_goal_id: item.cat_goal_id,
                         })
 
                     });
+
+                        let padreOdsss = _.uniqBy(right_topic.ods, 'label');
+                            right_topic.ods = [];
+                        for (let y = 0; y < padreOdsss.length; y++) {
+                            right_topic.ods.push(padreOdsss[y].label);
+                        }
+
                     this.filters.ods = consultOds;
                 }
 
@@ -1141,14 +1230,8 @@
                 let cats = me.arrayFilter;
 
                 data = {
-                    catalogos: cats,
-                    // params: {
-                    //     ...this.filters
-                    // },
-                    // right_topic: right_topic
+                    catalogos: cats
                 };
-
-                console.log("cache de temas: ",this.cacheTopics);
 
                 me.addAdvancedSearch([{ filters:this.filters,
                     rights: this.cacheRights,
@@ -1163,12 +1246,41 @@
                     // query: data
                 });
             },
+            getCarousel(){
+
+                var config = {
+                    headers:{
+                        'Content-Type':'application/json',
+                        'Accept':'application/json'
+                    },
+                    params: {
+                        type:1
+                    }
+                }
+
+                axios.get('/api/public/messages/adminPublic', config).then(response => {
+
+                    this.carouselImages = response.data;
+                }).catch(error => {
+                    this.$notify.error({
+                        title: 'Error',
+                        message: 'No se pudo completar la acción getData.'
+                    });
+                });
+            },
             getMessages(){
-                console.log('Get datos de mensajes');
-                let params = {
-                    type:2
-                };
-                axios.get('/api/public/messages/adminPublic',{params}).then(response => {
+               // console.log('Get datos de mensajes');
+                var config = {
+                    headers:{
+                        'Content-Type':'application/json',
+                        'Accept':'application/json'
+                    },
+                    params: {
+                        type:2
+                    }
+                }
+
+                axios.get('/api/public/messages/adminPublic', config).then(response => {
                     this.messages = response.data.dataPublic;
                     if (response.data.path_undersecretary!==null){
                         this.messages.path_undersecretary.push({url:response.data.path_undersecretary});
@@ -1188,19 +1300,79 @@
                     });
                 });
             },
-            getCarousel(){
-                let params = {
-                    type:1
-                };
-                axios.get('/api/public/messages/adminPublic',{params}).then(response => {
-                    console.log('CAROUSEL--->',response);
-                    this.carouselImages = response.data;
+            offsetAlies(name,value){
+                switch (name) {
+                    case 'offset':
+                    {
+                        if(value === 3){
+                            value = `col-md-offset-2`;
+                         }else if(value === 2){
+                            value = `col-md-offset-2`;
+                         }else if(value===1){
+                            value =  `col-md-offset-4`;
+                         }else if(value=== 4){
+                            value =  `col-md-offset-0`;
+                            setTimeout(item=>{
+                                let ctx = document.getElementById('id_of');
+                                ctx.setAttribute('style', 'padding: 0px 40px');
+                            },100);
+                         }
+                    break;
+                    }
+                    case 'col':
+                    {
+                    if(value === 3){
+                      value = `col-sm-8 col-md-8 col-lg-3`;
+                    }else if(value === 2){
+                      value = `col-sm-8 col-md-8 col-lg-5`;
+                    }else if(value === 1){
+                      value = `col-sm-8 col-md-8 col-lg-5`;
+                    }else if(value=== 4){
+                      value = `col-sm-8 col-md-8 col-lg-3`;
+
+                    }
+                    break;
+                    }
+                }
+                return value;
+            },
+            getAllies(){
+              //  console.log('get aliados')
+                var config = {
+                    headers:{
+                        'Content-Type':'application/json',
+                        'Accept':'application/json'
+                    },
+                    params: {
+                        type:3
+                    }
+                }
+
+                axios.get('/api/public/messages/adminPublic', config).then(response => {
+                    this.alliesImages = response.data;
                 }).catch(error => {
                     this.$notify.error({
                         title: 'Error',
                         message: 'No se pudo completar la acción getData.'
                     });
                 });
+            },
+
+            changeLanguage(lang){
+                if(lang == 1){
+                    axios.get('/api/public/get/language',{params:{lang}}).then(response => {
+                        if(response.data){
+                            this.lang = response.data;
+                        }
+                    })
+                }
+                else if(lang == 2){
+                    axios.get('/api/public/get/language/spanish',{params:{lang}}).then(response => {
+                        if(response.data){
+                            this.lang = response.data;
+                        }
+                    })
+                }
             },
         },
         computed:{
@@ -1227,9 +1399,16 @@
             me.labelForm(me.cats);
 
 
-        }
+        },
+
     }
 </script>
 
 <style scoped>
+.center-block {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 </style>

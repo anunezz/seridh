@@ -2,6 +2,7 @@
 
 use App\Http\Traits\CustomModelLogic;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 
@@ -18,5 +19,19 @@ class Files extends Model
     public function getHashAttribute()
     {
         return encrypt( $this->id );
+    }
+
+    public function scopeConsult($query, $search){
+
+        return $query->when(!empty($search), function ($query) use ($search){
+            return $query->where(function ($q) use ($search){
+
+                $q->when(!empty($search->title), function ($q) use ($search){
+                    return $q->where('title','like','%'.$search->title.'%');
+                });
+
+
+            });
+        });
     }
 }

@@ -46,6 +46,7 @@ export default {
             path: 'seleccionar',
             component: documentFiles,
             name: 'documentFiles',
+            props: true
         },
 
     ],

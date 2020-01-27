@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class CarouselImages extends Model
 {
-    protected $fillable = ['user_id','fileName','fileNameHash','isActive','type','link'];
+    protected $fillable = ['user_id','fileName','fileNameHash','isActive','type','link','text'];
 
     protected $appends = ['carousel','allies'];
 

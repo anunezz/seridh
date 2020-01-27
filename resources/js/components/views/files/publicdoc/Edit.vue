@@ -6,7 +6,7 @@
                     size="medium"
                     type="danger"
                     icon="el-icon-arrow-left"
-                    @click="$router.push('/archivos/seleccionar')">
+                    @click="$router.push({name: 'documentFiles',params: {type: 1}});">
                     Regresar
                 </el-button>
             </template>
@@ -33,77 +33,82 @@
                     </el-form-item>
                 </el-col>
             </el-row>
-
-            <p>Caraga de Documentos</p>
-            <el-row :gutter="10">
-                <el-col :span="24">
-                    <el-form-item>
-                        <el-upload
-                            class="upload-demo"
-                            drag
-                            action="/api/recommendations/upload/file"
-                            accept=".pdf"
-                            name="document"
-                            :auto-upload="true"
-                            :before-upload="beforeUploadFile"
-                            :headers="{'Authorization': apiToken}"
-                            :before-remove="removeFile"
-                            :on-success="uploadedFile"
-                            :on-error="onError">
-                            <i class="el-icon-upload"></i>
-                            <div class="el-upload__text">
-                                Suelta tu archivo aquí o <em>haz clic para cargar</em>
-                                (Tamaño máximo 6MB)
-                            </div>
-                        </el-upload>
-                    </el-form-item>
-                </el-col>
+            <el-row v-if = "documents.length===0">
+                <p>Carga de Documentos</p>
+                <el-row :gutter="10">
+                    <el-col :span="24">
+                        <el-form-item>
+                            <el-upload
+                                class="upload-demo"
+                                drag
+                                action="/api/recommendations/upload/file"
+                                accept=".pdf"
+                                name="document"
+                                :auto-upload="true"
+                                :before-upload="beforeUploadFile"
+                                :headers="{'Authorization': apiToken}"
+                                :before-remove="removeFile"
+                                :on-success="uploadedFile"
+                                :on-error="onError">
+                                <i class="el-icon-upload"></i>
+                                <div class="el-upload__text">
+                                    Suelta tu archivo aquí o <em>haz clic para cargar</em>
+                                    (Tamaño máximo 6MB)
+                                </div>
+                            </el-upload>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
             </el-row>
 
-            <p>Archivos agregados</p>
-            <el-table
-                size="mini"
-                border
-                :data="documents"
-                style="width: 100%">
-                <el-table-column
-                    prop="fileName"
-                    label="Nombre">
-                </el-table-column>
-                <el-table-column
-                    label="Acciones" header-align="left" align="center" width="200">
-                    <template slot-scope="scope">
-                        <el-button-group>
-                            <el-tooltip
-                                class="item"
-                                effect="dark"
-                                content="Eliminar"
-                                placement="top-start">
-                                <el-button
-                                    size="mini"
-                                    type="danger"
-                                    icon="fas fa-trash"
-                                    @click="disableDialog(scope.row.hash)">
-                                </el-button>
-                            </el-tooltip>
-                        </el-button-group>
-                    </template>
-                </el-table-column>
-            </el-table>
 
+            <el-row v-if="documents.length>0">
+                <h4>Archivo cargado</h4>
+                <el-table
+                    size="mini"
+                    border
+                    :data="documents"
+                    style="width: 100%">
+                    <el-table-column
+                        prop="fileName"
+                        label="Nombre">
+                    </el-table-column>
+                    <el-table-column
+                        label="Acciones" header-align="left" align="center" width="200">
+                        <template slot-scope="scope">
+                            <el-button-group>
+                                <el-tooltip
+                                    class="item"
+                                    effect="dark"
+                                    content="Eliminar"
+                                    placement="top-start">
+                                    <el-button
+                                        size="mini"
+                                        type="danger"
+                                        icon="fas fa-trash"
+                                        @click="disableDialog(scope.row.id)">
+                                    </el-button>
+                                </el-tooltip>
+                            </el-button-group>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </el-row>
             <p></p>
             <el-row :gutter="10">
                 <el-col :span="24">
                     <el-form-item>
                             <el-row :gutter="5" type="flex" class="row-bg" justify="end">
                                 <el-col :span="3">
-                                    <el-button size="medium" type="danger" style="width: 100%" @click="$router.push('/archivos/imagenes')">Cancelar</el-button>
+                                    <el-button size="medium" type="danger" style="width: 100%" @click="$router.push({name: 'documentFiles',params: {type: 1}});">
+                                        Cancelar
+                                    </el-button>
                                 </el-col>
                                 <el-col :span="3.2" >
-                                    <el-button size="medium" type="success" style="width: 100%" @click="saveForm(false)">Guardar sin publicar</el-button>
+                                    <el-button size="medium" type="success" style="width: 100%" @click="saveForm(false)" :disabled="documents.length===0">Guardar sin publicar</el-button>
                                 </el-col>
                                 <el-col :span="3.2" >
-                                    <el-button size="medium" type="primary" style="width: 100%" @click="submitForm(true)">Guardar y Publicar</el-button>
+                                    <el-button size="medium" type="primary" style="width: 100%" @click="submitForm(true)" :disabled="documents.length===0">Guardar y Publicar</el-button>
                                 </el-col>
                             </el-row>
                     </el-form-item>
@@ -139,6 +144,7 @@
         data() {
             return {
                 documents: [],
+                deleteID:null,
 
                 files:{
                     title: "",
@@ -218,6 +224,7 @@
             },
 
             uploadedFile(data){
+                this.documents.push( {id:data.documentId,fileName:data.name});
                 this.recommendationForm.files.push(data.documentId);
             },
 
@@ -246,11 +253,16 @@
             saveForm() {
                 this.startLoading();
                 let id = this.$route.params.id;
-
+                let data = {
+                    deleteID:this.deleteID,
+                    text:this.files,
+                    newfile:this.documents[0].id,
+                    isPublish:false,
+                };
                 this.$refs['files'].validate((valid) => {
                     if (valid) {
 
-                        axios.put(`/api/recommendations/update/document/${id}`, this.files).then(response => {
+                        axios.put(`/api/recommendations/update/document/${id}`, data).then(response => {
                             this.stopLoading();
 
                             this.$message({
@@ -259,7 +271,10 @@
                                 message: "Se Guardo correctamente la informacion"
                             });
 
-                            this.$router.push('/archivos/imagenes');
+                            this.$router.push({
+                                name: 'documentFiles',
+                                params: {type: 1}
+                            });
                         }).catch(error => {
                             this.stopLoading();
 
@@ -271,6 +286,11 @@
                     }
                     else {
                         this.stopLoading();
+                            this.$message({
+                            type: "warning",
+                            title: 'Error',
+                            message: "Complete los campos para continuar"
+                        });
                     }
                 });
             },
@@ -279,13 +299,18 @@
             submitForm() {
                 this.startLoading();
                 let id = this.$route.params.id;
-
+                let data = {
+                    deleteID:this.deleteID,
+                    text:this.files,
+                    newfile:this.documents[0].id,
+                    isPublish:true,
+                };
                 this.$refs['files'].validate((valid) => {
                     if (valid) {
 
                         this.files.isPublished = true;
 
-                        axios.put(`/api/recommendations/update/document/publi/${id}`, this.files).then(response => {
+                        axios.put(`/api/recommendations/update/document/publi/${id}`, data).then(response => {
                             this.stopLoading();
 
 
@@ -295,7 +320,10 @@
                                 message: "Se almaceno la información correctamente"
                             });
 
-                            this.$router.push('/archivos/imagenes');
+                            this.$router.push({
+                                name: 'documentFiles',
+                                params: {type: 1}
+                            });
                         }).catch(error => {
                             this.stopLoading();
 
@@ -333,9 +361,11 @@
             },
 
             disableDocument(id) {
-                this.startLoading();
-
-                axios.delete(`/api/recommendations/remove/file/${id}`, {responseType: 'blob'}).then(response => {
+                // this.startLoading();
+                this.documents = [];
+                this.deleteID = id;
+                this.removeDialog=false;
+               /* axios.delete(`/api/recommendations/remove/file/${id}`, {responseType: 'blob'}).then(response => {
                     this.stopLoading();
 
                     this.removeDialog = false;
@@ -354,7 +384,7 @@
                         type: "warning",
                         message: "No fue posible completar la acción, intente nuevamente."
                     });
-                });
+                });*/
             },
         }
     }

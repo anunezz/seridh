@@ -80,7 +80,7 @@ class Recommendation extends Model
         'comments','invoice', 'isPublished', 'typeIndicator','levelAttention','attentionClassification', 'isType'];
 
     protected $appends = ['hash', 'is_creator', 'implode_order', 'implode_power', 'implode_attendig',
-        'implode_population', 'implode_action','implode_attendigacronym'];
+        'implode_population', 'implode_action','implode_attendigacronym','format_rec'];
 
 
     public function user()
@@ -421,6 +421,37 @@ class Recommendation extends Model
     public function getImplodeActionAttribute()
     {
         return implode('| ', $this->action->pluck('name')->toArray());
+    }
+
+    public function getFormatRecAttribute()
+    {
+        do{
+            $findSpace = strpos($this->recommendation, '&nbsp; &nbsp;');
+
+            if ($findSpace != false) $this->recommendation = str_replace('&nbsp; &nbsp;','&nbsp;',$this->recommendation);
+        }while($findSpace != false);
+
+        if (substr_count($this->recommendation, '</p>')>1){
+            $onlyText = explode("</p>", $this->recommendation);
+            $fullText = '';
+
+            foreach ($onlyText as $text){
+                if (strpos($text, '">&nbsp;')==false){
+                    $fullText = $fullText.$text;
+                }
+            }
+
+            $format = str_replace('margin-left:','',$fullText);
+            $format = str_replace('text-align:','',$format);
+
+            return $format;
+        }else{
+
+            $format = str_replace('margin-left:','',$this->recommendation);
+            $format = str_replace('text-align:','',$format);
+            return $format;
+        }
+
     }
 
     // public function getImplodeRightAttribute()

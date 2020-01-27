@@ -18,13 +18,15 @@
                         {{ downloadText }}
                     </el-button>-->
                     <el-button
+                        v-if="$store.state.user.profile === 1 || 2"
                         icon="fas fa-upload"
                         size="small"
                         type="success"
-                        @click="dialogVisible = true">
+                        @click="cargaMasiva">
                         Carga Masiva
                     </el-button>
                     <el-button
+                        v-if="$store.state.user.profile === 1 || 2"
                         size="small"
                         type="success"
                         icon="fas fa-edit"
@@ -45,7 +47,7 @@
         </header-section>
         <el-row>
             <div align="left">
-                <el-button size="mini" @click="show=!show">Filtros de Busqueda</el-button>
+                <el-button size="mini" @click="show=!show">Flitros de búsqueda</el-button>
                 <!--  <transition name="boton">
                         <el-button size="mini" v-on:click="getRecommendations" plain @click="cleanFilters" icon="el-icon-refresh-left"><slot>Limpiar Filtro</slot></el-button>
                       </transition>
@@ -99,7 +101,7 @@
                     <el-main style="border-left: 16px solid #E9EEF3 ">
                         <el-card shadow="never">
                             <div slot="header">
-                                <span class="title">Filtros de Búsqueda</span>
+                                <span class="title">Flitros de búsqueda</span>
                             </div>
                             <el-form ref="search" :model="search" label-width="120px" label-position="top">
                                 <el-row :gutter="20">
@@ -184,7 +186,7 @@
                         sortable
                         label="Recomendación">
                         <template slot-scope="scope">
-                            <span v-html="scope.row.recommendation"></span>
+                            <span v-html="scope.row.format_rec"></span>
                         </template>
                     </el-table-column>
                     <el-table-column
@@ -342,7 +344,7 @@
                     :on-success="onSeccess">
                     <el-button style="margin-bottom: 10px" slot="trigger" size="small"
                                type="info">Selecciona un archivo</el-button>
-                    <el-button size="small" @click="dialogVisible = false">Cancelar</el-button>
+                    <el-button size="small" @click="dialogVisible = false,$refs.upload.uploadFiles=[]">Cancelar</el-button>
                     <el-button style="margin-left: 10px;" size="small" type="success"
                                @click="submitUpload">Cargar</el-button>
                   <div slot="tip" class="el-upload__tip">Solo archivos Excel</div>
@@ -622,6 +624,12 @@
             },
 
             submitUpload() {
+                if (this.$refs.upload.uploadFiles.length===0){
+                    this.$message({
+                        type: 'warning',
+                        message: 'No se seleccionó ningún archivo'
+                    });
+                }
                 this.addRows([]);
                 this.$refs.upload.submit();
                 this.dialogVisible = false;
@@ -651,7 +659,6 @@
                 axios.get('/api/filter-recommendations', {params: _search}).then(response => {
                     if (response.data.success) {
 
-                        console.log("RESPONSE INDEX: ",response);
                         this.recommendations = response.data.recommendations.data;
                         this.pagination.total = response.data.recommendations.total;
                         this.pagination.currentPage = response.data.recommendations.current_page;
@@ -687,6 +694,7 @@
             },
 
             onSeccess(response, file, fileList) {
+                this.$refs.upload.uploadFiles=[];
                 if (response.success) {
                     this.recommendations = [];
                     this.getRecommendations();
@@ -825,7 +833,6 @@
                 };
 
                 axios.get('/api/recommendations', data).then(response => {
-
                     if (response.data.success) {
                         this.recommendations = response.data.recommendations.data;
                         this.pagination.total = response.data.recommendations.total;
@@ -914,6 +921,10 @@
                 if (data.errorDocs!==null) show = true;
                 return show;
             },
+            cargaMasiva(){
+                this.$refs.upload.uploadFiles=[];
+                this.dialogVisible = true;
+            }
         },
     }
 </script>

@@ -3,7 +3,7 @@
         <header-section icon="el-icon-document" title="SubTemas">
             <template slot="buttons">
                 <el-col :span="5" :offset="7">
-                    <el-button type="success" @click="newRegisterDialog = true" style="width: 100%">
+                    <el-button type="success" @click="newSubTopic" style="width: 100%">
                         Nuevo registro
                     </el-button>
                 </el-col>
@@ -125,14 +125,14 @@
             <el-button type="danger" @click="newRegisterDialog = false">Cancelar</el-button>
             <el-button v-if="newRegisterDialog"
                        type="primary"
-                       :disabled="newRegisterName === ''"
+                       :disabled="newRegisterName === '' || newRegisterAcronym.cat_topic_id.length===0"
                        @click="newRegister">Aceptar</el-button>
             </span>
         </el-dialog>
 
         <el-dialog title="Editar Registro SubTema"
                    :visible.sync="editRegisterDialog"
-                   width="70%">
+                   width="70%" :before-close="handleClose">
 
             <el-input
                 v-if="editRegisterDialog"
@@ -156,7 +156,7 @@
             </el-select>
 
             <span slot="footer" class="dialog-footer">
-            <el-button type="danger" @click="editRegisterDialog = false">Cancelar</el-button>
+            <el-button type="danger" @click="getSubtopic(),editRegisterDialog = false">Cancelar</el-button>
             <el-button v-if="editRegisterDialog"
                        type="primary"
                        :disabled="subtopics[indexRegister].name === ''"
@@ -431,7 +431,20 @@
                     });
                 });
             },
+            newSubTopic(){
+                this.newRegisterName = '';
+                this.newRegisterAcronym.cat_topic_id = '';
+                this.newRegisterDialog = true;
+            },
 
+            handleClose(done) {
+                this.$confirm('¿Seguro que quieres cerrar este cuadro?')
+                    .then(_ => {
+                        done();
+                        this.getSubtopic();
+                    })
+                    .catch(_ => {});
+            }
 
         },
     }

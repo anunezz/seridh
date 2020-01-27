@@ -27,6 +27,15 @@ class CatGoalsOds extends Model
         //return $this->user_id === auth()->user()->id;
     }
 
+    public function scopeOfType($query, $search)
+    {
+        if (!empty($search)) {
+            return $query->where('name', 'like', '%'. $search . '%')
+                    ->orWhere('acronym', 'like', '%' . $search . '%');
+        }
+        return $query;
+    }
+
 
 
 }

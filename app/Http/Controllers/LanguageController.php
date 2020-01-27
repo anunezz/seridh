@@ -13,7 +13,7 @@ class LanguageController extends Controller
 {
 
 
-    public function getLanguage(Request $request, $lang = 'es')
+    public function getLanguage(Request $request, $lang = 'en')
     {
 
         try {

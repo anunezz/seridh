@@ -17,7 +17,7 @@
             <el-col :span="8">
                 <a class="links"
                    @click="goTo('publicIndex', {cat_transaction_type_id : 1, action: 'Reportes Publico'})">
-                    Documentos Publicos
+                    Documentos Públicos
                 </a>
                 <br><br>
                 <span>Reportes</span>

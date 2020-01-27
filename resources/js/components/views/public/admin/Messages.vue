@@ -3,6 +3,7 @@
         <!--<img class="card-img-bottom" src="/img/public/messages/dgdh.jpg"
              style="height: 80px; width: 80px;" alt="">
         <pre>{{messages.path_dgdhd}}</pre>-->
+
         <el-row class="showMessages">
             <el-form  ref="messages" :model="messages" label-width="120px" label-position="top">
                 <el-row style="margin-bottom: 50px">
@@ -23,7 +24,8 @@
                         <el-form-item prop="seridh" :rules="[
                                     { required: true, message: 'Este campo es requerido', trigger: 'blur'},
                                   ]">
-                            <el-input  type="textarea" :rows="5" placeholder="Escribe un mensaje" v-model="messages.seridh"></el-input>
+<!--                            <el-input  type="textarea" :rows="5" placeholder="Escribe un mensaje" v-model="messages.seridh"></el-input>-->
+                            <tinymce id="seridh" :other_options="tinyOptions" v-model="messages.seridh"/>
                         </el-form-item>
                     </el-row>
                 </el-row>
@@ -46,11 +48,12 @@
                             <el-form-item prop="undersecretary" :rules="[
                                     { required: true, message: 'Este campo es requerido', trigger: 'blur'},
                                   ]">
-                                <el-input  type="textarea" :rows="5" placeholder="Escribe un mensaje" v-model="messages.undersecretary"></el-input>
+<!--                                <el-input  type="textarea" :rows="5" placeholder="Escribe un mensaje" v-model="messages.undersecretary"></el-input>-->
+                                <tinymce id="undersecretary" :other_options="tinyOptions" v-model="messages.undersecretary"/>
                             </el-form-item>
                         </el-row>
                     </el-col>
-                    <el-col :xs="24" :sm="8" :md="8" :lg="8" :xl="8" style="padding: 10px">
+                    <el-col :xs="24" :sm="8" :md="8" :lg="8" :xl="8" style="padding: 30px">
                         <el-form-item prop="path_undersecretary" :rules="[
                                     { required: true, message: 'Debe cargar una imagen', trigger: 'blur'},
                                   ]">
@@ -93,11 +96,12 @@
                             <el-form-item prop="dgdhd" :rules="[
                                     { required: true, message: 'Este campo es requerido', trigger: 'blur'},
                                   ]">
-                                <el-input  type="textarea" :rows="5" placeholder="Escribe un mensaje" v-model="messages.dgdhd"></el-input>
+<!--                                <el-input  type="textarea" :rows="5" placeholder="Escribe un mensaje" v-model="messages.dgdhd"></el-input>-->
+                                <tinymce id="dgdhd" :other_options="tinyOptions" v-model="messages.dgdhd"/>
                             </el-form-item>
                         </el-row>
                     </el-col>
-                    <el-col :xs="24" :sm="8" :md="8" :lg="8" :xl="8" style="padding: 35px">
+                    <el-col :xs="24" :sm="8" :md="8" :lg="8" :xl="8" style="padding: 30px">
                         <el-form-item prop="path_dgdhd" :rules="[
                                     { required: true, message: 'Debe cargar una imagen', trigger: 'blur'},
                                   ]">
@@ -137,8 +141,36 @@
             return{
                 showDgdhd:true,
                 showSecre:true,
+                idSecre:null,
                 messages:{},
                 apiToken: 'Bearer ' + sessionStorage.getItem('SERIDH_token'),
+                tinyOptions: {
+                    language_url: '/js/tiny_es_MX.js',
+                    indent_use_margin: true,
+                    forced_root_block_attrs: {
+                        "style": "font-family: Montserrat;font-size:18px;font-style: normal;font-weight: normal"
+                    },
+                    menubar: '',
+                    statusbar: false,
+                    branding: false,
+                    min_height: 150,
+                    browser_spellcheck: true,
+                    font_formats: 'Montserrat=Montserrat;Soberana Sans=Soberana Sans;Arial=arial,helvetica,sans-serif;Times New Roman=Times New Roman, Times, serif;',
+                    setup: function (ed) {
+                        ed.settings.paste_postprocess = function (pl, o) {
+                            ed.dom.setAttrib(ed.dom.select('li', o.node), 'style', 'font-family: Montserrat;font-size:18px;font-style: normal;font-weight: normal');
+                            ed.dom.setAttrib(ed.dom.select('p', o.node), 'style', 'font-family: Montserrat;font-size:18px;font-style: normal;font-weight: normal');
+                        }
+                    },
+                    paste_as_text: true,
+                    paste_text_sticky: true,
+                    paste_text_sticky_default: true,
+                    toolbar1: 'bold italic underline forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent  ',
+                    toolbar2: "",
+                    plugins: [
+                        'paste'
+                    ]
+                },
             }
         },
         created() {
@@ -149,7 +181,6 @@
                 let $this = this;
                 axios.get('/api/recommendations/adminPublic').then(response => {
                     this.messages = response.data.dataPublic;
-
                     if (response.data.path_undersecretary!==null){
                         this.messages.path_undersecretary.push({url:response.data.path_undersecretary});
                         $this.showSecre = false;
@@ -167,22 +198,25 @@
                 });
             },
             submitForm() {
+                this.startLoading();
                 this.$refs['messages'].validate((valid) => {
                     if(valid){
                         this.messages.type=2;
                         axios.post('/api/recommendations/saveMessages', this.messages).then(response => {
-                            this.getData();
+                            this.stopLoading();
                             this.$notify({
                                 type: "success",
                                 message: "Se actualizo la información correctamente"
                             });
                         }).catch(error => {
+                            this.stopLoading();
                             this.$message({
                                 type: "warning",
                                 message: "No fue posible completar la acción, intente nuevamente."
                             });
                         });
                     }else{
+                        this.stopLoading();
                         this.$message({
                             type: "warning",
                             title: 'Error',
@@ -192,29 +226,30 @@
                 });
             },
             fileRemove(file, fileList) {
-                /*this.messages.path_dgdhd = [];
-                this.messages.path_undersecretary = [];*/
-                let params = {
-                    url:file.url,
-                };
+                if (this.messages.path_undersecretary.length>0){
+                    if (this.messages.path_undersecretary[0].url===file.url){
+                        this.messages.path_undersecretary = [];
+                        this.showSecre = true;
+                    }
+                }
 
-                axios.post('/api/recommendations/deleteImg/file', params).then(response => {
-                    this.getData();
-                }).catch(error => {
-                    this.$message({
-                        type: "warning",
-                        message: "No fue posible completar la acción, intente nuevamente."
-                    });
-                });
-                console.log(file.url);
-                this.showDgdhd = true;
-                this.showSecre = true;
-                console.log(file, fileList);
+                if (this.messages.path_dgdhd.length>0){
+                    if (this.messages.path_dgdhd[0].url===file.url){
+                        this.messages.path_dgdhd = [];
+                        this.showDgdhd = true;
+                    }
+                }
             },
             fileSuccess(response, file,fileList) {
-                this.getData();
-                /*this.showDgdhd = false;
-                console.log(file);*/
+                if (response.type === 1){
+                    this.messages.path_undersecretary.push({url:response.path});
+                    this.messages.idSecre = response.ImgId;
+                    this.showSecre = false;
+                }else {
+                    this.messages.path_dgdhd.push({url:response.path});
+                    this.messages.idDgdhd = response.ImgId;
+                    this.showDgdhd = false;
+                }
             },
             beforeUploadFile(file) {
                 if (file.size/1024/1024 > 6) {

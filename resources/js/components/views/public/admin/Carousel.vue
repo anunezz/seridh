@@ -48,7 +48,6 @@
                 </el-col>
             </el-row>
         </el-row>
-
     </div>
 </template>
 
@@ -130,6 +129,7 @@
                 return true;
             },
             submitImages(){
+                this.startLoading();
                 let params = {
                     type: 1,
                     ids: this.idsFiles,
@@ -139,12 +139,13 @@
                     this.previewImages=[];
                     this.listImages=[];
                     this.getFiles();
+                    this.stopLoading();
                     this.$notify({
                         type: "success",
                         message: "Se actualizo la información correctamente"
                     });
                 }).catch(error => {
-                    console.log(error);
+                    this.stopLoading();
                     this.$message({
                         type: "warning",
                         message: "No fue posible completar la acción, intente nuevamente."

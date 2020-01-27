@@ -18,10 +18,10 @@ class CreatePublicRecomendationTable extends Migration
             $table->longText('seridh')->nullable();
             $table->boolean('activeSeridh')->default(1);
             $table->longText('undersecretary')->nullable();
-            $table->string('path_undersecretary', 255)->nullable();
+            $table->unsignedBigInteger('path_undersecretary')->nullable();
             $table->boolean('activeUndersecretary')->default(1);
             $table->longText('dgdhd')->nullable();
-            $table->string('path_dgdhd', 255)->nullable();
+            $table->unsignedBigInteger('path_dgdhd')->nullable();
             $table->boolean('activeDgdhd')->default(1);
             $table->timestamps();
         });

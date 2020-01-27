@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Models\CarouselImages;
+use App\Http\Models\Cats\CatLanguage;
 use App\Http\Models\ConsolePublicRecommendation;
 use App\Http\Models\DocumentRecommendation;
 use App\Http\Models\Files;
@@ -38,40 +39,43 @@ use Exception;
 
 class PublicController extends Controller
 {
-    function getData()
+    function getData(Request $request)
     {
         try {
-            Recommendation::$withoutAppends = true;
-            $catRights = RightsTrait::orderRights(null, null, null);
-            $entities = CatEntity::select('id','name')->where('isActive',true)->get();
-            $catPopulation = CatPopulation::select('id','name')->where('isActive', 1)->get();
-            $catTopics = TopicsTrait::orderTopics(null);
-            $catAutorities = CatAttending::select('id','name')->where('isActive', 1)->get();
-            $catOds = CatOds::select('id','name')->where('isActive', 1)->get();
-            $CatSolidarityAction = CatSolidarityAction::where('isActive', 1)->get(['id', 'name']);
-            $goalsOds = GoalsOdsTrait::orderOds(null);
+            if ($request->wantsJson()){
+                Recommendation::$withoutAppends = true;
+                $catRights = RightsTrait::orderRights(null, null, null);
+                $entities = CatEntity::select('id','name')->where('isActive',true)->get();
+                $catPopulation = CatPopulation::select('id','name')->where('isActive', 1)->get();
+                $catTopics = TopicsTrait::orderTopics(null);
+                $catAutorities = CatAttending::select('id','name')->where('isActive', 1)->get();
+                $catOds = CatOds::select('id','name')->where('isActive', 1)->get();
+                $CatSolidarityAction = CatSolidarityAction::where('isActive', 1)->get(['id', 'name']);
+                $goalsOds = GoalsOdsTrait::orderOds(null);
 
-            $catYears = Recommendation::select('date')
-                ->where('isActive','=', 1)
-                ->where('isPublished','=', 1)
-                ->groupBy('date')
-                ->orderBy('date', 'desc')
-                ->get(['date']);
+                $catYears = Recommendation::select('date')
+                    ->where('isActive','=', 1)
+                    ->where('isPublished','=', 1)
+                    ->groupBy('date')
+                    ->orderBy('date', 'desc')
+                    ->get(['date']);
 
-            return response()->json([
-                'success' => true,
-                'catYears' => $catYears,
-                'catEntities' => $entities,
-                'catPopulations' => $catPopulation,
-                'catTopics' => $catTopics,
-                'catAutorities' => $catAutorities,
-                'catOds' => $catOds,
-                "goalsOds" => $goalsOds,
-                'catActions' => $CatSolidarityAction,
-                'catRights' => $catRights
+                return response()->json([
+                    'success' => true,
+                    'catYears' => $catYears,
+                    'catEntities' => $entities,
+                    'catPopulations' => $catPopulation,
+                    'catTopics' => $catTopics,
+                    'catAutorities' => $catAutorities,
+                    'catOds' => $catOds,
+                    "goalsOds" => $goalsOds,
+                    'catActions' => $CatSolidarityAction,
+                    'catRights' => $catRights
 
-            ], 200);
-
+                ], 200);
+            }else{
+                return response()->view('errors.404', [], 404);
+            }
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
@@ -228,87 +232,93 @@ class PublicController extends Controller
     }
 
 
-
-    public function count()
+    public function count(Request $request)
     {
         //  DB::beginTransaction();
         try{
-            $recommendation = Recommendation::where('isActive', '=', 1)
-                ->where('isPublished', '=', 1)->count();
+            if ($request->wantsJson()){
+                $recommendation = Recommendation::where('isActive', '=', 1)
+                    ->where('isPublished', '=', 1)->count();
 
 
 
-            //dd("recomendacion: ",$recommendation);
-            // $visit = Visits::findOrFail(1);
-            // $visit->visits = $visit->visits + 1;
-            // $visit->save();
-            $Entity = CatEntity::where('isActive', '=', 1)->count();
-            $Topic = CatTopic::where('isActive', '=', 1)->count();
+                //dd("recomendacion: ",$recommendation);
+                // $visit = Visits::findOrFail(1);
+                // $visit->visits = $visit->visits + 1;
+                // $visit->save();
+                $Entity = CatEntity::where('isActive', '=', 1)->count();
+                $Topic = CatTopic::where('isActive', '=', 1)->count();
 
 
 
-            $reportedaction = Recommendation::with('reportedaction')
-                ->where('isActive', '=', 1)
-                ->where('isPublished', '=', 1)->get();
+                $reportedaction = Recommendation::with('reportedaction')
+                    ->where('isActive', '=', 1)
+                    ->where('isPublished', '=', 1)->get();
 
 
 
 
-            $arraytypeReportedAction = [];
-            $countReportedaction = [];
-            foreach ($reportedaction as $value) {
-                foreach ($value->reportedaction as $v) {
+                $arraytypeReportedAction = [];
+                $countReportedaction = [];
+                foreach ($reportedaction as $value) {
+                    foreach ($value->reportedaction as $v) {
 
-                    array_push( $countReportedaction, $v );
+                        array_push( $countReportedaction, $v );
+                    }
                 }
+
+                //dd($countReportedaction);
+
+                $CatEntity = CatEntity::where('isActive', 1)->get(['id', 'name']);
+                $CatPopulation = CatPopulation::where('isActive', 1)->get(['id', 'name']);
+                $CatAttending = CatAttending::where('isActive', 1)->get(['id', 'name']);
+                $CatOds = CatOds::where('isActive', 1)->get(['id', 'name']);
+                $CatSolidarityAction = CatSolidarityAction::where('isActive', 1)->get(['id', 'name']);
+
+                $CatDate = Recommendation::select('date')
+                    ->where('isActive', 1)
+                    ->where('isPublished', 1)
+                    ->orderBy('date', 'desc')
+                    ->get();
+
+                $arrayaDate = array();
+                foreach ($CatDate as $date) {
+                    array_push($arrayaDate, $date->date);
+                }
+
+                $CatRightsRecommendation = CatRightsRecommendation::where('isActive', 1)->get(['id', 'name']); // 1
+                $CatSubRights = CatSubRights::where('isActive', 1)->get(['id', 'name', 'rights_recommendations_id']); // 2
+                $CatSubcategorySubrights = CatSubcategorySubrights::where('isActive', 1)->get(['id', 'name', 'sub_rights_id']); //3
+
+                $data = array(
+                    "0" => array("id" => 0, "name" => "Año", "data" => $arrayaDate),
+                    "1" => array("id" => 1, "name" => "Entidad Emisora", "data" => $CatEntity),
+                    "2" => array("id" => 2, "name" => "Población", "data" => $CatPopulation),
+                    "3" => array("id" => 3, "name" => "Temas", "data" => ''),
+                    "4" => array("id" => 4, "name" => "Autoridad", "data" => $CatAttending),
+                    "5" => array("id" => 5, "name" => "ODS", "data" => $CatOds),
+                    "6" => array("id" => 6, "name" => "Derechos Humanos", "data" => ''),
+                    "7" => array("id" => 7, "name" => "Acción solicitada", "data" => $CatSolidarityAction),
+                    '8' => array("id" => 8, "name" => "Buscar", "data" => '')
+                );
+
+                return response()->json([
+                    'success' => true,
+                    'lResults' => ['recommendation' => $recommendation,
+                        //   'vists' => $visit->visits,
+                        'entity' => $Entity,
+                        'topics' => $Topic,
+                        'reportedaction' => count($countReportedaction),
+                        'cats' => $data
+                    ]
+                ], 200);
+
+            }else{
+                return response()->view('errors.404', [], 404);
             }
 
-            //dd($countReportedaction);
-
-            $CatEntity = CatEntity::where('isActive', 1)->get(['id', 'name']);
-            $CatPopulation = CatPopulation::where('isActive', 1)->get(['id', 'name']);
-            $CatAttending = CatAttending::where('isActive', 1)->get(['id', 'name']);
-            $CatOds = CatOds::where('isActive', 1)->get(['id', 'name']);
-            $CatSolidarityAction = CatSolidarityAction::where('isActive', 1)->get(['id', 'name']);
-
-            $CatDate = Recommendation::select('date')
-                ->where('isActive', 1)
-                ->where('isPublished', 1)
-                ->orderBy('date', 'desc')
-                ->get();
-
-            $arrayaDate = array();
-            foreach ($CatDate as $date) {
-                array_push($arrayaDate, $date->date);
-            }
-
-            $CatRightsRecommendation = CatRightsRecommendation::where('isActive', 1)->get(['id', 'name']); // 1
-            $CatSubRights = CatSubRights::where('isActive', 1)->get(['id', 'name', 'rights_recommendations_id']); // 2
-            $CatSubcategorySubrights = CatSubcategorySubrights::where('isActive', 1)->get(['id', 'name', 'sub_rights_id']); //3
-
-            $data = array(
-                "0" => array("id" => 0, "name" => "Año", "data" => $arrayaDate),
-                "1" => array("id" => 1, "name" => "Entidad emisora", "data" => $CatEntity),
-                "2" => array("id" => 2, "name" => "Población", "data" => $CatPopulation),
-                "3" => array("id" => 3, "name" => "Temas", "data" => ''),
-                "4" => array("id" => 4, "name" => "Autoridad", "data" => $CatAttending),
-                "5" => array("id" => 5, "name" => "ODS", "data" => $CatOds),
-                "6" => array("id" => 6, "name" => "Derechos Humanos", "data" => ''),
-                "7" => array("id" => 7, "name" => "Acción Solicitada", "data" => $CatSolidarityAction),
-                '8' => array("id" => 8, "name" => "Buscar", "data" => '')
-            );
-
-            return response()->json([
-                'success' => true,
-                'lResults' => ['recommendation' => $recommendation,
-                    //   'vists' => $visit->visits,
-                    'entity' => $Entity,
-                    'topics' => $Topic,
-                    'reportedaction' => count($countReportedaction),
-                    'cats' => $data
-                ]
-            ], 200);
-        }catch(Exception $e){
+        }
+        catch(Exception $e){
             DB::rollBack();
             return response()->json([
                 'success' => false,
@@ -317,45 +327,53 @@ class PublicController extends Controller
         }
 
     }
-    public function labelsForm()
+
+    public function labelsForm(Request $request)
     {
         try{
-            $CatEntity = CatEntity::where('isActive', 1)->get(['id', 'name']);
-            $CatPopulation = CatPopulation::where('isActive', 1)->get(['id', 'name']);
-            $CatAttending = CatAttending::where('isActive', 1)->get(['id', 'name']);
-            $CatOds = CatOds::where('isActive', 1)->get(['id', 'name']);
+            if ($request->wantsJson()){
+                $CatEntity = CatEntity::where('isActive', 1)->get(['id', 'name']);
+                $CatPopulation = CatPopulation::where('isActive', 1)->get(['id', 'name']);
+                $CatAttending = CatAttending::where('isActive', 1)->get(['id', 'name']);
+                $CatOds = CatOds::where('isActive', 1)->get(['id', 'name']);
 
-            $CatDate = Recommendation::select('date')
-                ->where('isActive', 1)
-                ->where('isPublished', 1)
-                ->orderBy('date', 'desc')
-                ->get();
+                $CatDate = Recommendation::select('date')
+                    ->where('isActive', 1)
+                    ->where('isPublished', 1)
+                    ->orderBy('date', 'desc')
+                    ->get();
 
-            $arrayaDate = array();
-            foreach ($CatDate as $date) {
-                array_push($arrayaDate, $date->date);
+                $arrayaDate = array();
+                foreach ($CatDate as $date) {
+                    array_push($arrayaDate, $date->date);
+                }
+
+                $CatRightsRecommendation = CatRightsRecommendation::where('isActive', 1)->get(['id', 'name']); // 1
+                $CatSubRights = CatSubRights::where('isActive', 1)->get(['id', 'name', 'rights_recommendations_id']); // 2
+                $CatSubcategorySubrights = CatSubcategorySubrights::where('isActive', 1)->get(['id', 'name', 'sub_rights_id']); //3
+
+                $data = array(
+                    "0" => array("id" => 0, "name" => "Año", "data" => $arrayaDate),
+                    "1" => array("id" => 1, "name" => "Entidad emisora", "data" => $CatEntity),
+                    "2" => array("id" => 2, "name" => "Población", "data" => $CatPopulation),
+                    "3" => array("id" => 3, "name" => "Temas", "data" => ''),
+                    "4" => array("id" => 4, "name" => "Autoridad", "data" => $CatAttending),
+                    "5" => array("id" => 5, "name" => "ODS", "data" => $CatOds),
+                    "6" => array("id" => 6, "name" => "Derechos Humanos", "data" => ''),
+                    '7' => array("id" => 7, "name" => "Buscar", "data" => '')
+                );
+
+                return response()->json([
+                    'success' => true,
+                    'lResults' => $data
+                ], 200);
+
+            }else{
+                return response()->view('errors.404', [], 404);
             }
 
-            $CatRightsRecommendation = CatRightsRecommendation::where('isActive', 1)->get(['id', 'name']); // 1
-            $CatSubRights = CatSubRights::where('isActive', 1)->get(['id', 'name', 'rights_recommendations_id']); // 2
-            $CatSubcategorySubrights = CatSubcategorySubrights::where('isActive', 1)->get(['id', 'name', 'sub_rights_id']); //3
-
-            $data = array(
-                "0" => array("id" => 0, "name" => "Año", "data" => $arrayaDate),
-                "1" => array("id" => 1, "name" => "Entidad emisora", "data" => $CatEntity),
-                "2" => array("id" => 2, "name" => "Población", "data" => $CatPopulation),
-                "3" => array("id" => 3, "name" => "Temas", "data" => ''),
-                "4" => array("id" => 4, "name" => "Autoridad", "data" => $CatAttending),
-                "5" => array("id" => 5, "name" => "ODS", "data" => $CatOds),
-                "6" => array("id" => 6, "name" => "Derechos Humanos", "data" => ''),
-                '7' => array("id" => 7, "name" => "Buscar", "data" => '')
-            );
-
-            return response()->json([
-                'success' => true,
-                'lResults' => $data
-            ], 200);
-        }catch(Exception $e){
+            }
+          catch(Exception $e){
             return response()->json([
                 'success' => false,
                 'message' => 'Error al mostrar información labelsForm ' . $e->getMessage()
@@ -881,18 +899,21 @@ class PublicController extends Controller
 
     }
 
-    public function downloadPdf($id)
+    public function downloadPdf(Request $request, $id)
     {
         try {
-            //  $recommendations = Recommendation::with('user')->find(decrypt($id));
+            if ($request->wantsJson()){
+                $pdf = \App::make('dompdf.wrapper');
 
-            //  $notice = Notice::with('user', 'noticetype', 'status', 'answers.user.mission')->find(decrypt($id));
-            $pdf = \App::make('dompdf.wrapper');
+                $pdf->loadView('recommendation');
+                //, compact('recommendations'));
 
-            $pdf->loadView('recommendation');
-            //, compact('recommendations'));
+                return $pdf->download();
 
-            return $pdf->download();
+            }else{
+                return response()->view('errors.404', [], 404);
+            }
+
         }
         catch ( \Exception $e ) {
 
@@ -905,20 +926,24 @@ class PublicController extends Controller
     }
 
 
-    public function downloadDocumenPdf($id)
+    public function downloadDocumenPdf(Request $request, $id)
     {
         try {
 
-            $document   = Files::with('documents')->find($id);
+                $document   = Files::with('documents')->find($id);
 
-            $pathToFile = storage_path() . '/app/recommendations/files/' . $document->documents->fileNameHash;
+                $pathToFile = storage_path() . '/app/recommendations/files/' . $document->documents->fileNameHash;
 
-            return response()->download(
-                $pathToFile,
-                $document->fileName,
-                [],
-                'inline'
-            );
+                return response()->download(
+                    $pathToFile,
+                    $document->documents->fileName,
+                    [],
+                    'inline'
+                );
+
+
+
+
         }
 
         catch (\Exception $e) {
@@ -930,19 +955,18 @@ class PublicController extends Controller
         }
     }
 
-    public function countDocumenPdf($id)
+    public function countDocumenPdf(Request $request, $id)
     {
         try {
+                $document   = Files::with('documents')->find($id);
+                $doc = Document::find($document->document_id);
 
-            $document   = Files::with('documents')->find($id);
-            $doc = Document::find($document->document_id);
+                $doc->downloadCount = $doc->downloadCount + 1;
+                $doc->save();
 
-            $doc->downloadCount = $doc->downloadCount + 1;
-            $doc->save();
-
-            return response()->json([
-                'success' => true
-            ]);
+                return response()->json([
+                    'success' => true
+                ]);
 
         }
 
@@ -958,30 +982,38 @@ class PublicController extends Controller
     public function getMessages(Request $request)
     {
         try {
-            $data = $request->all();
+            if ($request->wantsJson()){
+                $data = $request->all();
 
-            if ($data['type'] == 1){
-                return CarouselImages::select('fileNameHash')->whereIsactive(1)->whereType(1)->get();
-            }elseif ($data['type'] == 2){
-                $configPublic = ConsolePublicRecommendation::find(1);
-                $dataPublic = [
-                    'seridh'               => $configPublic->seridh,
-                    'activeSeridh'         => $configPublic->activeSeridh == 1 ? true : false,
-                    'undersecretary'       => $configPublic->undersecretary,
-                    'path_undersecretary'  => [],
-                    'activeUndersecretary' => $configPublic->activeUndersecretary == 1 ? true : false,
-                    'dgdhd'                => $configPublic->dgdhd,
-                    'path_dgdhd'           => [],
-                    'activeDgdhd'          => $configPublic->activeDgdhd == 1 ? true : false,
-                ];
-                return response()->json([
-                    'dataPublic' => $dataPublic,
-                    'path_undersecretary'  => $configPublic->path_undersecretary,
-                    'path_dgdhd'           => $configPublic->path_dgdhd,
-                    'success'   => true
-                ]);
+                if ($data['type'] == 1){
+                    return CarouselImages::select('fileNameHash')->whereIsactive(1)->whereType(1)->get();
+                }else if ($data['type'] == 2){
+                    $configPublic = ConsolePublicRecommendation::find(1);
+                    $pathUnsecre = CarouselImages::find($configPublic->path_undersecretary);
+                    $pathDgdhd = CarouselImages::find($configPublic->path_dgdhd);
+                    $dataPublic = [
+                        'seridh'               => $configPublic->seridh,
+                        'activeSeridh'         => $configPublic->activeSeridh == 1 ? true : false,
+                        'undersecretary'       => $configPublic->undersecretary,
+                        'path_undersecretary'  => [],
+                        'activeUndersecretary' => $configPublic->activeUndersecretary == 1 ? true : false,
+                        'dgdhd'                => $configPublic->dgdhd,
+                        'path_dgdhd'           => [],
+                        'activeDgdhd'          => $configPublic->activeDgdhd == 1 ? true : false,
+                    ];
+                    return response()->json([
+                        'dataPublic' => $dataPublic,
+                        'path_undersecretary'  => '/img/public/messages/'.$pathUnsecre->fileNameHash,
+                        'path_dgdhd'           => '/img/public/messages/'.$pathDgdhd ->fileNameHash,
+                        'success'   => true
+                    ]);
+                } else {
+                    return CarouselImages::select('fileNameHash','text','link')->whereIsactive(1)->whereType(3)->get();
+                }
+
+            }else{
+                return response()->view('errors.404', [], 404);
             }
-
 
         }
         catch ( \Exception $e ){
@@ -992,20 +1024,18 @@ class PublicController extends Controller
         }
     }
 
-    public function downloadDocumentPublicPdf($id)
+    public function downloadDocumentPublicPdf(Request $request, $id)
     {
         try {
+                $document   = DocumentRecommendation::with('documents')->find($id);
+                $pathToFile = storage_path() . '/app/recommendations/files/' . $document->documents->fileNameHash;
 
-            $document   = DocumentRecommendation::with('documents')->find($id);
-
-            $pathToFile = storage_path() . '/app/recommendations/files/' . $document->documents->fileNameHash;
-
-            return response()->download(
-                $pathToFile,
-                $document->fileName,
-                [],
-                'inline'
-            );
+                return response()->download(
+                    $pathToFile,
+                    $document->fileName,
+                    [],
+                    'inline'
+                );
         }
 
         catch (\Exception $e) {
@@ -1017,6 +1047,117 @@ class PublicController extends Controller
         }
     }
 
+    public function getLanguage(Request $request, $lang = 'en')
+    {
+
+        try {
+            if ($request->wantsJson()){
+                $langs = CatLanguage::select('acronym')->get()->pluck('acronym');
+                //	$langs = $result;//['es', 'en', 'cn','fra','bra'];
+                $status = false;
+                foreach ($langs as $item) {
+                    if ($lang == $item) {
+                        $status = true;
+                    }
+                }
+
+                if ($status) {
+                    $pathToFile = storage_path() . "/app/lang/" . $lang . '.json';
+                    return response()->download(
+                        $pathToFile,
+                        $lang,
+                        [],
+                        'inline'//attachment
+                    );
+                } else {
+                    return response()->json([
+                        'success' => false,
+                    ], 404);
+                }
+
+            }else{
+                return response()->view('errors.404', [], 404);
+            }
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function getSpanish(Request $request, $lang = 'es')
+    {
+
+        try {
+            if ($request->wantsJson()){
+                $langs = CatLanguage::select('acronym')->get()->pluck('acronym');
+                //	$langs = $result;//['es', 'en', 'cn','fra','bra'];
+                $status = false;
+                foreach ($langs as $item) {
+                    if ($lang == $item) {
+                        $status = true;
+                    }
+                }
+
+                if ($status) {
+                    $pathToFile = storage_path() . "/app/lang/" . $lang . '.json';
+                    return response()->download(
+                        $pathToFile,
+                        $lang,
+                        [],
+                        'inline'//attachment
+                    );
+                } else {
+                    return response()->json([
+                        'success' => false,
+                    ], 404);
+                }
+
+            }else{
+                return response()->view('errors.404', [], 404);
+            }
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function getDocumentPublic(Request $request){
+        try {
+            if ($request->wantsJson()){
+                $data = $request->all();
+                $search = json_decode($data['filters']);
+
+                $files = Files::with( 'documents')
+                    ->consult($search)
+                    ->where('isActive', true)
+                    ->orderBy('updated_at', 'DESC')
+                    ->paginate($data['perPage']);
+
+
+                return response()->json([
+                    'files' => $files,
+                    'success' => true
+                ]);
+
+            }else{
+                return response()->view('errors.404', [], 404);
+            }
+
+        }
+        catch ( \Exception $e ){
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
 
 
 }

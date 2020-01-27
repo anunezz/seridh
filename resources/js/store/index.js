@@ -5,9 +5,6 @@ import user from './modules/user'
 import bulkLoading from './modules/bulkLoadingErrors'
 import publico from './modules/publico'
 import createPersistedState from "vuex-persistedstate";
-import Carousel3d from 'vue-carousel-3d';
-
-
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -26,7 +23,6 @@ export default new Vuex.Store({
         loading,
         user,
         bulkLoading,
-        publico,
-        Carousel3d
+        publico
     }
 });

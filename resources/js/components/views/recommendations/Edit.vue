@@ -128,7 +128,7 @@
                         </el-col>
                     </el-row>
                     <el-row :gutter="20">
-                        <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
+                        <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
                             <el-form-item label="Autoridadad"
                                           prop="cat_attendig_id"
                                           :rules="[
@@ -150,7 +150,9 @@
                                 </el-select>
                             </el-form-item>
                         </el-col>
-                        <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
+                    </el-row>
+                    <el-row :gutter="20">
+                        <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
                             <el-form-item label="Acción Solicitada"
                                           prop="cat_solidarity_action_id"
                                           :rules="[
@@ -171,7 +173,6 @@
                                 </el-select>
                             </el-form-item>
                         </el-col>
-
                     </el-row>
                     <el-row :gutter="20">
                         <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">

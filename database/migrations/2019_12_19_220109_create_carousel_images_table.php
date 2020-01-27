@@ -19,6 +19,7 @@ class CreateCarouselImagesTable extends Migration
             $table->text('fileName');
             $table->text('fileNameHash');
             $table->string('link')->nullable();
+            $table->string('text')->nullable();
             $table->boolean('isActive')->default(0);
             $table->unsignedBigInteger('type')->nullable();
             $table->timestamps();

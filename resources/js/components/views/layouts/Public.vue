@@ -4,7 +4,6 @@
          element-loading-spinner="el-icon-loading"
          style="width: 100%">
         <el-backtop :visibility-height="500"/>
-        <!-- element-loading-background="rgba(0, 0, 0, 0.8)" -->
         <nav class="navbar navbar-inverse sub-navbar fixed-top" style="margin-top: 50px!important;">
             <div class="container">
                 <div class="navbar-header">
@@ -14,56 +13,25 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="?tab=">SERIDH <small>v 1.1</small> </a>
+                    <a class="navbar-brand" href="?tab=">SERIDH <small>v {{$vertion}}</small> </a>
                 </div>
                 <div class="collapse navbar-collapse" id="subenlaces">
                     <ul class="nav subnav navbar-nav navbar-right">
                         <li class="landing-btn active">
-
-
                             <a @click="$router.push( {path: '/publico'})" style="cursor: pointer;">
                                 Inicio
                             </a>
-
-
-                            <!-- <div class="col-md-12 " style="padding: 20px;">
-                                <router-link to="/publico">
-                                    <button type="button" class="btn btn-success input-sm pull-right">Regresar</button>
-                                </router-link>
-                            </div> -->
-
-
                         </li>
-                        <!-- <li class="landing-btn">
-                            <a href="#">
-                                Cat&aacute;logos
-                            </a>
-                        </li> -->
                         <li class="landing-btn">
                             <a @click="$router.push({name: 'PublicDocuments'})" style="cursor: pointer;">
                                 Documentos
                             </a>
                         </li>
-                        <!-- <li class="landing-btn">
-                            <a href="#">
-                                Preguntas frecuentes
-                            </a>
-                        </li> -->
-                        <!-- <li class="landing-btn">
-                         <a href="#">
-                             Metodolog&iacute;a
-                         </a>
-                     </li> -->
                     </ul>
                 </div>
             </div>
         </nav>
         <router-view></router-view>
-
-        <!-- <pre>
-            {{ cats }}
-        </pre> -->
-
     </div>
 </template>
 
@@ -85,31 +53,32 @@
         created(){
             this.startLoading();
             this.stopLoading();
-           // this.activeLoaing(false);
-
         },
         methods: {
             ...mapActions("publico", ['addVisits','activeLoaing','addCats','addColors']),
             event(){
                 let me = this;
-                axios.get('/api/public/recommendations/count').then(function (response) {
+                var config = {
+                    headers:{
+                        'Content-Type':'application/json',
+                        'Accept':'application/json'
+                    }
+                }
+
+                axios.get('/api/public/recommendations/count', config).then(function (response) {
                     if (response.data.success){
                         let data = {
                             'recommendation':response.data.lResults.recommendation,
                             'issuingEntities': response.data.lResults.entity,
                             'topic': response.data.lResults.topics,
-                            //'visits': response.data.lResults.vists,
                             'reportedaction': response.data.lResults.reportedaction
                         };
 
-
-                        console.log("Catalogos desde Public: ", response.data.lResults.cats );
                         me.addCats([]);
                         me.addVisits([]);
                         setTimeout(item=>{
                             me.addCats( response.data.lResults.cats );
                             me.addVisits( data );
-                            console.log("Los datos fueron cargados exitosamente......");
                         },500);
 
                     }
@@ -123,20 +92,6 @@
         },
         mounted(){
             this.event();
-
-            // let colores = ["#FF5353","#DD597D","#CA00CA","#A41CC6","#7373FF","#29AFD6","#74BAAC","#E1E1A8","#DAAF85","#CF8D72","#F7DE00","#93BF96","#63E9FC","#AE70ED","#FF97CB","#5EAE9E","#25A0C5","#5B5BFF","#8D18AB","#B300B3","#D73E68","#FF2626","#99E0FF","#CEFFFD","#FF86C2"];
-            // if(this.colors.length > 0){
-            //  this.addColors([]);
-            //  setTimeout(i=>{
-            //     this.addColors(colores);
-            //  },500);
-            // }else{
-            //     this.addColors(colores);
-            // }
-            // this.activeLoaing(true);
-            //         let recaptchaScript = files.createElement('script')
-            // recaptchaScript.setAttribute('src', 'https://framework-gb.cdn.gob.mx/gobmx.js')
-            // files.head.appendChild(recaptchaScript);
         }
     }
 </script>

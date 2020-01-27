@@ -3,7 +3,7 @@
 
 <el-card class="box-card">
     <el-row>
-        <el-col offset="22">
+        <el-col :offset="22">
             <el-button
                 size="small"
                 type="danger"
@@ -18,7 +18,7 @@
     </el-row>
 
     <el-row>
-        <el-collapse :accordion="true"  :value="collapse" >
+        <el-collapse :accordion="true">
             <el-collapse-item name="1">
                 <template slot="title">
                     <h3>Configuración de carrusel</h3>

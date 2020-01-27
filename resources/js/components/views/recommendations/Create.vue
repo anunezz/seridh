@@ -10,13 +10,13 @@
                     @click="$router.push('/recomendaciones')">
                     Regresar
                 </el-button>
-                <!--<el-button
+       <!--         <el-button
                     size="medium"
                     type="success"
                     icon="fas fa-flag-usa"
                     @click="changeLanguage(1)">
                     English
-                </el-button>-->
+                </el-button> -->
 
             </template>
         </header-section>
@@ -131,7 +131,7 @@
                         </el-col>
                     </el-row>
                     <el-row :gutter="20">
-                        <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
+                        <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
                             <el-form-item :label="lang.form && lang.form.attending? lang.form.attending : 'Autoridadad'"
                                           prop="cat_attendig_id"
                                           :rules="[
@@ -143,7 +143,7 @@
                                     multiple
                                     :multiple-limit="5"
                                     :placeholder="lang.form && lang.form.elegir? lang.form.elegir : 'Seleccionar'"
-                                    style="width: 200%">
+                                    style="width: 100%">
                                     <el-option
                                         v-for="(attending, index) in attendings"
                                         :key="index"
@@ -155,7 +155,7 @@
                         </el-col>
                     </el-row>
                     <el-row :gutter="20">
-                        <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
+                        <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
                             <el-form-item :label="lang.form && lang.form.solidarity? lang.form.solidarity : 'Acción Solicitada'"
                                           prop="cat_solidarity_action_id"
 
@@ -167,7 +167,7 @@
                                     filterable
                                     multiple
                                     :placeholder="lang.form && lang.form.elegir? lang.form.elegir : 'Seleccionar'"
-                                    style="width: 200%">
+                                    style="width: 100%">
                                     <el-option
                                         v-for="(action, index) in actions"
                                         :key="index"
@@ -177,7 +177,6 @@
                                 </el-select>
                             </el-form-item>
                         </el-col>
-
                     </el-row>
                     <el-row :gutter="20">
                         <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">

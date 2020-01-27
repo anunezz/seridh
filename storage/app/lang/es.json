@@ -1,3 +1,24 @@
+{
 
-{"header":{"title":"Agregar Recomendaci\u00f3n"},"form":{"text":"Texto de Recomendaci\u00f3n","entity":"Entidad Emisora","order":"Orden de Gobierno","power":"Poder de Gobierno","attending":"Entidad encargada de atender","right":"Derechos de la recomendaci\u00f3n","population":"Poblaci\u00f3n","solidarity":"Acci\u00f3n Solidaria","elegir":"Seleccionar","review":"Revisi\u00f3n de derechos de la recomendaci\u00f3n","topic":"Revisi\u00f3n de tema(s)","subtopic":"Revisi\u00f3n de subtema(s)","goals":"ODS (Objetivos de Desarrollo Sostenible)","comment":"Comentarios"},"success":false}
+    "header": {
+        "title": "Recomendaciones",
+        "entity" : "Entidad Emisora",
+        "topics" : "Temas",
+        "actions" : "Acciones Reportadas",
+        "search" : "Búsqueda avanzada de recomendaciones",
+        "previous" : "Limpiar búsqueda anterior",
+        "seridh" : "¿Qué es el SERIDH?",
+        "undersecretary" : "Mensaje de la Subsecretaría para Asuntos Multilaterales y Derechos Humanos",
+        "dgdhd" : "Mensaje de la Dirección General de Derechos Humanos y Democracia",
+        "statistics" : "Estadísticas básicas",
+        "allies" : "Aliados",
+        "ridhEntity" : "recomendación por Entidad Emisora",
+        "ridhYear" : "recomendación por año",
+        "recommendationsReceived" : "Total de recomendaciones recibidas por autoridad",
+        "recommendationsReported" : "Total de recomendaciones con al menos una acción reportada por autoridad",
+        "ods" : "recomendación por Objetivos de Desarrollo Sostenible",
+        "messagesSeridh" : ""
+    }
 
+
+}

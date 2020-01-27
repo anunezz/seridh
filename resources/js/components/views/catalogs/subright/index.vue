@@ -3,7 +3,7 @@
         <header-section icon="el-icon-document" title="Derechos Nivel 2">
             <template slot="buttons">
                 <el-col :span="5" :offset="7">
-                    <el-button type="success" @click="newRegisterDialog = true" style="width: 100%">
+                    <el-button type="success" @click="subRight" style="width: 100%">
                         Nuevo registro
                     </el-button>
                 </el-col>
@@ -56,7 +56,7 @@
                                         type="info"
                                         size="mini"
                                         icon="fas fa-edit"
-                                        @click="openEditDialog(scope.$index, scope.row.hash, scope.row.name, scope.row.acronym)">
+                                        @click="openEditDialog(scope.$index, scope.row.hash, scope.row.name, scope.row.rights_recommendations_id)">
                                     </el-button>
                                 </el-tooltip>
                                 <el-tooltip
@@ -125,14 +125,14 @@
             <el-button type="danger" @click="newRegisterDialog = false">Cancelar</el-button>
             <el-button v-if="newRegisterDialog"
                        type="primary"
-                       :disabled="newRegisterName === ''"
+                       :disabled="newRegisterName === '' || newRegisterAcronym.rights_recommendations_id.length===0"
                        @click="newRegister">Aceptar</el-button>
             </span>
         </el-dialog>
 
         <el-dialog title="Editar Registro Derecho Nivel 2"
                    :visible.sync="editRegisterDialog"
-                   width="70%">
+                   width="70%" :before-close="handleClose">
             <el-input
                 v-if="editRegisterDialog"
                 placeholder="Nombre del Derecho de Nivel 2"
@@ -155,7 +155,7 @@
             </el-select>
 
             <span slot="footer" class="dialog-footer">
-            <el-button type="danger" @click="editRegisterDialog = false">Cancelar</el-button>
+            <el-button type="danger" @click="getSubrights(),editRegisterDialog = false">Cancelar</el-button>
             <el-button v-if="editRegisterDialog"
                        type="primary"
                        :disabled="subrights[indexRegister].name === ''"
@@ -349,7 +349,7 @@
 
             editRegister() {
                 this.startLoading();
-
+                console.log(this.subrights[this.indexRegister].rights_recommendations_id);
                 let data = {
                     id: this.hashRegister,
                     cat: 11,
@@ -431,7 +431,20 @@
                 });
             },
 
+            subRight(){
+                this.newRegisterName = '';
+                this.newRegisterAcronym.rights_recommendations_id = '';
+                this.newRegisterDialog = true;
+            },
 
+            handleClose(done) {
+                this.$confirm('¿Seguro que quieres cerrar este cuadro?')
+                    .then(_ => {
+                        done();
+                        this.getSubrights();
+                    })
+                    .catch(_ => {});
+            }
         },
     }
 </script>

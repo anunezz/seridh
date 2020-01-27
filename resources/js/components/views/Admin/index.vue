@@ -40,7 +40,7 @@
                 <br><br>
                 <span>Inicio</span>
             </el-col>
-            <!-- <el-col :span="8">
+             <el-col :span="8">
                 <a class="links"
                    @click="goTo('PanelIndex', {cat_transaction_type_id : 1, action: 'Ingresa al Panel'})">
                     Panel
@@ -48,16 +48,16 @@
                 <br><br>
                 <span>Idiomas</span>
                  <br><br>
-            </el-col> -->
+            </el-col>
         </el-row>
         <el-row :gutter="10">
             <el-col :span="8">
                 <a class="links"
                    @click="goTo('PublicIndex', {cat_transaction_type_id : 1, action: 'Ingresar al Publico'})">
-                    Publico
+                    Público
                 </a>
                 <br><br>
-                <span>Administrador del portal publico</span>
+                <span>Administrador del portal público</span>
             </el-col>
         </el-row>
     </div>

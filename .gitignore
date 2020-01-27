@@ -1,6 +1,10 @@
-node_modules/
-public/js/app.js
-storage/*.key
-vendor/
-.idea/
-.vscode/
+/node_modules/
+/public/js/app.js
+/storage/oauth-private.key
+/storage/oauth-public.key
+/vendor/
+/.idea
+/.vscode
+storage/app/recommendations/
+
+storage/app/Recomendaciones.xlsm

@@ -3,7 +3,7 @@
         <header-section icon="el-icon-document" title="Acción Solicitada">
             <template slot="buttons">
                 <el-col :span="5" :offset="7">
-                    <el-button type="success" @click="newRegisterDialog = true" style="width: 100%">
+                    <el-button type="success" @click="actionRequest" style="width: 100%">
                         Nuevo registro
                     </el-button>
                 </el-col>
@@ -106,7 +106,8 @@
 
         <el-dialog title="Editar Registro"
                    :visible.sync="editRegisterDialog"
-                   width="70%">
+                   width="70%"
+                   :before-close="handleClose">
             <el-input
                 v-if="editRegisterDialog"
                 placeholder="Nombre de Acción Solicitada"
@@ -116,7 +117,7 @@
             </el-input>
 
             <span slot="footer" class="dialog-footer">
-            <el-button type="danger" @click="editRegisterDialog = false">Cancelar</el-button>
+            <el-button type="danger" @click="getAction(),editRegisterDialog = false">Cancelar</el-button>
             <el-button v-if="editRegisterDialog"
                        type="primary"
                        :disabled="actions[indexRegister].name === ''"
@@ -182,36 +183,6 @@
         },
 
         created() {
-            this.startLoading();
-            axios.get('/api/recommendations/create').then(response => {
-                this.ods = response.data.ods;
-                this.entities = response.data.entities;
-                this.orders = response.data.orders;
-                this.powers = response.data.powers;
-                this.attendings = response.data.attendings;
-                this.rights = response.data.rights;
-                this.populations = response.data.populations;
-                this.actions = response.data.actions;
-                this.topics = response.data.topics;
-                //    this.subtopics = response.data.subtopics;
-                this.ods = response.data.ods;
-                this.dates = response.data.dates;
-                this.tree = response.data.tree;
-                this.stopLoading();
-                if (this.indexEdit!=null){
-                    this.errorData(this.indexEdit);
-                }
-
-            }).catch(error => {
-                this.stopLoading();
-
-                this.$message({
-                    type: "warning",
-                    message: "No fue posible completar la acción, intente nuevamente."
-                });
-            });
-
-
             this.getAction();
         },
 
@@ -266,7 +237,7 @@
             newRegister() {
                 this.startLoading();
 
-                let data = {cat: 6, name: this.newRegisterName, colors: this.newRegisterAcronym};
+                let data = {cat: 6, name: this.newRegisterName};
 
                 axios.post('/api/cats/new-register', data).then(response => {
 
@@ -298,11 +269,11 @@
                 });
             },
 
-            openEditDialog(index, id, name, colors) {
+            openEditDialog(index, id, name) {
                 this.indexRegister = index;
                 this.hashRegister = id;
                 this.nameRegister = name;
-                this.acronymRegister = colors;
+
 
                 let data = {cat_transaction_type_id: 1, action: 'Editar Catálogo de Acción Solicitada'};
 
@@ -323,7 +294,7 @@
                     id: this.hashRegister,
                     cat: 6,
                     name: this.actions[this.indexRegister].name,
-                    colors: this.entities[this.indexRegister].colors
+
                 };
 
                 axios.put('/api/cats/update/register', data).then(response => {
@@ -342,7 +313,7 @@
                         this.getAction();
                     } else {
                         this.actions[this.indexRegister].name = this.nameRegister;
-                        this.actions[this.indexRegister].colors = this.acronymRegister;
+
 
                         this.$notify({
                             type: "warning",
@@ -365,9 +336,6 @@
                 this.actions[this.indexRegister].name = value.replace(/[#$%&?|+=*!<>"';()/{}[\]\\]/g, "");
             },
 
-            onAcronymChanged(value){
-                this.actions[this.indexRegister].colors = value.replace(/[#$%&?|+=*!<>"';()/{}[\]\\]/g, "");
-            },
 
             disableDialog(id) {
                 this.removeDialog = true;
@@ -399,6 +367,18 @@
                     });
                 });
             },
+            actionRequest(){
+                this.newRegisterName = '';
+                this.newRegisterDialog = true;
+            },
+            handleClose(done) {
+                this.$confirm('¿Seguro que quieres cerrar este cuadro?')
+                    .then(_ => {
+                        done();
+                        this.getAction();
+                    })
+                    .catch(_ => {});
+            }
         },
     }
 </script>

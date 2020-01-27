@@ -83,38 +83,42 @@ class ReportedActionController extends Controller
     public function show($id)
     {
         try {
-            $relations = ['action:id','population:id','attendig:id'];
-            $reportedActions = ReportedAction::with($relations)->whereRecommendationId(decrypt($id))
-                ->whereIsactive(1)->orderBy('id','desc')->get();
+            if (request()->wantsJson()){
+                $relations = ['action:id','population:id','attendig:id'];
+                $reportedActions = ReportedAction::with($relations)->whereRecommendationId(decrypt($id))
+                    ->whereIsactive(1)->orderBy('id','desc')->get();
 
-            $listReportedActions=[];
-            foreach ($reportedActions as $reported){
-                $arrayActions = [];
-                foreach ($reported->action as $action){
-                    array_push($arrayActions,$action->id);
-                }
-                $arrayPopulations = [];
-                foreach ($reported->population as $population){
-                    array_push($arrayPopulations,$population->id);
-                }
-                $arrayAttendig = [];
-                foreach ($reported->attendig as $attendig){
-                    array_push($arrayAttendig,$attendig->id);
-                }
+                $listReportedActions=[];
+                foreach ($reportedActions as $reported){
+                    $arrayActions = [];
+                    foreach ($reported->action as $action){
+                        array_push($arrayActions,$action->id);
+                    }
+                    $arrayPopulations = [];
+                    foreach ($reported->population as $population){
+                        array_push($arrayPopulations,$population->id);
+                    }
+                    $arrayAttendig = [];
+                    foreach ($reported->attendig as $attendig){
+                        array_push($arrayAttendig,$attendig->id);
+                    }
 
-                $listReportedActions[]=[
-                    'id'=> encrypt($reported->id),
-                    'invoice'=>$reported->invoice,
-                    'date'=>$reported->date,
-                    'description'=>$reported->description,
-                    'cat_solidarity_action_id' => $arrayActions,
-                    'cat_population_id' => $arrayPopulations,
-                    'cat_attendig_id' => $arrayAttendig
-                ];
+                    $listReportedActions[]=[
+                        'id'=> encrypt($reported->id),
+                        'invoice'=>$reported->invoice,
+                        'date'=>$reported->date,
+                        'description'=>$reported->description,
+                        'cat_solidarity_action_id' => $arrayActions,
+                        'cat_population_id' => $arrayPopulations,
+                        'cat_attendig_id' => $arrayAttendig
+                    ];
+                }
+                return response()->json([
+                    'reportedActions'     => $listReportedActions,
+                ]);
+            }else{
+                return response()->view('errors.404', [], 404);
             }
-            return response()->json([
-                'reportedActions'     => $listReportedActions,
-            ]);
         }
         catch ( \Exception $e ) {
 

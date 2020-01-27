@@ -3,7 +3,7 @@
         <header-section icon="el-icon-document" title="Población">
             <template slot="buttons">
                 <el-col :span="5" :offset="7">
-                    <el-button type="success" @click="newRegisterDialog = true" style="width: 100%">
+                    <el-button type="success" @click="newPopulation" style="width: 100%">
                         Nuevo registro
                     </el-button>
                 </el-col>
@@ -86,7 +86,8 @@
 
         <el-dialog title="Nuevo Registro"
                    :visible.sync="newRegisterDialog"
-                   width="70%">
+                   width="70%"
+                   :before-close="handleClose">
             <el-input
                 v-if="newRegisterDialog"
                 placeholder="Nombre de la Población"
@@ -105,7 +106,7 @@
 
         <el-dialog title="Editar Registro"
                    :visible.sync="editRegisterDialog"
-                   width="70%">
+                   width="70%" :before-close="handleClose">
             <el-input
                 v-if="editRegisterDialog"
                 placeholder="Nombre de la Población"
@@ -114,7 +115,7 @@
                 clearable>
             </el-input>
             <span slot="footer" class="dialog-footer">
-            <el-button type="danger" @click="editRegisterDialog = false">Cancelar</el-button>
+            <el-button type="danger" @click="getPopulation(),editRegisterDialog = false">Cancelar</el-button>
             <el-button v-if="editRegisterDialog"
                        type="primary"
                        :disabled="populations[indexRegister].name === ''"
@@ -178,35 +179,6 @@
         },
 
         created() {
-            this.startLoading();
-            axios.get('/api/recommendations/create').then(response => {
-                this.ods = response.data.ods;
-                this.entities = response.data.entities;
-                this.orders = response.data.orders;
-                this.powers = response.data.powers;
-                this.attendings = response.data.attendings;
-                this.rights = response.data.rights;
-                this.populations = response.data.populations;
-                this.actions = response.data.actions;
-                this.topics = response.data.topics;
-                //    this.subtopics = response.data.subtopics;
-                this.ods = response.data.ods;
-                this.dates = response.data.dates;
-                this.tree = response.data.tree;
-                this.stopLoading();
-                if (this.indexEdit!=null){
-                    this.errorData(this.indexEdit);
-                }
-
-            }).catch(error => {
-                this.stopLoading();
-
-                this.$message({
-                    type: "warning",
-                    message: "No fue posible completar la acción, intente nuevamente."
-                });
-            });
-
 
             this.getPopulation();
         },
@@ -382,6 +354,19 @@
                     });
                 });
             },
+            newPopulation(){
+                this.newRegisterName = '';
+                this.newRegisterDialog = true;
+            },
+
+            handleClose(done) {
+                this.$confirm('¿Seguro que quieres cerrar este cuadro?')
+                    .then(_ => {
+                        done();
+                        this.getPopulation();
+                    })
+                    .catch(_ => {});
+            }
         },
     }
 </script>

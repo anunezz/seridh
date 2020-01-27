@@ -33,6 +33,8 @@ Vue.component('tinymce', tinymce);
 Vue.mixin(Loading);
 Vue.use(VJsoneditor);
 
+Vue.prototype.$vertion= '1.7';
+
 Vue.use(IdleVue, {
     eventEmitter: eventsHub,
     idleTime: 15/*Minutes*/ * 60/*Seconds*/ * 1000/*Miliseconds*/
@@ -48,10 +50,13 @@ window.Vue = Vue;
 window.axios = axios;
 window._ = require('lodash');
 
-
 window.axios.defaults.headers.common = {
     'X-Requested-With': 'XMLHttpRequest',
-    'Accept': 'application/json'
+    'Accept': 'application/json',
+    'Content-Type': 'application/json',
+    'cache-control': 'no-cache="Set-Cookie", no-store, must-revalidate',
+    'pragma': 'no-cache',
+    'no-cache': 'Set-Cookie, Set-Directiva Cookie2',
 };
 
 if (window.sessionStorage.getItem('SERIDH_token')) {

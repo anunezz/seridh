@@ -13,7 +13,7 @@
         </header-section>
         <el-form ref="userForm" :model="userForm" label-width="120px" label-position="top">
             <el-row :gutter="10">
-                <el-col v-if="userForm.cat_profile_id !== 1"
+      <!--          <el-col v-if="userForm.cat_profile_id !== 1"
                         :span="userForm.cat_profile_id !== 3 ? 8 : 12">
                     <el-form-item v-if="userForm.cat_profile_id === 2 || userForm.cat_profile_id === 4"
                                   label="Misión"
@@ -50,8 +50,8 @@
                             </el-option>
                         </el-select>
                     </el-form-item>
-                </el-col>
-                <el-col v-if="userForm.cat_profile_id !== 3 && userForm.cat_profile_id !== 1 && userForm.cat_profile_id !== 5" :span="8">
+                </el-col>   -->
+         <!--       <el-col v-if="userForm.cat_profile_id !== 3 && userForm.cat_profile_id !== 1 && userForm.cat_profile_id !== 5" :span="8">
                     <el-form-item label="Organismo"
                                   prop="cat_organism_id"
                                   :rules="[
@@ -68,7 +68,7 @@
                             </el-option>
                         </el-select>
                     </el-form-item>
-                </el-col>
+                </el-col>  -->
                 <el-col :span="userForm.cat_profile_id === 1 || userForm.cat_profile_id === 5 ? 24 : userForm.cat_profile_id !== 3 && userForm.cat_profile_id !== 1 ? 8 : 12">
                     <el-form-item label="Perfl"
                                   prop="cat_profile_id"
@@ -89,7 +89,7 @@
                     </el-form-item>
                 </el-col>
             </el-row>
-            <el-row v-if="userForm.cat_profile_id === 4" :gutter="10">
+  <!--          <el-row v-if="userForm.cat_profile_id === 4" :gutter="10">
                 <el-col :span="24">
                     <el-form-item label="Consulado"
                                   prop="cat_consulate_id"
@@ -108,7 +108,7 @@
                         </el-select>
                     </el-form-item>
                 </el-col>
-            </el-row>
+            </el-row>   -->
             <el-row :gutter="10">
                 <el-col :span="8">
                     <el-form-item label="Nombre"
@@ -134,7 +134,7 @@
                     </el-form-item>
                 </el-col>
             </el-row>
-            <el-row :gutter="10" v-if="userForm.cat_profile_id !== 1 && userForm.cat_profile_id !== 5">
+   <!--         <el-row :gutter="10" v-if="userForm.cat_profile_id !== 1 && userForm.cat_profile_id !== 5">
                 <el-col :span="24">
                     <el-form-item label="Temas"
                                   prop="topics"
@@ -153,12 +153,12 @@
                         </el-select>
                     </el-form-item>
                 </el-col>
-            </el-row>
+            </el-row> -->
             <el-row :gutter="10">
-                <el-col :span="5" :offset="14">
+                <!--<el-col :span="5" :offset="14">
                     <el-button type="primary" style="width: 100%" @click="cleanAll()">Limpiar</el-button>
-                </el-col>
-                <el-col :span="5">
+                </el-col>-->
+                <el-col :span="5" :offset="19">
                     <el-button type="success" style="width: 100%" @click="submitForm">
                         Actualizar
                     </el-button>

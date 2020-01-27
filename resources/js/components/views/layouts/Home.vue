@@ -16,7 +16,7 @@
                     </el-col>
                     <el-col :span="8">
                         <div class="header-title-home" @click="$router.push('/')" style="cursor: pointer">
-                            SERIDH <small>v 1.1</small>
+                            SERIDH <small>v {{$vertion}}</small>
                         </div>
                     </el-col>
 

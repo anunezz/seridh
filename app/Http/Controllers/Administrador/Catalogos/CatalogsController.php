@@ -26,102 +26,107 @@ class CatalogsController extends Controller
     public function getCatalogos(Request $request)
     {
         try {
+            if ($request->wantsJson()) {
+                $data = $request->all();
 
-            $data = $request->all();
+                $entity = CatEntity::select(['name','id','acronym'])
+                    ->where('isActive', true)
+                    ->orderBy('updated_at', 'DESC')
+                    ->paginate($data['perPage']);
 
-            $entity = CatEntity::select(['name','id','acronym'])
-                ->where('isActive', true)
-                ->orderBy('updated_at', 'DESC')
-                ->paginate($data['perPage']);
+                $order = CatGobOrder::select(['name','id'])
+                    ->where('isActive', true)
+                    ->orderBy('updated_at', 'DESC')
+                    ->paginate($data['perPage']);
 
-            $order = CatGobOrder::select(['name','id'])
-                ->where('isActive', true)
-                ->orderBy('updated_at', 'DESC')
-                ->paginate($data['perPage']);
+                $power = CatGobPower::select(['name','id'])
+                    ->where('isActive', true)
+                    ->orderBy('updated_at', 'DESC')
+                    ->paginate($data['perPage']);
 
-            $power = CatGobPower::select(['name','id'])
-                ->where('isActive', true)
-                ->orderBy('updated_at', 'DESC')
-                ->paginate($data['perPage']);
+                $attendig = CatAttending::select(['name','id', 'acronym'])
+                    ->where('isActive', true)
+                    ->orderBy('updated_at', 'DESC')
+                    ->paginate($data['perPage']);
 
-            $attendig = CatAttending::select(['name','id', 'acronym'])
-                ->where('isActive', true)
-                ->orderBy('updated_at', 'DESC')
-                ->paginate($data['perPage']);
+                $population = CatPopulation::select(['name','id'])
+                    ->where('isActive', true)
+                    ->orderBy('updated_at', 'DESC')
+                    ->paginate($data['perPage']);
 
-            $population = CatPopulation::select(['name','id'])
-                ->where('isActive', true)
-                ->orderBy('updated_at', 'DESC')
-                ->paginate($data['perPage']);
+                $action = CatSolidarityAction::select(['name','id'])
+                    ->where('isActive', true)
+                    ->orderBy('updated_at', 'DESC')
+                    ->paginate($data['perPage']);
 
-            $action = CatSolidarityAction::select(['name','id'])
-                ->where('isActive', true)
-                ->orderBy('updated_at', 'DESC')
-                ->paginate($data['perPage']);
+                $ods = CatOds::select(['name','id'])
+                    ->where('isActive', true)
+                    ->orderBy('updated_at', 'DESC')
+                    ->paginate($data['perPage']);
 
-            $ods = CatOds::select(['name','id'])
-                ->where('isActive', true)
-                ->orderBy('updated_at', 'DESC')
-                ->paginate($data['perPage']);
+                $topic = CatTopic::select(['name','id'])
+                    ->where('isActive', true)
+                    ->orderBy('updated_at', 'DESC')
+                    ->paginate($data['perPage']);
 
-            $topic = CatTopic::select(['name','id'])
-                ->where('isActive', true)
-                ->orderBy('updated_at', 'DESC')
-                ->paginate($data['perPage']);
+                $right = CatRightsRecommendation::select(['name','id'])
+                    ->where('isActive', true)
+                    ->orderBy('updated_at', 'DESC')
+                    ->paginate($data['perPage']);
 
-            $right = CatRightsRecommendation::select(['name','id'])
-                ->where('isActive', true)
-                ->orderBy('updated_at', 'DESC')
-                ->paginate($data['perPage']);
+                $subtopic = CatSubtopic::select(['name','id','cat_topic_id'])
+                    ->with('topics:id,name')
+                    ->where('isActive', true)
+                    ->orderBy('updated_at', 'DESC')
+                    ->paginate($data['perPage']);
 
-            $subtopic = CatSubtopic::select(['name','id','cat_topic_id'])
-                ->with('topics:id,name')
-                ->where('isActive', true)
-                ->orderBy('updated_at', 'DESC')
-                ->paginate($data['perPage']);
+                $documents = DocumentRecommendation::select(['folio','document_id','id','isActive'])
+                    ->with('documents:id,fileName,fileNameHash,downloadCount')
+                    ->where('isActive', true)
+                    ->orderBy('updated_at', 'DESC')
+                    ->paginate($data['perPage']);
 
-            $documents = DocumentRecommendation::select(['folio','document_id','id','isActive'])
-                ->with('documents:id,fileName,fileNameHash,downloadCount')
-                ->where('isActive', true)
-                ->orderBy('updated_at', 'DESC')
-                ->paginate($data['perPage']);
+                $subright = CatSubRights::select(['name','id', 'rights_recommendations_id'])
+                    ->with('rigthRecommendation:id,name')
+                    ->where('isActive', true)
+                    ->orderBy('updated_at', 'DESC')
+                    ->paginate($data['perPage']);
 
-            $subright = CatSubRights::select(['name','id', 'rights_recommendations_id'])
-                ->with('rigthRecommendation:id,name')
-                ->where('isActive', true)
-                ->orderBy('updated_at', 'DESC')
-                ->paginate($data['perPage']);
+                $subcategory = CatSubcategorySubrights::select(['name','id', 'sub_rights_id'])
+                    ->with('subRight:id,name')
+                    ->where('isActive', true)
+                    ->orderBy('updated_at', 'DESC')
+                    ->paginate($data['perPage']);
 
-            $subcategory = CatSubcategorySubrights::select(['name','id', 'sub_rights_id'])
-                ->with('subRight:id,name')
-                ->where('isActive', true)
-                ->orderBy('updated_at', 'DESC')
-                ->paginate($data['perPage']);
-
-            $goalsods = CatGoalsOds::select(['name','id','ods_id'])
-                ->with('ods:id,name')
-                ->where('isActive', true)
-                ->orderBy('updated_at', 'DESC')
-                ->paginate($data['perPage']);
+                $goalsods = CatGoalsOds::select(['name','id','ods_id','acronym'])
+                    ->with('ods:id,name')
+                    ->where('isActive', true)
+                    ->orderBy('updated_at', 'DESC')
+                    ->paginate($data['perPage']);
 
 
-            return response()->json([
+                return response()->json([
 
-                'entity'      => $entity,
-                'order'       => $order,
-                'power'       => $power,
-                'attendig'    => $attendig,
-                'population'  => $population,
-                'action'      => $action,
-                'ods'         => $ods,
-                'topic'       => $topic,
-                'right'       => $right,
-                'subtopic'    => $subtopic,
-                'subright'    => $subright,
-                'subcategory' => $subcategory,
-                'goalsods'    => $goalsods,
-                'success'     => true
-            ]);
+                    'entity'      => $entity,
+                    'order'       => $order,
+                    'power'       => $power,
+                    'attendig'    => $attendig,
+                    'population'  => $population,
+                    'action'      => $action,
+                    'ods'         => $ods,
+                    'topic'       => $topic,
+                    'right'       => $right,
+                    'subtopic'    => $subtopic,
+                    'subright'    => $subright,
+                    'subcategory' => $subcategory,
+                    'goalsods'    => $goalsods,
+                    'success'     => true
+                ]);
+
+            }else{
+                return response()->view('errors.404', [], 404);
+            }
+
         }
         catch ( \Exception $e ){
 
@@ -135,6 +140,7 @@ class CatalogsController extends Controller
     public function newRegister(Request $request)
     {
         try {
+
             DB::beginTransaction();
 
             $duplicityCheck = false;
@@ -189,7 +195,8 @@ class CatalogsController extends Controller
             }
             elseif ($request->cat === 13) {
                 $cat = new CatGoalsOds();
-                $duplicityCheck = self::duplicityCheck(CatGoalsOds::class, null, $request->name, $request->ods_id);
+                $duplicityCheck = self::duplicityCheck(CatGoalsOds::class, null, $request->name, $request->ods_id, $request->acronym);
+
             }
 
 
@@ -207,10 +214,12 @@ class CatalogsController extends Controller
 
                 $request->cat === 12 ? $cat->sub_rights_id = $request->sub_rights_id : null;
 
-                $request->cat === 13 ? $cat->ods_id = $request->ods_id : null;
+                if ($request->cat === 13){
+                    $cat->ods_id = $request->ods_id;
+                    $cat->acronym = $request->acronym;
+                }
 
                 $cat->save();
-
                 GeneralController::saveTransactionLog(2, 'Se creo elemento en catalogo con id: ' . $cat->id);
                 DB::commit();
 
@@ -223,7 +232,7 @@ class CatalogsController extends Controller
 
                 return response()->json([
                     'success' => false,
-                    'message' => 'Ya existe un registro con ese nombre, favor de verificar'
+                    'message' => 'Ya existe un registro con ese nombre o acrónimo, favor de verificar'
                 ], 200);
             }
         } catch (Exception $e) {
@@ -319,7 +328,7 @@ class CatalogsController extends Controller
             elseif ($request->cat === 13) {
 
                 $cat = CatGoalsOds::find(decrypt($request->id));
-                $duplicityCheck = self::duplicityCheck(CatGoalsOds::class, $cat->id, $request->name, $request->ods_id);
+                $duplicityCheck = self::duplicityCheck(CatGoalsOds::class, $cat->id, $request->name, $request->ods_id,$request->acronym);
             }
 
 
@@ -331,7 +340,10 @@ class CatalogsController extends Controller
                 $request->cat === 10 ? $cat->cat_topic_id = $request->cat_topic_id : null;
                 $request->cat === 11 ? $cat->rights_recommendations_id = $request->rights_recommendations_id : null;
                 $request->cat === 12 ? $cat->sub_rights_id = $request->sub_rights_id : null;
-                $request->cat === 13 ? $cat->ods_id = $request->ods_id : null;
+                if ($request->cat === 13){
+                    $cat->ods_id = $request->ods_id;
+                    $cat->acronym = $request->acronym;
+                }
 
                 $cat->isActive = true;
 
@@ -349,7 +361,7 @@ class CatalogsController extends Controller
 
                 return response()->json([
                     'success' => false,
-                    'message' => 'Ya existe un registro con ese nombre, favor de verificar'
+                    'message' => 'Ya existe un registro con ese nombre o acrónimo, favor de verificar'
                 ], 200);
             }
         } catch (Exception $e) {
@@ -362,12 +374,19 @@ class CatalogsController extends Controller
         }
     }
 
-    private static function duplicityCheck($cat, $id, $name, $acronym = null, $topicId = null, $rightId = null, $subrightId = null, $odsId = null)
+    private static function duplicityCheck($cat, $id, $name, $acronym = null, $topicId = null, $rightId = null, $subrightId = null, $odsId = null, $aux=null)
     {
         try {
+            if ($aux !=null) {
+                //dd($name,$aux);
+                $nam = $cat::where('name', $name)->whereIsactive(true)->first();
+                $acro = $cat::where('acronym', $aux)->whereIsactive(true)->first();
+                if (is_null($nam) && is_null($acro)) return false;
+                else return true;
+            }
 
             if ( is_null($topicId)) {
-                return $cat::where('id', '!=', $id)->where('name', $name)->first() ? true : false;
+                return $cat::where('id', '!=', $id)->where('name', $name)->whereIsactive(true)->first() ? true : false;
             }
 
             if ( is_null($rightId)) {
@@ -741,6 +760,49 @@ class CatalogsController extends Controller
 
             return response()->json([
                 'success' => true
+            ]);
+        }
+        catch (\Exception $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'No se pudo completar la acción',
+            ], 500);
+        }
+    }
+
+    public function searchCats(Request $request)
+    {
+        try {
+            $data = $request->all();
+
+            switch ($data['data']['name']) {
+                case 'authorityAttending':
+                {
+                    $datos = $data['data'];
+                    $results = CatAttending::where('isActive', 1)
+                    ->where(function ($query) use ($datos) {
+                           if(  ( $datos['action'] === "acronym" || $datos['action'] === "name" ) AND strlen($datos['search']) > 0 ){
+                              return $query->where($datos['action'], 'like', '%'.$datos['search'].'%');
+                           }else if(strlen($datos['action']) > 0 AND $datos['action'] === 'all' ){
+                              return $query->where('isActive',1 );
+                           }
+                    })->paginate($data['perPage']);;
+
+                 break;
+                }
+
+                default:
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'No se pudo completar la acción',
+                    ], 500);
+                break;
+            }
+
+            return response()->json([
+                'success' => true,
+                'lResults' => $results
             ]);
         }
         catch (\Exception $e) {

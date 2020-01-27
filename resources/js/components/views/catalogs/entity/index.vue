@@ -3,7 +3,7 @@
         <header-section icon="el-icon-document" title="Entidad Emisora">
             <template slot="buttons">
                 <el-col :span="5" :offset="7">
-                    <el-button type="success" @click="newRegisterDialog = true" style="width: 100%">
+                    <el-button type="success" @click="newEntity" style="width: 100%">
                         Nuevo registro
                     </el-button>
                 </el-col>
@@ -119,7 +119,7 @@
 
         <el-dialog title="Editar Registro"
                    :visible.sync="editRegisterDialog"
-                   width="70%">
+                   width="70%" :before-close="handleClose">
             <el-input
                 v-if="editRegisterDialog"
                 placeholder="Tipo de Información"
@@ -135,7 +135,7 @@
                 clearable>
             </el-input>
             <span slot="footer" class="dialog-footer">
-            <el-button type="danger" @click="editRegisterDialog = false">Cancelar</el-button>
+            <el-button type="danger" @click="getEntities(),editRegisterDialog = false">Cancelar</el-button>
             <el-button v-if="editRegisterDialog"
                        type="primary"
                        :disabled="entities[indexRegister].name && entities[indexRegister].acronym === ''"
@@ -404,10 +404,21 @@
                     });
                 });
             },
+            newEntity(){
+                console.log('nueva entidad');
+                this.newRegisterName = '';
+                this.tabform.newRegisterAcronym='';
+                this.newRegisterDialog = true
+            },
 
-
-
-
+            handleClose(done) {
+                this.$confirm('¿Seguro que quieres cerrar este cuadro?')
+                    .then(_ => {
+                        done();
+                        this.getEntities();
+                    })
+                    .catch(_ => {});
+            }
         },
     }
 </script>

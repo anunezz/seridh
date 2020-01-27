@@ -28,13 +28,7 @@ class CatLanguageSeeder extends Seeder
                     'updated_at'            => '2019-01-01 23:23:23',
                     'deleted_at'            => NULL
                 ),
-                array(
-                    'acronym'               => 'fr',
-                    'description'           => 'Frances',
-                    'created_at'            => '2019-01-01 23:23:23',
-                    'updated_at'            => '2019-01-01 23:23:23',
-                    'deleted_at'            => NULL
-                ),
+
 
             ));
     }

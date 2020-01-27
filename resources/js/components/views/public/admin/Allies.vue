@@ -1,166 +1,140 @@
 <template>
    <!-- https://github.com/wlada/vue-carousel-3d#usage -->
-    <div>
-       <div >
+   <div>
+       <el-row class="showimages">
+           <el-divider content-position="left">Vista previa de aliados</el-divider>
+           <el-row :gutter="20" type="flex" class="row-bg" justify="center" v-if="alliesImages.length<5">
+               <el-col :xs="24" :sm="5" :md="5" :lg="5" :xl="5" v-for="(ally,index) in alliesImages" :key="index" style="height: 285px;border: 1px solid #DCDFE6; padding: 1px;margin: 20px">
+                   <img :src="ally.allies" style="width: 100% !important; height: 100px;background: #2769c6">
+                   <el-row style="padding:5px;text-align: center;height: 140px;">
+                       <strong><b>
+                           <h5 style="margin: 0px">
+                               {{ally.text}}
+                           </h5>
+                       </b></strong>
 
+                   </el-row>
+                   <el-row style="text-align: center;margin-bottom: 10px">
+                       <el-col :offset="4">
+                           <el-link :href="ally.link" :underline="false" target="_blank" style="background: #9D2449;border-radius: 3px;color: #fff;padding: 3px;">
+                               Ir al enlace
+                           </el-link>
+                           <el-button-group style="margin-left: 8px">
+                               <el-tooltip class="item" effect="dark" content="Editar aliado" placement="bottom">
+                                   <el-button type="primary" size="mini" icon="el-icon-edit" circle @click="editAlly(ally,index)"/>
+                               </el-tooltip>
+                               <el-tooltip class="item" effect="dark" content="Eliminar aliado" placement="bottom">
+                                   <el-button type="danger" size="mini" icon="el-icon-delete" circle @click="deleteAlly(ally,index)"> </el-button>
+                               </el-tooltip>
+                           </el-button-group>
+                       </el-col>
+                   </el-row>
+               </el-col>
+           </el-row>
+           <el-row v-if="alliesImages.length>4">
+                   <div style="width: 80%; margin: 0px 30px 0px 120px;" >
+                   <!-- <carousel-3d :height="230" :width="360" :id="carouselId" :autoplay="true" :autoplay-timeout="5000"> -->
+                   <carousel-3d border="0"  :height="300" :id="carouselId" :width="360" :autoplay="true" :autoplay-timeout="3500" :disable3d="true" :space="365" :clickable="false" :controls-visible="true">
+                       <slide v-for="(ally, index) in alliesImages" :key="index" :index="index" style="background: white">
+                           <!--<figure>
+                               <img :src="ally.allies" style="width: 100% !important; heigth: 300px;background: #2769c6">
+                           </figure>-->
+                           <el-row style="padding: 1px">
+                               <!--                               <el-row style="background: #2769c6;">-->
+                               <img :src="ally.allies" style="width: 100% !important; height: 100px;background: #2769c6">
+                               <!--                               </el-row>-->
+                               <el-row style="padding:5px;text-align: center;height: 85px;">
+                                   <strong><b>
+                                       <h5 style="margin: 0px">
+                                           {{ally.text}}
+                                       </h5>
+                                   </b></strong>
 
- Hay slider: {{ previewImages.length }}
+                               </el-row>
+                               <el-row style="text-align: center;margin-bottom: 8px">
+                                   <el-col :offset="4">
+                                       <el-link :href="ally.link" :underline="false" target="_blank" style="background: #9D2449;border-radius: 3px;color: #fff;padding: 3px;width: 30%;">
+                                           Ir al enlace
+                                       </el-link>
+                                       <el-button-group style="margin-left: 60px">
+                                           <el-tooltip class="item" effect="dark" content="Editar aliado" placement="bottom">
+                                               <el-button type="primary" size="mini" icon="el-icon-edit" circle @click="editAlly(ally,index)"/>
+                                           </el-tooltip>
+                                           <el-tooltip class="item" effect="dark" content="Eliminar aliado" placement="bottom">
+                                               <el-button type="danger" size="mini" icon="el-icon-delete" circle @click="deleteAlly(ally,index)"> </el-button>
+                                           </el-tooltip>
 
- <div >
-  <carousel-3d 
-            :height="180" 
-            :disable3d="true" 
-                :space="365" 
-            :clickable="true" 
-     :controls-visible="true"
-     
-     >
+                                       </el-button-group>
+                                   </el-col>
+                               </el-row>
+                           </el-row>
 
-    <slide v-for="(slide, i) in previewImages.length" :key="i" :index="i">
-                  <div >
-                            <div class="card text-center card-gob">
-                            <div style="background: #2769c6; width: 100%; padding: 3.5em;">
-                                <!-- <img :src="getExpReg(previewImages[i])" style="width: 100% !important; heigth: 150px;"> -->
-                            </div>
-                            <h4  class="card-title">
-                             yyyyy   Lorem ipsum dolor sit amet, consectetur adipisicing elit. {{i}}
-                            </h4>
-                            <br/>
-                            <a href="https://www.un.org/es" target="_blank" class="btn btn-primary btn-xs pull-center active" style="width:40%; margin: 0px auto 10px auto;">Ir al enlace</a>
-                             </div>
-                    </div>
-                
-    </slide>
-  </carousel-3d>
-</div>
+                       </slide>
+                   </carousel-3d>
+                 </div>
+               </el-row>
+           <el-row v-if="alliesImages.length===0" style="text-align: center">
+               <h3>No hay ningún aliado</h3>
+           </el-row>
+           <el-divider content-position="left">Configuración</el-divider>
+           <el-row :gutter="20">
+               <el-form  ref="allies" :model="formAllies" label-width="120px" label-position="top">
+               <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
 
+                       <el-form-item label="Texto" prop="text" :rules="[
+                                    { required: true, message: 'Este campo es requerido', trigger: 'blur'},
+                                  ]">
+                           <el-input placeholder="Escribe algun texto" type="textarea" :rows="4" maxlength="235" show-word-limit v-model="formAllies.text"></el-input>
+                       </el-form-item>
+                       <el-form-item label="Link" prop="link" :rules="[
+                                    { required: true, message: 'Este campo es requerido', trigger: 'blur'},
+                                  ]">
+                           <el-input placeholder="https://www.ejemplo.mx/" v-model="formAllies.link">
+                               <el-button slot="append" icon="el-icon-search" @click=" testUrl" :disabled="formAllies.link.length===0"></el-button>
+                           </el-input>
+                       </el-form-item>
 
-
-
-  <button @click="mas()">Agregar imagenes </button>
-
-                    <!-- <carousel-3d :height="220" :width="360" :border="1.5" :space="365" :clickable="false" :controls-visible="true">
-                        <slide  v-for="(slide, i) in slides" :index="i" :key="i" >
-                           <div class="row">
-                            <div class="col-md-12 card text-center card-gob">
-                            <div style="background: #2769c6; width: 100%; padding: 1.5em;">
-                                <img src="img/logo-onu.png" style="width: 100% !important; heigth: 300px;">
-                            </div>
-                            <h4 data-v-ce5e9132="" class="card-title">
-                                Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                            </h4>
-                            <br/>
-                            <a href="https://www.un.org/es" target="_blank" class="btn btn-primary btn-xs pull-center active" style="width:40%; margin: 0px auto 10px auto;">Ir al enlace</a>
-                             </div>
-                           </div>
-                        </slide>
-                    </carousel-3d> -->
-                </div>
-
-
-
-             <el-divider content-position="left">Vista previa</el-divider>
-
-<div style="margin: 50px auto; " v-if="showSlides===false">
-
-              <div class="card text-center card-gob" style="height: 220px; width:20%; display:inline-block;"
-                         v-for="(image,index) in previewImages" 
-                          :key="index">
-                        <div style="background: #2769c6; width: 87%; height: 60px; padding: 20px;" >
-                            <img :src="getExpReg(image)" style="width: 100%; height: 65px;">
-                        </div>
-                        <div style="text-aling:center; padding: 5px;">
-                            <p>
-                              <strong><b> Lorem ipsum dolor sit amet, consectetur adipisicing elit.</b></strong>
-                            </p>
-
-                            <a href="https://www.un.org/es" class="btn btn-categorias" style="cursor: pointer; text-decoration: none;" target="_blank" >Ir al enlace</a>
-
-                        </div>
-                    </div>
-
-</div>
-      
-
-
- 
-
-
-
-
-        
-
-
-        <el-row class="showimages">
-            <!-- <el-divider content-position="left">Vista previa</el-divider>
-            <el-row style="margin-bottom: 30px">
-                <el-col :offset="4">
-                    <el-carousel trigger="click" height="250px"  style="width: 70%" v-if="previewImages.length>0">
-                        <el-carousel-item v-for="(image,index) in previewImages" :key="index" style="text-align: center">
-                            <img :src="getExpReg(image)" alt="" style="width:100%; height: 250px;">
-                        </el-carousel-item>
-                    </el-carousel>
-                    <h3 v-else >No hay ninguna imagen</h3>
-                </el-col>
-            </el-row> -->
-
-
-
-           
-          
-                
-          
-
-
-
-            <el-divider content-position="left">Lista de imagenes
-                <span :class="{imageFull : previewImages.length > 0}" style="border-radius: 10px;padding: 3px;background: red;color: white;">
-                    {{previewImages.length}}
-                </span>
-            </el-divider>
-            <el-row style="margin-top: 50px">
-                <el-col :span="24">
-                    <el-upload
-                        ref="carrusel"
-                        id="listImg"
-                        style="text-align: center"
-                        action="/api/recommendations/updateImg/file"
-                        name="document"
-                        :headers="{'Authorization': apiToken}"
-                        :data="{allies:true}"
-                        list-type="picture-card"
-                        accept=".jpg, .png, .jpeg"
-                        :on-success="successImage"
-                        :file-list="listImages"
-                        :before-upload="beforeUploadFile"
-                        :on-preview="handlePictureCardPreview"
-                        :on-remove="handleRemove">
-
-                        <i class="fas fa-cloud-upload-alt"> Cargar imagen (1500px X 400px)</i>
-                    </el-upload>
-                    <el-dialog :visible.sync="dialogVisible">
-                        <img width="100%" :src="dialogImageUrl" alt="">
-                    </el-dialog>
-                </el-col>
-            </el-row>
-            <el-row type="flex" class="row-bg" justify="end" style="margin-top: 20px">
-                <el-col :span="2.5">
-                    <el-button type="primary" @click="submitImages" :disabled="previewImages.length===0">Guardar</el-button>
-                </el-col>
-            </el-row>
-        </el-row>
-
-    </div>
+               </el-col>
+               <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
+                    <h3><span style="margin-left: 50px">Imagen</span></h3>
+                   <el-row type="flex" class="row-bg" justify="left">
+                       <el-col :span="2" :offset="5">
+                           <el-form-item prop="idImage" :rules="[
+                                    { required: true, message: 'Este campo es requerido', trigger: 'blur'},
+                                  ]">
+                               <el-upload
+                                   id="ally"
+                                   :disabled="enableLoad"
+                                   class="avatar-uploader"
+                                   action="/api/recommendations/updateImg/file"
+                                   name="document"
+                                   :headers="{'Authorization': apiToken}"
+                                   :data="{allies:true}"
+                                   accept=".jpg, .png, .jpeg"
+                                   :show-file-list="false"
+                                   :on-success="allySuccess"
+                                   :before-upload="beforeUploadFile">
+                                   <img v-if="imageUrl" :src="imageUrl" class="avatar" style="width: 300px" alt="">
+                                   <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                               </el-upload>
+                           </el-form-item>
+                       </el-col>
+                   </el-row>
+               </el-col>
+               </el-form>
+           </el-row>
+           <el-row type="flex" class="row-bg" justify="end">
+               <el-button type="success" @click="previewSee">Ver vista previa</el-button>
+               <el-button type="primary" @click="submitAlly">Guardar</el-button>
+           </el-row>
+       </el-row>
+   </div>
 </template>
 
 <script>
     import { Carousel3d, Slide } from 'vue-carousel-3d';
     export default {
-          components: {
-    'carousel-3d': Carousel3d,
-    'slide': Slide
-  },
-
+         components: {Carousel3d,Slide},
         data(){
             return{
                 dialogImageUrl: '',
@@ -170,8 +144,18 @@
                 idsFiles:[],
                 idsDelete:[],
                 listImages: [],
-                slides:0,
-                showSlides: false
+                alliesImages:{},
+                formAllies:{
+                    idImage:null,
+                    text:'',
+                    link:'',
+                    allies:''
+                },
+                imageUrl: '',
+                index:null,
+                enableLoad:false,
+                carouselId:1,
+                allDelete:[],
             }
         },
 
@@ -182,38 +166,10 @@
 
         },
         methods: {
-        
-            getExpReg(value){
-                console.log("jkjkjkjkkjjkjkjk",value);
-                if(value.fileNameHash === undefined){
-                    return '';
-                }else{
-                     return `/img/public/allies/${value.fileNameHash}`;
-                }
-            },
+
             getFiles(){
-                let $this = this;
                 axios.get('/api/allies/images').then(response => {
-                    console.log("Response imagenes aliados: ",response.data);
-                    this.previewImages = response.data;
-                    this.slides = response.data.length;
-
-                   if(this.slides > 2){
-                      this.showSlides = false;
-                      
-                     setTimeout(item=>{
-                       this.showSlides = true;
-                     },2000);
-
-                    }else{
-                      this.showSlides = false;
-                    }
-
-
-                    response.data.forEach(function(element){
-                        $this.idsFiles.push(element.id);
-                        $this.listImages.push({url:element.allies});
-                    });
+                    this.alliesImages = response.data;
                 }).catch(error => {
                     this.$notify.error({
                         title: 'Error',
@@ -221,36 +177,33 @@
                     });
                 });
             },
-            handleRemove(file) {
-                let idsDelete = [];
-                let arrayDelete = this.previewImages.filter(function(item) {
-                    return item.fileName === file.name;
-                });
-                let arrayDelete2 = this.previewImages.filter(function(item) {
-                    return item.allies === file.url;
+            submitAlly(){
+                let params = {
+                    type: 3,
+                    allAllies: this.alliesImages,
+                    deletes: this.allDelete
+                };
+                this.startLoading();
+                axios.post('/api/recommendations/saveMessages', params).then(response => {
+                    this.alliesImages = {};
+                    this.getFiles();
+                    this.stopLoading();
+                    this.$notify({
+                        type: "success",
+                        message: "Se actualizo la información correctamente"
+                    });
+                }).catch(error => {
+                    this.$message({
+                        type: "warning",
+                        message: "No fue posible completar la acción, intente nuevamente."
+                    });
                 });
 
-                if (arrayDelete.length>0) {idsDelete.push(arrayDelete[0].id); this.idsFiles = this.idsFiles.filter(id => id !== arrayDelete[0].id);}
-                if (arrayDelete2.length>0) {idsDelete.push(arrayDelete2[0].id); this.idsFiles = this.idsFiles.filter(id => id !== arrayDelete2[0].id);}
-
-                let newArray = this.previewImages.filter(function(item) {
-                    return item.fileName !== file.name;
-                });
-                this.previewImages = newArray;
-                let newArray2 = this.previewImages.filter(function(item) {
-                    return item.allies !== file.url;
-                });
-                this.previewImages = newArray2;
-                if (idsDelete.length>0) this.idsDelete.push(idsDelete[0]);
             },
-            handlePictureCardPreview(file) {
-                console.log("File: ",file);
-                this.dialogImageUrl = file.url;
-                this.dialogVisible = true;
-            },
-            successImage(response,file){
-                this.idsFiles.push(response.documentId);
-                this.previewImages.push({id:response.documentId, fileName:response.fileName,fileNameHash: response.fileNameHash ,path: response.allies });
+            allySuccess(res) {
+                this.imageUrl = res.path;
+                this.formAllies.idImage = res.documentId;
+                this.formAllies.allies= res.path;
             },
             beforeUploadFile(file) {
                 if (file.size/1024/1024 > 6) {
@@ -264,73 +217,99 @@
                 }
                 return true;
             },
-            submitImages(){
-                let params = {
-                    type: 2,
-                    ids: this.idsFiles,
-                    idsDelete: this.idsDelete
-                };
-                axios.post('/api/recommendations/saveMessages', params).then(response => {
-                    this.previewImages=[];
-                    this.listImages=[];
-                    this.getFiles();
-                    this.$notify({
-                        type: "success",
-                        message: "Se actualizo la información correctamente"
+            editAlly(data,index){
+                this.index = index;
+                this.formAllies.idImage = data.id;
+                this.formAllies.text = data.text;
+                this.formAllies.link = data.link;
+                this.imageUrl = data.allies;
+                this.enableLoad = true;
+            },
+            previewSee(){
+                if (this.index !== null){
+                    this.alliesImages[this.index].text = this.formAllies.text;
+                    this.alliesImages[this.index].link = this.formAllies.link;
+                    this.enableLoad = false;
+                }else {
+                    this.$refs['allies'].validate((valid) => {
+                        if(valid){
+                            this.alliesImages.push({
+                                id:this.formAllies.idImage,
+                                text: this.formAllies.text,
+                                link: this.formAllies.link,
+                                allies: this.formAllies.allies
+                            });
+                            this.carouselId++;
+                        }else{
+                            this.$message({
+                                type: "warning",
+                                title: 'Error',
+                                message: "Complete los campos para continuar"
+                            });
+                        }
                     });
-                }).catch(error => {
-                    console.log(error);
+                }
+                this.index = null;
+                this.formAllies.idImage = null;
+                this.formAllies.text = '';
+                this.formAllies.link = '';
+                this.formAllies.allies = '';
+                this.imageUrl = '';
+            },
+            testUrl(){
+                window.open(this.formAllies.link,'_blank');
+            },
+            deleteAlly(data,ind){
+                this.$confirm('¿Está seguro que quiere eliminar este aliado?',{
+                    confirmButtonText: 'Aceptar',
+                    cancelButtonText: 'Cancelar',
+                    type: 'warning'
+                }).then(() => {
+                    this.alliesImages.splice(ind, 1);
+                    this.allDelete.push(data.id);
+                    this.carouselId++;
+                    this.index = null;
+                    this.formAllies.idImage = null;
+                    this.formAllies.text = '';
+                    this.formAllies.link = '';
+                    this.formAllies.allies = '';
+                    this.imageUrl = '';
                     this.$message({
-                        type: "warning",
-                        message: "No fue posible completar la acción, intente nuevamente."
+                        type: "success",
+                        title: 'Éxito',
+                        message: "Se elimino aliado de la lista"
+                    });
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: 'Eliminación cancelada'
                     });
                 });
-            },
+            }
         }
     }
 </script>
 
 <style scoped>
 
- .card-gob .list-unstyled[data-v-ce5e9132] {
-        height: 5.2rem
-    }
-
-    .el-carousel__item h3 {
-        color: #475669;
-        font-size: 14px;
-        opacity: 0.75;
-        line-height: 150px;
-        margin: 0;
-    }
-
-    .el-carousel__item:nth-child(2n) {
-        background-color: #99a9bf;
-    }
-
-    .el-carousel__item:nth-child(2n+1) {
-        background-color: #d3dce6;
-    }
     .showimages{
         border: 1px solid #DCDFE6;
         padding: 20px;
         border-radius: 5px;
     }
-    .imageFull{
-        background: #38a2f9 !important;
-    }
-    .btn-categorias {
+
+    .avatar-uploader-icon {
+        font-size: 28px;
+        color: #8c939d;
+        width: 178px;
+        height: 178px;
+        line-height: 178px;
         text-align: center;
-        color: #fff !important;
-        background-color: #9d2449;
-        border: 0;
-        padding: 5px 7px;
-        font-size: .9rem;
-        margin-bottom: 10px
+        border: 2px dashed #DCDFE6;
     }
-
-
-
-
-
+    .avatar {
+        width: 178px;
+        height: 178px;
+        display: block;
+    }
 </style>

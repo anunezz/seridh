@@ -3,7 +3,7 @@
         <header-section icon="el-icon-document" title="Metas ODS">
             <template slot="buttons">
                 <el-col :span="5" :offset="7">
-                    <el-button type="success" @click="newRegisterDialog = true" style="width: 100%">
+                    <el-button type="success" @click="metaOds" style="width: 100%">
                         Nuevo registro
                     </el-button>
                 </el-col>
@@ -28,6 +28,7 @@
 
         <p></p>
         <br>
+<!--        <filters :goals="goalsods" :pagination="pagination" :cat="'goalsOds'" v-if="filt"></filters>-->
         <el-row :gutter="20">
             <el-col :span="24">
                 <el-table
@@ -44,6 +45,10 @@
                         label="Metas ODS">
                     </el-table-column>
                     <el-table-column
+                        prop="acronym"
+                        label="Acrónimo">
+                    </el-table-column>
+                    <el-table-column
                         label="Acciones" header-align="left" align="center">
                         <template slot-scope="scope">
                             <el-button-group size="mini">
@@ -56,7 +61,7 @@
                                         type="info"
                                         size="mini"
                                         icon="fas fa-edit"
-                                        @click="openEditDialog(scope.$index, scope.row.hash, scope.row.name, scope.row.ods_id)">
+                                        @click="openEditDialog(scope.$index, scope.row.hash, scope.row.name, scope.row.ods_id,scope.row.acronym)">
                                     </el-button>
                                 </el-tooltip>
                                 <el-tooltip
@@ -98,6 +103,13 @@
                 maxlength="500"
                 clearable>
             </el-input>
+            <el-input
+                v-if="newRegisterDialog"
+                style="margin-top: 25px"
+                placeholder="Acrónimo"
+                v-model="acronym"
+                clearable>
+            </el-input>
             <el-form ref="newRegisterAcronym" :model="newRegisterAcronym" label-position="top" >
             <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
                 <el-form-item label="ODS"
@@ -112,7 +124,7 @@
                         clearable
                         style="width: 100%">
                         <el-option
-                            v-for="(goal, index) in ods"
+                            v-for="(goal, index) in goa"
                             :key="index"
                             :label="goal.name"
                             :value="goal.id">
@@ -125,14 +137,14 @@
             <el-button type="danger" @click="newRegisterDialog = false">Cancelar</el-button>
             <el-button v-if="newRegisterDialog"
                        type="primary"
-                       :disabled="newRegisterName === ''"
+                       :disabled="newRegisterName === '' || newRegisterAcronym.ods_id.length===0 || acronym === ''"
                        @click="newRegister">Aceptar</el-button>
             </span>
         </el-dialog>
 
-        <el-dialog title="Editar Registro Derechos de Nivel 3"
+        <el-dialog title="Editar Meta ODS"
                    :visible.sync="editRegisterDialog"
-                   width="70%">
+                   width="70%" :before-close="handleClose">
             <el-input
                 v-if="editRegisterDialog"
                 placeholder="Nombre del Derecho de Nivel 3"
@@ -140,15 +152,22 @@
                 maxlength="100"
                 clearable>
             </el-input>
+            <el-input
+                v-if="editRegisterDialog"
+                style="margin-top: 25px"
+                placeholder="Acrónimo"
+                v-model="acronym"
+                clearable>
+            </el-input>
             <br><br>
-            <h4>Derechos Nivel 2</h4>
+            <h4>ODS</h4>
             <el-select v-if="editRegisterDialog"
                        :disabled="goalsods[indexRegister].is_used && goalsods[indexRegister].isActive"
                        v-model="goalsods[indexRegister].ods_id"
                        filterable placeholder="Seleccionar"
                        style="width: 100%">
                 <el-option
-                    v-for="(goal , index) in ods"
+                    v-for="(goal , index) in goa"
                     :key="index"
                     :label="goal.name"
                     :value="goal.id">
@@ -156,10 +175,10 @@
             </el-select>
 
             <span slot="footer" class="dialog-footer">
-            <el-button type="danger" @click="editRegisterDialog = false">Cancelar</el-button>
+            <el-button type="danger" @click="getGoalsOds(),editRegisterDialog = false">Cancelar</el-button>
             <el-button v-if="editRegisterDialog"
                        type="primary"
-                       :disabled="goalsods[indexRegister].name === ''"
+                       :disabled="goalsods[indexRegister].name === '' || acronym===''"
                        @click="editRegister">Aceptar</el-button>
             </span>
         </el-dialog>
@@ -179,19 +198,24 @@
 
 <script>
     import HeaderSection from "../../layouts/partials/HeaderSection";
+    import filters from '../../layouts/partials/Filters'
 
     export default {
 
         components: {
-            HeaderSection
+            HeaderSection,
+            filters
         },
 
         data() {
             return {
-
+                filt:false,
+                aux:'',
+                acronym: '',
                 goalsods: [],
                 ods: [],
                 goals: [],
+                goa: [],
 
 
                 search: '',
@@ -223,14 +247,13 @@
                 apiToken: 'Bearer ' + sessionStorage.getItem('SERIDH_token'),
             }
         },
-
         created() {
 
             this.getGoalsOds();
             this.startLoading();
             axios.get('/api/recommendations/create').then(response => {
 
-                this.ods = response.data.ods;
+                this.goa = response.data.goa;
 
                 this.stopLoading();
                 if (this.indexEdit!=null){
@@ -265,15 +288,17 @@
 
                     if (response.data.success) {
 
-
                         this.ods = response.data.ods.data;
                         this.goalsods = response.data.goalsods.data;
+
                         this.pagination.total = response.data.goalsods.total;
                         this.pagination.currentPage = response.data.goalsods.current_page;
                         this.pagination.perPage = response.data.goalsods.per_page;
 
                         this.stopLoading();
+                        this.filt=true;
                     }
+
 
                 }).catch(error => {
                     this.stopLoading();
@@ -299,7 +324,7 @@
             newRegister() {
                 this.startLoading();
 
-                let data = {cat: 13, name: this.newRegisterName, ods_id: this.newRegisterAcronym.ods_id};
+                let data = {cat: 13, name: this.newRegisterName, ods_id: this.newRegisterAcronym.ods_id, acronym: this.acronym};
 
                 axios.post('/api/cats/new-register', data).then(response => {
 
@@ -331,11 +356,12 @@
                 });
             },
 
-            openEditDialog(index, id, name, acronym) {
+            openEditDialog(index, id, name, acronym,aux) {
                 this.indexRegister = index;
                 this.hashRegister = id;
                 this.nameRegister = name;
                 this.acronymRegister = acronym;
+                this.acronym = aux;
 
                 let data = {cat_transaction_type_id: 1, action: 'Editar Catálogo de SubCategory'};
 
@@ -356,7 +382,8 @@
                     id: this.hashRegister,
                     cat: 13,
                     name: this.goalsods[this.indexRegister].name,
-                    ods_id: this.goalsods[this.indexRegister].ods_id
+                    ods_id: this.goalsods[this.indexRegister].ods_id,
+                    acronym : this.acronym
                 };
 
                 axios.put('/api/cats/update/register', data).then(response => {
@@ -432,8 +459,25 @@
                     });
                 });
             },
+            metaOds(){
+                this.newRegisterName = '';
+                this.newRegisterAcronym.ods_id = '';
+                this. acronym = '';
+                this.newRegisterDialog = true;
+            },
 
+            handleClose(done) {
+                this.$confirm('¿Seguro que quieres cerrar este cuadro?')
+                    .then(_ => {
+                        done();
+                        this.getGoalsOds();
+                    })
+                    .catch(_ => {});
+            }
 
         },
     }
 </script>
+<style scoped>
+
+</style>

@@ -131,7 +131,31 @@
 
                                     <div class="clearfix"></div>
 
-                                    <div class="col-md-4">
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <h5>ODS</h5>
+                                            </div>
+                                            <div class="col-md-12">
+
+                                                <table>
+                                                    <tr v-for="(i,key) in ods" :key="key">
+                                                        <td colspan="1" WIDTH="100" valign="top"> <strong> <b> {{ i.name }} </b> </strong> </td>
+                                                        <td colspan="1" valign="top">
+                                                            <ul>
+                                                                <li v-for="(ii,idx) in i.data" :key="idx">
+                                                                    {{ ii }}
+                                                                </li>
+                                                            </ul>
+                                                            <br>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- <div class="col-md-4">
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <h5>ODS</h5>
@@ -149,9 +173,9 @@
                                                 </ul>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> -->
 
-                                    <div class="col-md-4">
+                                    <div class="col-md-6">
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <h5>Derechos Humanos</h5>
@@ -176,7 +200,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-4">
+                                    <div class="col-md-6">
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <h5>Temas</h5>

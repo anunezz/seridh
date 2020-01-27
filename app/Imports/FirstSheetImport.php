@@ -47,7 +47,14 @@ class FirstSheetImport implements ToModel, WithBatchInserts, WithChunkReading
         if (count($this->goodReportedActions)==0){
             $this->goodReportedActions = session('reportedActions');
         }
-            if (($row[0] != "Texto de recomendación") && ($row[0] != "Ejemplo")) {
+        if (($row[0] != "Texto de recomendación") && ($row[0] != "Ejemplo")) {
+            $emptyRow = false;
+            foreach ($row as $ro){
+                if ($ro != null){
+                    $emptyRow = true;
+                }
+            }
+            if ($emptyRow){
                 $col=false;
                 for ($i=0;$i<15;$i++){
                     if ($i != 12 && $i != 13){
@@ -87,12 +94,14 @@ class FirstSheetImport implements ToModel, WithBatchInserts, WithChunkReading
                 $idsGob=[];
                 $errorGob=[];
                 foreach ($gobOrders as $gob){
-                    $id = CatGobOrder::where('name',trim($gob))->where('isActive',1)->pluck('id')->first();
-                    if (isset($id)){
-                        array_push($idsGob,$id);
-                    }else{
-                        array_push($errorGob,$gob);
-                        $col=true;
+                    if (strlen($gob)>0){
+                        $id = CatGobOrder::where('name',trim($gob))->where('isActive',1)->pluck('id')->first();
+                        if (isset($id)){
+                            array_push($idsGob,$id);
+                        }else{
+                            array_push($errorGob,$gob);
+                            $col=true;
+                        }
                     }
                     $id=null;
                 }
@@ -102,12 +111,14 @@ class FirstSheetImport implements ToModel, WithBatchInserts, WithChunkReading
                 $idsPow=[];
                 $errorPow=[];
                 foreach ($powerGob as $pow){
-                    $id = CatGobPower::where('name',trim($pow))->where('isActive',1)->pluck('id')->first();
-                    if (isset($id)){
-                        array_push($idsPow,$id);
-                    }else{
-                        array_push($errorPow,$pow);
-                        $col=true;
+                    if (strlen($pow)>0){
+                        $id = CatGobPower::where('name',trim($pow))->where('isActive',1)->pluck('id')->first();
+                        if (isset($id)){
+                            array_push($idsPow,$id);
+                        }else{
+                            array_push($errorPow,$pow);
+                            $col=true;
+                        }
                     }
                     $id=null;
                 }
@@ -116,12 +127,14 @@ class FirstSheetImport implements ToModel, WithBatchInserts, WithChunkReading
                 $idsEnt=[];
                 $errorAuthority=[];
                 foreach ($entEnc as $en){
-                    $id = CatAttending::where('name',trim($en))->where('isActive',1)->pluck('id')->first();
-                    if (isset($id)){
-                        array_push($idsEnt,$id);
-                    }else{
-                        array_push($errorAuthority,$en);
-                        $col=true;
+                    if (strlen($en)>0){
+                        $id = CatAttending::where('name',trim($en))->where('isActive',1)->pluck('id')->first();
+                        if (isset($id)){
+                            array_push($idsEnt,$id);
+                        }else{
+                            array_push($errorAuthority,$en);
+                            $col=true;
+                        }
                     }
                     $id=null;
                 }
@@ -131,12 +144,14 @@ class FirstSheetImport implements ToModel, WithBatchInserts, WithChunkReading
                 $idsPop=[];
                 $errorPop=[];
                 foreach ($population as $pop){
-                    $id = CatPopulation::where('name',trim($pop))->where('isActive',1)->pluck('id')->first();
-                    if (isset($id)){
-                        array_push($idsPop,$id);
-                    }else{
-                        array_push($errorPop,$pop);
-                        $col=true;
+                    if (strlen($pop)>0){
+                        $id = CatPopulation::where('name',trim($pop))->where('isActive',1)->pluck('id')->first();
+                        if (isset($id)){
+                            array_push($idsPop,$id);
+                        }else{
+                            array_push($errorPop,$pop);
+                            $col=true;
+                        }
                     }
                     $id=null;
                 }
@@ -146,12 +161,14 @@ class FirstSheetImport implements ToModel, WithBatchInserts, WithChunkReading
                 $idsAct=[];
                 $errorAction = [];
                 foreach ($actionS as $act){
-                    $id = CatSolidarityAction::where('name',trim($act))->where('isActive',1)->pluck('id')->first();
-                    if (isset($id)){
-                        array_push($idsAct,$id);
-                    }else{
-                        array_push($errorAction,$act);
-                        $col=true;
+                    if (strlen($act)>0){
+                        $id = CatSolidarityAction::where('name',trim($act))->where('isActive',1)->pluck('id')->first();
+                        if (isset($id)){
+                            array_push($idsAct,$id);
+                        }else{
+                            array_push($errorAction,$act);
+                            $col=true;
+                        }
                     }
                     $id=null;
                 }
@@ -163,15 +180,17 @@ class FirstSheetImport implements ToModel, WithBatchInserts, WithChunkReading
                 $auxGoalsOd = [];
                 $errorOds = [];
                 foreach ($ods as $od){
-                    $id = CatGoalsOds::whereAcronym(trim($od))->whereIsactive(1)->first();
-                    if (isset($id)){
+                    if (strlen($od)>0){
+                        $id = CatGoalsOds::whereAcronym(trim($od))->whereIsactive(1)->first();
+                        if (isset($id)){
                             $listGoalsOds[$id->id]=[
                                 'ods_id' => $id->ods_id
                             ];
-                        array_push($auxGoalsOd ,$id);
-                    }else{
-                        array_push($errorOds,$od);
-                        $col=true;
+                            array_push($auxGoalsOd ,$id);
+                        }else{
+                            array_push($errorOds,$od);
+                            $col=true;
+                        }
                     }
                     $id=null;
                 }
@@ -182,17 +201,19 @@ class FirstSheetImport implements ToModel, WithBatchInserts, WithChunkReading
                 $auxTopics = [];
                 $erroreTopics = [];
                 foreach ($themes as $theme){
-                    $them = CatSubtopic::where('name',trim($theme))->where('isActive',1)->first();
-                    if (isset($them)){
-                        $listThemes[$them['id']]=[
-                            'cat_topic_id' => $them['cat_topic_id']
-                        ];
-                        array_push($auxTopics ,$them);
-                    }else{
-                        array_push($erroreTopics,$theme);
-                        $col=true;
+                    if (strlen($theme)>0){
+                        $them = CatSubtopic::where('name',trim($theme))->where('isActive',1)->first();
+                        if (isset($them)){
+                            $listThemes[$them['id']]=[
+                                'cat_topic_id' => $them['cat_topic_id']
+                            ];
+                            array_push($auxTopics ,$them);
+                        }else{
+                            array_push($erroreTopics,$theme);
+                            $col=true;
+                        }
+                        $them=null;
                     }
-                    $them=null;
                 }
 
                 $comments = '<p style="font-family: Montserrat; font-size: 14px; font-style: normal; font-weight: normal;">'.trim($row[10]).'</p>';
@@ -218,13 +239,15 @@ class FirstSheetImport implements ToModel, WithBatchInserts, WithChunkReading
                 if ($row[15]!=null){
                     $documents = explode("||", $row[15]);
                     foreach ($documents as $document){
-                        $findDoc = DocumentRecommendation::whereFolio(trim($document))->whereIsactive(1)
-                            ->pluck('id')->first();
-                        if (is_null($findDoc)){
-                            array_push($errorDocs,$document);
-                            $col = true;
-                        }else{
-                            array_push($lisDocs,$findDoc);
+                        if (strlen($document)>0){
+                            $findDoc = DocumentRecommendation::whereFolio(trim($document))->whereIsactive(1)
+                                ->pluck('id')->first();
+                            if (is_null($findDoc)){
+                                array_push($errorDocs,$document);
+                                $col = true;
+                            }else{
+                                array_push($lisDocs,$findDoc);
+                            }
                         }
                     }
                 }
@@ -234,17 +257,17 @@ class FirstSheetImport implements ToModel, WithBatchInserts, WithChunkReading
                 $indicator = null;
                 if ($row[16]!=null){
                     $indicator = CatIndicator::whereName(trim($row[16]))->whereIsactive(1)
-                                                ->pluck('id')->first();
+                        ->pluck('id')->first();
                 }
                 $levelAttention = null;
                 if ($row[17]!=null){
                     $levelAttention = CatLevelAttention::whereName(trim($row[17]))->whereIsactive(1)
-                                                        ->pluck('id')->first();
+                        ->pluck('id')->first();
                 }
                 $classification = null;
                 if ($row[18]!=null && $levelAttention!=null){
                     $classification = CatAttentionClassification::whereLevelAttentionsId($levelAttention)
-                                        ->whereName(trim($row[18]))->whereIsactive(1)->pluck('id')->first();
+                        ->whereName(trim($row[18]))->whereIsactive(1)->pluck('id')->first();
                 }
 
                 $dataControl = [
@@ -263,16 +286,18 @@ class FirstSheetImport implements ToModel, WithBatchInserts, WithChunkReading
                 $findRights = [];
 
                 foreach ($derechos as $d){
-                    $find = strpos($d, '2.-');
-                    if ($find===false){
-                        array_push($findRightslll,$d);
-                    }else{
-                        if (substr_count($d, '2.-')>1){
-                            array_push($erroreRights,$d);
-                            $col=true;
+                    if (strlen($d)>0){
+                        $find = strpos($d, '2.-');
+                        if ($find===false){
+                            array_push($findRightslll,$d);
                         }else{
-                            $auxDerecho = explode("2.-", $d);
-                            array_push($findRights,$auxDerecho[1]);
+                            if (substr_count($d, '2.-')>1){
+                                array_push($erroreRights,$d);
+                                $col=true;
+                            }else{
+                                $auxDerecho = explode("2.-", $d);
+                                array_push($findRights,$auxDerecho[1]);
+                            }
                         }
                     }
                 }
@@ -336,12 +361,17 @@ class FirstSheetImport implements ToModel, WithBatchInserts, WithChunkReading
                 ];
 
                 $text = trim($row[0]);
-                if (strlen($text)>250) {
-                    $textTrunc = substr($text, 0, 267);
+                $textTrunc=$text;
+                /*if (strlen($text)>250) {
+                    for ($i=0;$i<267;$i++){
+                        $textTrunc = $textTrunc.$text[$i];
+                    }
+                    //$textTrunc = substr(utf8_encode($text), 0, 267);
+                    dd($textTrunc);
                     $textTrunc = $textTrunc . "...";
                 }else{
                     $textTrunc =$text;
-                }
+                }*/
 
                 /*crear recomendación*/
                 if (is_null($existRecommendation )) {
@@ -441,20 +471,22 @@ class FirstSheetImport implements ToModel, WithBatchInserts, WithChunkReading
                         $subRights = explode("||", $row[8]);
                         $idsSubRights=[];
                         foreach ($subRights as $subright){
-                            $id = CatSubcategorySubrights::where('name',trim($subright))->where('isActive',1)->first();
-                            $idAux = CatSubRights::where('id',trim($id['sub_rights_id']))->where('isActive',1)->pluck('rights_recommendations_id')->first();
-                            if (isset($id)){
-                                $idsSubRights[$idAux ]=[
-                                    'subrigth_id' => $id['sub_rights_id'],
-                                    'subcategory_subrights_id' => $id['id']
-                                ];
-                                $recommendation->right()->attach($idsSubRights);
+                            if(strlen($subright)>0){
+                                $id = CatSubcategorySubrights::where('name',trim($subright))->where('isActive',1)->first();
+                                $idAux = CatSubRights::where('id',trim($id['sub_rights_id']))->where('isActive',1)->pluck('rights_recommendations_id')->first();
+                                if (isset($id)){
+                                    $idsSubRights[$idAux ]=[
+                                        'subrigth_id' => $id['sub_rights_id'],
+                                        'subcategory_subrights_id' => $id['id']
+                                    ];
+                                    $recommendation->right()->attach($idsSubRights);
+                                }
+                                $id=null;
+                                $idsSubRights=[];
                             }
-                            $id=null;
-                            $idsSubRights=[];
                         }
 
-                     } else {
+                    } else {
                         $errorRows = new stdClass();
                         $errorRows->row = $this->fila;
                         $errorRows->textTrunc = $textTrunc;
@@ -479,10 +511,11 @@ class FirstSheetImport implements ToModel, WithBatchInserts, WithChunkReading
                         $errorRows->goodReportedActions = $goodReportRec;
                         $newRow = (array)$errorRows;
                         array_push($this->errorRe, $newRow);
-                      }
+                    }
                 }
             }
-            $this->fila++;
+        }
+        $this->fila++;
         session(["errorMasivo"=>$this->errorRe]);
     }
 

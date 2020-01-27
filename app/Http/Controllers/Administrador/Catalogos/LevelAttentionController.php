@@ -14,6 +14,8 @@ class LevelAttentionController extends Controller
     {
         if ($request->wantsJson()) {
             return LevelAttentionResource::collection(CatLevelAttention::whereIsactive(1)->get());
+        }else{
+            return view('errors.404');
         }
     }
 

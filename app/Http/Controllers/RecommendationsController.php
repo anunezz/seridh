@@ -38,23 +38,26 @@ class RecommendationsController extends Controller
     public function index(Request $request)
     {
         try {
-            $data = $request->all();
+            if ($request->wantsJson()){
+                $data = $request->all();
 
-            $recommendations = Recommendation::with('user', 'entity:id,name',
-                'order', 'power')
-                ->search($data['filters'])
-                ->where('isActive', true)
-                ->orderBy('updated_at', 'DESC')
-                ->paginate($data['perPage']);
+                $recommendations = Recommendation::with('user', 'entity:id,name',
+                    'order', 'power')
+                    ->search($data['filters'])
+                    ->where('isActive', true)
+                    ->orderBy('updated_at', 'DESC')
+                    ->paginate($data['perPage']);
 
-            $entity = CatEntity::select(['name','id'])->get();
+                $entity = CatEntity::select(['name','id'])->get();
 
-            return response()->json([
-                'recommendations' => $recommendations,
-                'entity' => $entity,
-                'success'         => true
-            ]);
-
+                return response()->json([
+                    'recommendations' => $recommendations,
+                    'entity' => $entity,
+                    'success'         => true
+                ]);
+            }else{
+                return response()->view('errors.404', [], 404);
+            }
         }
         catch ( \Exception $e ){
 
@@ -68,19 +71,23 @@ class RecommendationsController extends Controller
     public function documents(Request $request)
     {
         try {
+            if ($request->wantsJson()){
+                $data = $request->all();
 
-            $data = $request->all();
+                $documents = Files::select(['title','description','document_id','id','created_at','isPublished'])
+                    ->with('documents:id,fileName,fileNameHash,downloadCount')
+                    ->where('isActive', true)
+                    ->orderBy('updated_at', 'DESC')
+                    ->paginate($data['perPage']);
 
-            $documents = Files::select(['title','description','document_id','id','created_at','isPublished'])
-                ->with('documents:id,fileName,fileNameHash,downloadCount')
-                ->where('isActive', true)
-                ->orderBy('updated_at', 'DESC')
-                ->paginate($data['perPage']);
+                return response()->json([
+                    'documents' => $documents,
+                    'success'   => true
+                ]);
 
-            return response()->json([
-                'documents' => $documents,
-                'success'   => true
-            ]);
+            }else{
+                return response()->view('errors.404', [], 404);
+            }
 
         }
         catch ( \Exception $e ){
@@ -94,6 +101,7 @@ class RecommendationsController extends Controller
 
     public function getGonsult(Request $request){
         try {
+
              $data = $request->all();
              $search = json_decode($data['filters']);
 
@@ -120,95 +128,100 @@ class RecommendationsController extends Controller
         }
     }
 
-    public function create()
+    public function create(Request $request)
     {
         try {
+            if ($request->wantsJson()){
+                $lastId = Recommendation::orderBy('id', 'desc')->pluck('id')->first();
+                $lastId = $lastId + 1;
 
-            $lastId = Recommendation::orderBy('id', 'desc')->pluck('id')->first();
-            $lastId = $lastId + 1;
-
-            $entities = CatEntity::where('isActive', 1)
-                ->orderBy('name')
-                ->get(['id', 'name', 'acronym']);
-
-
-            $orders = CatGobOrder::where('isActive', 1)
-                ->orderBy('name')
-                ->get(['id', 'name']);
-
-            $powers = CatGobPower::where('isActive', 1)
-                ->orderBy('name')
-                ->get(['id', 'name']);
-
-            $attendings = CatAttending::where('isActive', 1)
-                ->orderBy('name')
-                ->get(['id', 'name']);
-
-            $rights = RightsTrait::orderRights(null, null, null);
-
-            $topics = TopicsTrait::orderTopics(null);
-
-            $top = CatTopic::where('isActive', 1)
-                ->orderBy('name')
-                ->get(['id', 'name']);
-
-            $rig = CatRightsRecommendation::where('isActive', 1)
-                ->orderBy('name')
-                ->get(['id', 'name']);
-
-            $subrig = CatSubRights::where('isActive', 1)
-                ->orderBy('name')
-                ->get(['id', 'name']);
-
-            $goalsOds = GoalsOdsTrait::orderOds(null);
-
-            $populations = CatPopulation::where('isActive', 1)
-                ->orderBy('name')
-                ->get(['id', 'name']);
-
-            $actions = CatSolidarityAction::where('isActive', 1)
-                ->orderBy('name')
-                ->get(['id', 'name']);
-
-            $subtopics = CatSubtopic::with('topic')->where('isActive', 1)
-                ->orderBy('name')
-                ->get(['id', 'name', 'cat_topic_id']);
-
-            $ods = CatOds::where('isActive', 1)
-                ->orderBy('name')
-                ->get(['id', 'name']);
-
-            $dates = CatDate::where('isActive', 1)
-                ->orderBy('name')
-                ->get(['id', 'name']);
-
-            $documents = Document::where('isActive', 1)
-                ->orderBy('fileName')
-                ->get(['id', 'fileName']);
+                $entities = CatEntity::where('isActive', 1)
+                    ->orderBy('name')
+                    ->get(['id', 'name', 'acronym']);
 
 
-            return response()->json([
-                'entities'    => $entities,
-                'orders'      => $orders,
-                'populations' => $populations,
-                'actions'     => $actions,
-                'topics'      => $topics['tree'],
-                'goalsOds'    => $goalsOds['tree'],
-                'rights'      => $rights,
-                'ods'         => $ods,
-                'dates'       => $dates,
-                'powers'      => $powers,
-                'attendings'  => $attendings,
-                'subtopics'   => $subtopics,
-                'documents'   => $documents,
-                'top'         => $top,
-                'rig'         => $rig,
-                'subrig'      => $subrig,
+                $orders = CatGobOrder::where('isActive', 1)
+                    ->orderBy('name')
+                    ->get(['id', 'name']);
 
-//
-//                'tree' => $tree,
-                'success'     => true
-            ]);
+                $powers = CatGobPower::where('isActive', 1)
+                    ->orderBy('name')
+                    ->get(['id', 'name']);
+
+                $attendings = CatAttending::where('isActive', 1)
+                    ->orderBy('name')
+                    ->get(['id', 'name']);
+
+                $rights = RightsTrait::orderRights(null, null, null);
+
+                $topics = TopicsTrait::orderTopics(null);
+
+                $top = CatTopic::where('isActive', 1)
+                    ->orderBy('name')
+                    ->get(['id', 'name']);
+
+                $rig = CatRightsRecommendation::where('isActive', 1)
+                    ->orderBy('name')
+                    ->get(['id', 'name']);
+
+                $subrig = CatSubRights::where('isActive', 1)
+                    ->orderBy('name')
+                    ->get(['id', 'name']);
+
+                $goa = CatOds::where('isActive', 1)
+                    ->orderBy('id','ASC')
+                    ->get(['id', 'name']);
+
+                $goalsOds = GoalsOdsTrait::orderOds(null);
+
+                $populations = CatPopulation::where('isActive', 1)
+                    ->orderBy('name')
+                    ->get(['id', 'name']);
+
+                $actions = CatSolidarityAction::where('isActive', 1)
+                    ->orderBy('name')
+                    ->get(['id', 'name']);
+
+                $subtopics = CatSubtopic::with('topic')->where('isActive', 1)
+                    ->orderBy('name')
+                    ->get(['id', 'name', 'cat_topic_id']);
+
+                $ods = CatOds::where('isActive', 1)
+                    ->orderBy('name')
+                    ->get(['id', 'name']);
+
+                $dates = CatDate::where('isActive', 1)
+                    ->orderBy('name')
+                    ->get(['id', 'name']);
+
+                $documents = Document::where('isActive', 1)
+                    ->orderBy('fileName')
+                    ->get(['id', 'fileName']);
+
+                return response()->json([
+                    'entities'    => $entities,
+                    'orders'      => $orders,
+                    'populations' => $populations,
+                    'actions'     => $actions,
+                    'topics'      => $topics['tree'],
+                    'goalsOds'    => $goalsOds['tree'],
+                    'rights'      => $rights,
+                    'ods'         => $ods,
+                    'dates'       => $dates,
+                    'powers'      => $powers,
+                    'attendings'  => $attendings,
+                    'subtopics'   => $subtopics,
+                    'documents'   => $documents,
+                    'top'         => $top,
+                    'rig'         => $rig,
+                    'subrig'      => $subrig,
+                    'goa'        => $goa,
+                    'success'     => true
+                ]);
+
+            }else{
+                return response()->view('errors.404', [], 404);
+            }
 
         }
         catch ( \Exception $e ) {
@@ -414,96 +427,94 @@ class RecommendationsController extends Controller
     public function edit(Request $request, $id)
     {
         try {
+                $entities = CatEntity::where('isActive', 1)
+                    ->orderBy('name')
+                    ->get(['id', 'name']);
 
-            $entities = CatEntity::where('isActive', 1)
-                ->orderBy('name')
-                ->get(['id', 'name']);
+                $orders = CatGobOrder::where('isActive', 1)
+                    ->orderBy('name')
+                    ->get(['id', 'name']);
 
-            $orders = CatGobOrder::where('isActive', 1)
-                ->orderBy('name')
-                ->get(['id', 'name']);
+                $powers = CatGobPower::where('isActive', 1)
+                    ->orderBy('name')
+                    ->get(['id', 'name']);
 
-            $powers = CatGobPower::where('isActive', 1)
-                ->orderBy('name')
-                ->get(['id', 'name']);
-
-            $attendings = CatAttending::where('isActive', 1)
-                ->orderBy('name')
-                ->get(['id', 'name']);
-
-
-            $populations = CatPopulation::where('isActive', 1)
-                ->orderBy('name')
-                ->get(['id', 'name']);
-
-            $actions = CatSolidarityAction::where('isActive', 1)
-                ->orderBy('name')
-                ->get(['id', 'name']);
+                $attendings = CatAttending::where('isActive', 1)
+                    ->orderBy('name')
+                    ->get(['id', 'name']);
 
 
-            $subtopics = CatSubtopic::where('isActive', 1)
-                ->orderBy('name')
-                ->get(['id', 'name']);
+                $populations = CatPopulation::where('isActive', 1)
+                    ->orderBy('name')
+                    ->get(['id', 'name']);
 
-            $dates = CatDate::where('isActive', 1)
-                ->orderBy('name')
-                ->get(['id', 'name']);
+                $actions = CatSolidarityAction::where('isActive', 1)
+                    ->orderBy('name')
+                    ->get(['id', 'name']);
 
-            $relations = ['order', 'power', 'attendig', 'population','dataControl',
-                          'right', 'subright','subcategory', 'subtopic','goalsOds','docs'];
 
-            $recommendation = Recommendation::with($relations)->find(decrypt($id));
+                $subtopics = CatSubtopic::where('isActive', 1)
+                    ->orderBy('name')
+                    ->get(['id', 'name']);
 
-           // dd($recommendation->docs);
+                $dates = CatDate::where('isActive', 1)
+                    ->orderBy('name')
+                    ->get(['id', 'name']);
 
-            $rights = RightsTrait::orderRights($recommendation->right->all(),$recommendation->subright->all(),$recommendation->subcategory->all());
+                $relations = ['order', 'power', 'attendig', 'population','dataControl',
+                    'right', 'subright','subcategory', 'subtopic','goalsOds','docs'];
 
-            $topics = TopicsTrait::orderTopics($recommendation->subtopic->all());
+                $recommendation = Recommendation::with($relations)->find(decrypt($id));
 
-            $goalsOds = GoalsOdsTrait::orderOds($recommendation->goalsOds->all());
+                $rights = RightsTrait::orderRights($recommendation->right->all(),$recommendation->subright->all(),$recommendation->subcategory->all());
 
-            $recommendationForm = [
-                'recommendation'               => $recommendation->recommendation,
-                'validity'                     => $recommendation->validity,
-                'directed'                     => $recommendation->directed,
-                'cat_entity_id'                => $recommendation->cat_entity_id,
-                'cat_gob_order_id'             => $recommendation->order->pluck('id')->toArray(),
-                'cat_gob_power_id'             => $recommendation->power->pluck('id')->toArray(),
-                'cat_attendig_id'              => $recommendation->attendig->pluck('id')->toArray(),
-                'cat_population_id'            => $recommendation->population->pluck('id')->toArray(),
-                'cat_solidarity_action_id'     => $recommendation->action->pluck('id')->toArray(),
-                'cat_review_right_id'          => $recommendation->cat_review_right_id,
-                'cat_review_topic_id'          => $recommendation->cat_review_topic_id,
-                'date'                         => $recommendation->date,
-                'comments'                     => $recommendation->comments,
-                'invoice'                      => $recommendation->invoice,
-                'listRights'                   => $rights['listR'],
-                'listThemes'                   => $topics['listThemes'],
-                'listGoalsOds'                 => $goalsOds['listOds'],
-                'documents'                    => $recommendation->docs->pluck('id')->toArray(),
-                'dataControl'                  => $recommendation->dataControl,
-                'isPublished'                  => $recommendation->isPublished,
-            ];
-//dd($recommendationForm);
-            return response()->json([
-                'entities'           => $entities,
-                'orders'             => $orders,
-                'populations'        => $populations,
-                'actions'            => $actions,
-                'dates'              => $dates,
-                'powers'             => $powers,
-                'attendings'         => $attendings,
-                'subtopics'          => $subtopics,
-                'recommendationForm' => $recommendationForm,
-                'success'            => true,
-                'showIds'            => $rights['showIds'],
-                'rights'             => $rights['rights'],
-                'showIde'            => $topics['showIde'],
-                'showOdsIds'         => $goalsOds['showOdsIds'],
-                'topics'             => $topics['tree'],
-                'goalsOds'           => $goalsOds['tree'],
-                'folioRe'            =>$recommendation->invoice,
-            ]);
+                $topics = TopicsTrait::orderTopics($recommendation->subtopic->all());
+
+                $goalsOds = GoalsOdsTrait::orderOds($recommendation->goalsOds->all());
+
+                $recommendationForm = [
+                    'recommendation'               => $recommendation->recommendation,
+                    'validity'                     => $recommendation->validity,
+                    'directed'                     => $recommendation->directed,
+                    'cat_entity_id'                => $recommendation->cat_entity_id,
+                    'cat_gob_order_id'             => $recommendation->order->pluck('id')->toArray(),
+                    'cat_gob_power_id'             => $recommendation->power->pluck('id')->toArray(),
+                    'cat_attendig_id'              => $recommendation->attendig->pluck('id')->toArray(),
+                    'cat_population_id'            => $recommendation->population->pluck('id')->toArray(),
+                    'cat_solidarity_action_id'     => $recommendation->action->pluck('id')->toArray(),
+                    'cat_review_right_id'          => $recommendation->cat_review_right_id,
+                    'cat_review_topic_id'          => $recommendation->cat_review_topic_id,
+                    'date'                         => $recommendation->date,
+                    'comments'                     => $recommendation->comments,
+                    'invoice'                      => $recommendation->invoice,
+                    'listRights'                   => $rights['listR'],
+                    'listThemes'                   => $topics['listThemes'],
+                    'listGoalsOds'                 => $goalsOds['listOds'],
+                    'documents'                    => $recommendation->docs->pluck('id')->toArray(),
+                    'dataControl'                  => $recommendation->dataControl,
+                    'isPublished'                  => $recommendation->isPublished,
+                ];
+
+                return response()->json([
+                    'entities'           => $entities,
+                    'orders'             => $orders,
+                    'populations'        => $populations,
+                    'actions'            => $actions,
+                    'dates'              => $dates,
+                    'powers'             => $powers,
+                    'attendings'         => $attendings,
+                    'subtopics'          => $subtopics,
+                    'recommendationForm' => $recommendationForm,
+                    'success'            => true,
+                    'showIds'            => $rights['showIds'],
+                    'rights'             => $rights['rights'],
+                    'showIde'            => $topics['showIde'],
+                    'showOdsIds'         => $goalsOds['showOdsIds'],
+                    'topics'             => $topics['tree'],
+                    'goalsOds'           => $goalsOds['tree'],
+                    'folioRe'            =>$recommendation->invoice,
+                ]);
+
 
         }
         catch ( \Exception $e ) {
@@ -718,7 +729,8 @@ class RecommendationsController extends Controller
 
             return response()->json([
                 'success'    => true,
-                'documentId' => $file->id
+                'documentId' => $file->id,
+                'name'      =>$document->getClientOriginalName(),
             ]);
         }
         catch ( \Exception $e ) {
@@ -833,7 +845,7 @@ class RecommendationsController extends Controller
     public function publicDocuments(Request $request)
     {
         try {
-
+            if ($request->wantsJson()){
             $data = $request->all();
 
             $documents = Files::select(['title','description','document_id','id','created_at','isPublished'])
@@ -848,6 +860,10 @@ class RecommendationsController extends Controller
                 'success'   => true
             ]);
 
+            }else{
+                return response()->view('errors.404', [], 404);
+            }
+
         }
         catch ( \Exception $e ){
 
@@ -857,6 +873,8 @@ class RecommendationsController extends Controller
             ]);
         }
     }
+
+
 
     public function saveFile(Request $request)
     {
@@ -1020,15 +1038,14 @@ class RecommendationsController extends Controller
             DB::beginTransaction();
 
             $data = $request->all();
-            $files = Files::with('documents')->find(decrypt($id));
+            $files = Files::find(decrypt($id));
 
-
-            $files->title = $data['title'];
-            $files->description = $data['description'];
-
+            $files->title = $data['text']['title'];
+            $files->description = $data['text']['description'];
+            $files->document_id = $data['newfile'];
+            $files->isPublished = $data['isPublish'];
 
             $files->save();
-
 
             GeneralController::saveTransactionLog(2,
                 'Edita un documento con id: ' . $files->id);
@@ -1053,14 +1070,15 @@ class RecommendationsController extends Controller
     public function updateDocPubli(Request $request, $id)
     {
         try {
+
             DB::beginTransaction();
 
             $data = $request->all();
-            $files = Files::with('documents')->find(decrypt($id));
+            $files = Files::find(decrypt($id));
 
-
-            $files->title = $data['title'];
-            $files->description = $data['description'];
+            $files->title = $data['text']['title'];
+            $files->description = $data['text']['description'];
+            $files->document_id = $data['newfile'];
             $files->isPublished = true;
 
             $files->save();
@@ -1188,25 +1206,27 @@ class RecommendationsController extends Controller
     public function recommendationDocuments(Request $request)
     {
         try {
+            if ($request->wantsJson()){
+                $data = $request->all();
+                $documents = null;
+                if (isset($data['transfer'])){
+                    $documents = DocumentRecommendation::whereIsactive(1)->get();
+                }
+                else{
+                    $documents = DocumentRecommendation::select(['folio','document_id','id','isActive'])
+                        ->with('documents:id,fileName,fileNameHash,downloadCount')
+                        ->where('isActive', true)
+                        ->orderBy('updated_at', 'DESC')
+                        ->paginate($data['perPage']);
+                }
 
-            $data = $request->all();
-            $documents = null;
-            if (isset($data['transfer'])){
-                $documents = DocumentRecommendation::all();
+                return response()->json([
+                    'documents' => $documents,
+                    'success'   => true
+                ]);
+            }else{
+                return response()->view('errors.404', [], 404);
             }
-            else{
-                $documents = DocumentRecommendation::select(['folio','document_id','id','isActive'])
-                    ->with('documents:id,fileName,fileNameHash,downloadCount')
-                    ->where('isActive', true)
-                    ->orderBy('updated_at', 'DESC')
-                    ->paginate($data['perPage']);
-            }
-
-            return response()->json([
-                'documents' => $documents,
-                'success'   => true
-            ]);
-
         }
         catch ( \Exception $e ){
 
@@ -1326,6 +1346,38 @@ class RecommendationsController extends Controller
                 'success' => false,
                 'message' => 'No se pudo completar la acción',
             ], 500);
+        }
+    }
+
+    public function searchCatalogs(Request $request)
+    {
+        try{
+            $data = $request->all();
+
+            $users = CatGoalsOds::ofType($data['filters'])->where('isActive', true)
+                            ->paginate($data['perPage']);;
+
+            /*dd(json_decode($data['filters']));
+            $recommendations = Recommendation::with('user', 'ods', 'entity:id,name',
+                'order', 'power')
+                ->consult($search)
+                ->where('isActive', true)
+                ->orderBy('updated_at', 'DESC')
+                ->paginate($data['perPage']);*/
+
+
+            return response()->json([
+                'recommendations' => $recommendations,
+                'success'         => true
+            ]);
+
+        }
+        catch ( \Exception $e ){
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]);
         }
     }
 

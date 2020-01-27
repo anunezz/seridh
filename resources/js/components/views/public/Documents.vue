@@ -5,16 +5,38 @@
             <el-col :offset="10">
                 <header-section icon="el-icon-document" title="Documentos"></header-section>
             </el-col>
-            
             <p></p>
-            <div align="center" class="form-group has-feedback">
-                <input type="text" size="30" class="control" placeholder="Buscador de Documentos"></input>
-                <i class="glyphicon glyphicon-search has-feedback"></i>
-            </div>
+            <template>
+                <div>
+
+                </div>
+            </template>
+            <template>
+                <div>
+            <el-form size="small" ref="search" :model="search" >
+                <el-row>
+                    <el-col :offset="8" :span="8">
+                        <el-form-item>
+                            <el-input placeholder="Búscador de documentos" v-model="search.title">
+                                <el-button :disabled="search.title === null" slot="append" icon="el-icon-search" @click="getByFilter"></el-button>
+                            </el-input>
+                            <div style="display: flex; margin-top: 10px; height: 23px;">
+                                <transition v-model="search.title" name="el-fade-in-linear">
+                                    <div v-show="show" class="transition-box">
+                                        <el-button slot="append" icon="el-icon-refresh-left" @click="cleanFilters">Limpiar Búsqueda</el-button>
+                                    </div>
+                                </transition>
+                            </div>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+            </el-form>
+                </div>
+            </template>
 
             <el-tabs type="border-card">
                 <template>
-                    <el-main style="border-left: 16px solid #E9EEF3 ">
+                    <el-main style="border-left: 8px solid #E9EEF3 ">
                         <el-card shadow="never">
                             <div slot="header">
                                 <p>Archivos agregados</p>
@@ -29,6 +51,12 @@
                                         :total="pagination.total">
                                     </el-pagination>
                                 </el-col>
+
+                                <div class="col-md-12" style="padding-bottom: 50px !important;" v-if="pagination.total === 0 && numero == 3" >
+                                    <div class='alert alert-danger'>
+                                        No se encontraron documentos.
+                                    </div>
+                                </div>
                                 <p></p>
                                 <br></br>
                                 <el-row>
@@ -132,6 +160,7 @@
                                 layout="sizes, ->, prev, pager, next"
                                 :total="pagination.total">
                             </el-pagination>
+
                         </el-card>
                     </el-main>
                 </template>
@@ -153,6 +182,8 @@
 
         data() {
             return {
+
+                numero: 0,
 
                 show: false,
 
@@ -188,13 +219,12 @@
                 catEntity: [],
                 checked: false,
                 checked2: false,
-                search: {
-                    date: null,
-                    recommendation: null,
-                    cat_entity_id: null,
-                    isPublished: []
-                }
 
+                search: {
+                    title: null
+                },
+
+                blogs: [],
 
             }
         },
@@ -222,20 +252,26 @@
             getDocument(currentPage = 1) {
                 this.startLoading();
 
-                let data = {
+                var config = {
+                    headers:{
+                        'Content-Type':'application/json',
+                        'Accept':'application/json'
+                    },
                     params: {
                         page: currentPage,
                         perPage: this.pagination.perPage,
-                        isType: 2
+                        isType: 2,
+                        filters: this.filters
                     }
-                };
+                }
 
-                axios.get('/api/recommendations/get/public-files', data).then(response => {
+                axios.get('/api/recommendations/get/public-files', config).then(response => {
 
                     if (response.data.success) {
 
                         this.documents = response.data.documents.data;
                         this.pagination.total = response.data.documents.total;
+                        if( this.pagination.total === 0){ this.numero = 3; }
                         this.pagination.currentPage = response.data.documents.current_page;
                         this.pagination.perPage = response.data.documents.per_page;
 
@@ -323,6 +359,37 @@
                         message: "No fue posible completar la acción, intente nuevamente."
                     });
                 });
+            },
+
+            getByFilter() {
+
+                let _search = {
+                    filters: this.search,
+                    page: 1,
+                    perPage: this.pagination.perPage,
+
+                };
+
+                axios.get('/api/public/filter-documents', {params: _search}).then(response => {
+                    if (response.data.success) {
+
+                        this.documents = response.data.files.data;
+                        this.pagination.total = response.data.files.total;
+                        if( this.pagination.total === 0){ this.numero = 3; }
+                        this.pagination.currentPage = response.data.files.current_page;
+                        this.pagination.perPage = response.data.files.per_page;
+                    }
+                    this.show = true
+                });
+
+            },
+
+            cleanFilters() {
+                this.search.title = null;
+                this.getDocument();
+
+                this.show = false
+
             },
 
 

@@ -55,7 +55,7 @@ class User extends Authenticatable
 {
     use HasApiTokens, Notifiable;
 
-    protected $fillable = ['cat_profile_id', 'name', 'firstName', 'secondName'];
+    protected $fillable = ['username','cat_profile_id', 'name', 'firstName', 'secondName'];
     protected $appends = ['full_name', 'hash'];
 
     public function getFullNameAttribute()

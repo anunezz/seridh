@@ -42,7 +42,7 @@
                 </el-table-column>
                 <el-table-column
                     prop="title"
-                    label="Titulo del documento">
+                    label="Título del documento">
                 </el-table-column>
                 <el-table-column
                     prop="documents.downloadCount"

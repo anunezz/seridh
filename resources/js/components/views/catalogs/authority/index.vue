@@ -2,11 +2,7 @@
     <div>
         <header-section icon="el-icon-document" title="Autoridad encargada de atender">
             <template slot="buttons">
-                <el-col :span="5" :offset="7">
-                    <el-button type="success" @click="newRegisterDialog = true" style="width: 100%">
-                        Nuevo registro
-                    </el-button>
-                </el-col>
+
             </template>
         </header-section>
 
@@ -28,6 +24,34 @@
         <p></p>
         <br>
         <el-row :gutter="20">
+                <el-col :span="24">
+                    <el-card class="box-card">
+
+                        <div  class="text item" :body-style="{ width: '100%' }" style="float:right; padding: 0px 0px 20px 0px;">
+                            <el-tooltip class="item" effect="dark" content="Nuevo" placement="top-start">
+                                <el-button type="primary"
+                                        size="mini"
+                                        icon="el-icon-plus"
+                                        @click="newAutority"
+                                        style="padding-button: 10px;">
+                                        Nuevo
+                                </el-button>
+                            </el-tooltip>
+                        </div>
+
+                        <!-- <div style="margin-top: 15px;">
+                        <el-input placeholder="Buscar por Autoridad encargada de atender" v-model="advancedText" class="input-with-select" clearable>
+                            <el-select v-model="advancedSelect" slot="prepend" placeholder="Búsqueda avanzada" style="width: 200px;">
+                                <el-option label="Mostrar Todo" value="all"></el-option>
+                                <el-option label="Siglas" value="acronym"></el-option>
+                                <el-option label="Nombre" value="name"></el-option>
+                            </el-select>
+                            <el-button slot="append" icon="el-icon-search" @click="advancedSearch(advancedSelect,advancedText)"></el-button>
+                        </el-input>
+                        </div> -->
+
+                    </el-card>
+                </el-col>
             <el-col :span="24">
                 <el-table
                     :data="attendings"
@@ -90,32 +114,43 @@
         <el-dialog title="Nuevo Registro"
                    :visible.sync="newRegisterDialog"
                    width="70%">
-            <el-input
-                v-if="newRegisterDialog"
-                placeholder="Nombre de la Autoridad"
-                v-model="newRegisterName"
-                maxlength="100"
-                clearable>
-            </el-input>
-            <el-input
-                v-if="newRegisterDialog"
-                placeholder="Siglas"
-                v-model="newRegisterAcronym"
-                maxlength="100"
-                clearable>
-            </el-input>
-            <span slot="footer" class="dialog-footer">
-            <el-button type="danger" @click="newRegisterDialog = false">Cancelar</el-button>
-            <el-button v-if="newRegisterDialog"
-                       type="primary"
-                       :disabled="newRegisterName === ''"
-                       @click="newRegister">Aceptar</el-button>
-            </span>
+             <el-row :gutter="20">
+                 <el-col :span="24">
+                    <el-input
+                        v-if="newRegisterDialog"
+                        placeholder="Nombre de la Autoridad"
+                        v-model="newRegisterName"
+                        maxlength="100"
+                        clearable>
+                    </el-input>
+                    <div style="margin: 20px 0;"></div>
+                 </el-col>
+
+                 <el-col :span="24">
+                    <el-input
+                        v-if="newRegisterDialog"
+                        placeholder="Siglas"
+                        v-model="newRegisterAcronym"
+                        maxlength="100"
+                        clearable>
+                    </el-input>
+                  </el-col>
+                </el-row>
+
+                <span slot="footer" class="dialog-footer">
+                    <el-button type="danger" @click="newRegisterDialog = false">Cancelar</el-button>
+                    <el-button v-if="newRegisterDialog"
+                            type="primary"
+                            :disabled="newRegisterName === '' || newRegisterAcronym==='' "
+                            @click="newRegister">Aceptar</el-button>
+                </span>
+
         </el-dialog>
 
         <el-dialog title="Editar Registro"
                    :visible.sync="editRegisterDialog"
-                   width="70%">
+                   width="70%"
+                   :before-close="handleClose">
             <el-input
                 v-if="editRegisterDialog"
                 placeholder="Nombre de la Autoridad"
@@ -131,7 +166,7 @@
                 clearable>
             </el-input>
             <span slot="footer" class="dialog-footer">
-            <el-button type="danger" @click="editRegisterDialog = false">Cancelar</el-button>
+            <el-button type="danger" @click="getAttendings(),editRegisterDialog = false">Cancelar</el-button>
             <el-button v-if="editRegisterDialog"
                        type="primary"
                        :disabled="attendings[indexRegister].name === ''"
@@ -190,18 +225,52 @@
                 removeHash: null,
                 hashId: null,
 
+                advancedSelect:'',
+                advancedText:'',
+
                 apiToken: 'Bearer ' + sessionStorage.getItem('SERIDH_token'),
             }
         },
 
         created() {
-
             this.getAttendings();
         },
 
 
         methods: {
+            advancedSearch(action,search,currentPage = 1){
+              let me = this;
 
+                me.startLoading();
+                let data = {
+                        page: currentPage,
+                        perPage: me.pagination.perPage,
+                        data: {action: action, search: search.trim(),name: 'authorityAttending'}
+                };
+
+                if(action === 'all'){
+                   me.advancedText = '';
+                }
+                console.log("Busqueda por accion: ",action);
+                console.log("Busqueda por busqueda ",search);
+
+                axios.post('/api/cats/searchCats', data).then(response => {
+                    if (response.data.success) {
+                      console.log("Response catalogos: ",response);
+                        me.attendings = response.data.lResults.data;
+                        me.pagination.total = response.data.lResults.total;
+                        me.pagination.currentPage = response.data.lResults.current_page;
+                        me.pagination.currentPage = response.data.lResults.current_page;
+                        me.pagination.perPage = response.data.lResults.per_page;
+                        me.stopLoading();
+                    }
+                }).catch(error => {
+                    me.$message({
+                        type: "warning",
+                        message: "No fue posible completar la acción, intente nuevamente."
+                    });
+                });
+            },
             getAttendings(currentPage = 1) {
                 this.startLoading();
 
@@ -209,8 +278,7 @@
                     params: {
                         page: currentPage,
                         perPage: this.pagination.perPage,
-                        search: this.search,
-                        cat: 4
+                        search: this.search
                     }
                 };
 
@@ -239,11 +307,21 @@
 
             handleCurrentChange(currentPage) {
                 this.pagination.currentPage = currentPage;
+                if(this.advancedSelect.length > 0){
+                  this.advancedSearch(this.advancedSelect,this.advancedText);
+                  return;
+                }
+
                 this.getAttendings(currentPage)
             },
 
             handleSizeChange(sizePerPage) {
                 this.pagination.perPage = sizePerPage;
+                if(this.advancedSelect.length > 0){
+                  this.advancedSearch(this.advancedSelect,this.advancedText);
+                  return;
+                }
+
                 this.getAttendings();
             },
 
@@ -383,6 +461,19 @@
                     });
                 });
             },
+            newAutority(){
+                this.newRegisterName = '';
+                this.newRegisterAcronym = '';
+                this.newRegisterDialog = true;
+            },
+            handleClose(done) {
+                this.$confirm('¿Seguro que quieres cerrar este cuadro?')
+                    .then(_ => {
+                        done();
+                        this.getAttendings();
+                    })
+                    .catch(_ => {});
+            }
         },
     }
 </script>

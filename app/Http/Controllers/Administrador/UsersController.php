@@ -16,18 +16,22 @@ class UsersController extends Controller
     public function index(Request $request)
     {
         try {
-            $data = $request->all();
+            if ($request->wantsJson()){
+                $data = $request->all();
 
-            $users = User::with('profile')
-                ->search($data['search'])
-                ->where('isActive', true)
-                ->orderBy('cat_profile_id', 'DESC')
-                ->paginate($data['perPage']);
+                $users = User::with('profile')
+                    ->search($data['search'])
+                    ->where('isActive', true)
+                    ->orderBy('cat_profile_id', 'DESC')
+                    ->paginate($data['perPage']);
 
-            return response()->json([
-                'users'   => $users,
-                'success' => true
-            ]);
+                return response()->json([
+                    'users'   => $users,
+                    'success' => true
+                ]);
+            } else{
+                return response()->view('errors.404', [], 404);
+            }
 
         }
         catch ( Exception $e ) {
@@ -39,24 +43,30 @@ class UsersController extends Controller
         }
     }
 
-    public function edit($id)
+    public function edit(Request $request, $id)
     {
         try {
-            $user = User::find(decrypt($id));
-            $profiles = CatProfile::where('isActive', 1)->get(['id', 'name']);
+            if ($request->wantsJson()){
 
-            $userform = [
-                'cat_profile_id'  => $user->cat_profile_id,
-                'name'            => $user->name,
-                'firstName'       => $user->firstName,
-                'secondName'      => $user->secondName
-            ];
+                $user = User::find(decrypt($id));
+                $profiles = CatProfile::where('isActive', 1)->get(['id', 'name']);
 
-            return response()->json([
-                'profiles'  => $profiles,
-                'userForm'  => $userform,
-                'success'   => true
-            ]);
+                $userform = [
+                    'cat_profile_id'  => $user->cat_profile_id,
+                    'name'            => $user->name,
+                    'firstName'       => $user->firstName,
+                    'secondName'      => $user->secondName
+                ];
+
+                return response()->json([
+                    'profiles'  => $profiles,
+                    'userForm'  => $userform,
+                    'success'   => true
+                ]);
+
+            }else{
+                return response()->view('errors.404', [], 404);
+            }
 
         }
         catch ( Exception $e ) {
@@ -71,22 +81,29 @@ class UsersController extends Controller
     public function update(Request $request, $id)
     {
         try {
-            DB::beginTransaction();
+            if ($request->wantsJson()){
+                DB::beginTransaction();
 
-            $user = User::find(decrypt($id));
+                $user = User::find(decrypt($id));
 
-            $user->fill($request->all());
-            $user->save();
+                $user->fill($request->all());
+                $user->save();
 
 
-            GeneralController::saveTransactionLog(3, 'Edita al usuario: ' . $user->username);
+                GeneralController::saveTransactionLog(3, 'Edita al usuario: ' . $user->username);
 
-            DB::commit();
+                DB::commit();
 
-            return response()->json([
-                'success' => true
-            ], 200);
-        }
+                return response()->json([
+                    'success' => true
+                ], 200);
+
+            }else{
+                return response()->view('errors.404', [], 404);
+            }
+
+            }
+
         catch ( Exception $e ) {
             DB::rollBack();
 

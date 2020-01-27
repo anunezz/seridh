@@ -1,9 +1,9 @@
 <template>
     <div>
-        <header-section icon="el-icon-document-add" title="Bandeja de Documentos asociados a las Recomendaciones">
+        <header-section icon="el-icon-document-add" title="Bandeja de documentos asociados a las recomendaciones">
             <template slot="buttons">
                 <el-col :span="3" :offset="21">
-                    <el-button size="small" type="success" @click="newRegisterDialog = true" style="width: 100%">
+                    <el-button size="small" type="success" @click="newDocRec" style="width: 100%">
                         + Documento
                     </el-button>
                 </el-col>
@@ -167,7 +167,7 @@
 
                     <el-row :gutter="10">
                         <el-col :span="24">
-                            <el-form-item label="Agrege un documento PDF"
+                            <el-form-item label="Agregar un documento PDF"
                                           prop="files"
                                           :rules="[
                                     { required: true, message: 'Este campo es requerido', trigger: 'blur'},
@@ -238,6 +238,8 @@
                 recommendationForm:{
                     title: '',
                     files: [],
+                    cat_entity_id:'',
+                    date:'',
                 },
 
 
@@ -344,12 +346,12 @@
 
             handleCurrentChange(currentPage) {
                 this.pagination.currentPage = currentPage;
-                this.getDocument(currentPage)
+                this.getDocumentRecommendation(currentPage)
             },
 
             handleSizeChange(sizePerPage) {
                 this.pagination.perPage = sizePerPage;
-                this.getDocument();
+                this.getDocumentRecommendation();
             },
 
             onError(err, file, fileList){
@@ -445,7 +447,10 @@
                                 title: 'Éxito',
                                 message: "Se almaceno el documento con folio: " + response.data.folio
                             });
-                            this.recommendationForm = {};
+                            this.recommendationForm.title = '';
+                            this.recommendationForm.cat_entity_id = '';
+                            this.recommendationForm.date = '';
+                            this.recommendationForm.files = [];
                             this.newRegisterDialog = false;
                             this.getDocumentRecommendation();
 
@@ -511,7 +516,13 @@
                         });
                     });
             },
-
+            newDocRec(){
+                this.recommendationForm.title = '';
+                this.recommendationForm.cat_entity_id = '';
+                this.recommendationForm.date = '';
+                this.recommendationForm.files = [];
+                this.newRegisterDialog = true;
+            }
 
         }
     }

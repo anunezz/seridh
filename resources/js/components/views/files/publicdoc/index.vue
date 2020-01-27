@@ -1,9 +1,9 @@
 <template>
     <div>
-        <header-section icon="el-icon-document" title="Bandeja de Documentos Publicos">
+        <header-section icon="el-icon-document" title="Bandeja de documentos públicos">
                 <template slot="buttons">
                     <el-col :span="3" :offset="21">
-                        <el-button size="small" type="success" @click="newRegisterDialog = true" style="width: 100%">
+                        <el-button size="small" type="success" @click="newDoc" style="width: 100%">
                             + Documento
                         </el-button>
                     </el-col>
@@ -40,7 +40,7 @@
                 </el-table-column>
                 <el-table-column
                     prop="title"
-                    label="Titulo del documento">
+                    label="Título del documento">
                 </el-table-column>
                 <el-table-column
                     prop="isPublished"
@@ -187,7 +187,7 @@
         </el-dialog>
 
 
-        <el-dialog title="Carga de Documentos Publicos"
+        <el-dialog title="Carga de Documentos Públicos"
                    :visible.sync="openRegisterDialog"
                    :center="true"
                    :destroy-on-close="true"
@@ -216,7 +216,7 @@
 
                 <el-row :gutter="10">
                     <el-col :span="24">
-                        <el-form-item label="Agregue un documento PDF"
+                        <el-form-item label="Agregar un documento PDF"
                                       prop="files"
                                       :rules="[
                                     { required: false, message: 'Este campo es requerido', trigger: 'blur'},
@@ -266,30 +266,44 @@
                 </el-card>
         </el-dialog>
 
-        <el-dialog title="Carga de Documentos Publicos"
+        <el-dialog title="Carga de Documentos Públicos"
                    :visible.sync="newRegisterDialog"
                    :center="true"
                    :destroy-on-close="true"
                    width="70%">
-            <el-input
-                v-if="newRegisterDialog"
-                placeholder="Titulo del Documento"
-                v-model="newRegisterName"
-                maxlength="47"
-                clearable>
-            </el-input>
+            <el-row>
+                <el-col :span="1" style="width: 10px">
+                    <span style="color: red">*</span>
+                </el-col>
+                <el-col :span="23">
+                    <el-input
+                        v-if="newRegisterDialog"
+                        placeholder="Título del Documento"
+                        v-model="newRegisterName"
+                        maxlength="47"
+                        clearable>
+                    </el-input>
+                </el-col>
+            </el-row>
             <p></p>
             <br>
-            <el-input
-                v-if="newRegisterDialog"
-                placeholder="Descripción del Documento"
-                v-model="newRegisterDescription"
-                maxlength="200"
-                clearable>
-            </el-input>
+            <el-row>
+                <el-col :span="1" style="width: 10px">
+                    <span style="color: red">*</span>
+                </el-col>
+                <el-col :span="23">
+                    <el-input
+                        v-if="newRegisterDialog"
+                        placeholder="Descripción del Documento"
+                        v-model="newRegisterDescription"
+                        maxlength="200"
+                        clearable>
+                    </el-input>
+                </el-col>
+            </el-row>
             <p></p>
             <el-form ref="newRegisterAcronym" :model="newRegisterAcronym" label-width="120px" label-position="top" >
-                <el-form-item label="Agregue un documento PDF"
+                <el-form-item label="Agregar un documento PDF"
                               prop="files"
                               :rules="[
                                     { required: true, message: 'Este campo es requerido', trigger: 'blur'},
@@ -321,11 +335,11 @@
             <el-button type="danger" @click="newRegisterDialog = false">Cancelar</el-button>
             <el-button v-if="newRegisterDialog"
                        type="success"
-                       :disabled="newRegisterName && newRegisterDescription === null"
+                       :disabled="newRegisterName==='' || newRegisterDescription === '' "
                        @click="newRegister(false)">Guardar sin Publicar</el-button>
             <el-button v-if="newRegisterDialog"
                        type="primary"
-                       :disabled="newRegisterName && newRegisterDescription && newRegisterAcronym === '' && null"
+                       :disabled="newRegisterName === '' || newRegisterDescription === ''"
                        @click="newRegister(true)">Guardar y Publicar</el-button>
             </span>
         </el-dialog>
@@ -353,7 +367,7 @@
 
             <br><br>
             <el-form ref="newRegisterAcronym" :model="newRegisterAcronym" label-width="120px" label-position="top" >
-                <el-form-item label="Agregue un documento PDF"
+                <el-form-item label="Agregar un documento PDF"
                               prop="files"
                               :rules="[
                                     { required: true, message: 'Este campo es requerido', trigger: 'blur'},
@@ -491,27 +505,6 @@
         },
         created() {
             this.getDocument();
-
-            this.startLoading();
-            let id = this.$route.params.id;
-
-            axios.get(`/api/recommendations/edit/doc/${id}`).then(response => {
-
-                this.files = response.data.files;
-
-                this.stopLoading();
-                if (this.indexEdit!=null){
-                    this.errorData(this.indexEdit);
-                }
-
-            }).catch(error => {
-                this.stopLoading();
-
-                this.$message({
-                    type: "warning",
-                    message: "No fue posible completar la acción, intente nuevamente."
-                });
-            });
 
         },
 
@@ -778,6 +771,9 @@
             newRegister(type) {
                 this.startLoading();
 
+                this.$refs['newRegisterAcronym'].validate((valid) => {
+                    if (valid) {
+
                 let data = {title: this.newRegisterName, description: this.newRegisterDescription,
                             files: this.newRegisterAcronym.files, isPublished: this.isPublished = type};
 
@@ -811,6 +807,18 @@
                         type: "warning",
                         message: "No fue posible completar la acción, intente nuevamente."
                     });
+                });
+
+                    }
+                    else {
+                        this.stopLoading();
+
+                        this.$message({
+                            type: "warning",
+                            title: 'Error',
+                            message: "Complete los campos para continuar"
+                        });
+                    }
                 });
             },
 
@@ -925,6 +933,11 @@
                         });
                     });
             },
+            newDoc(){
+                this.newRegisterName = '';
+                this.newRegisterDescription = '';
+                this.newRegisterDialog = true;
+            }
         }
     }
 </script>

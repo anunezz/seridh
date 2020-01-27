@@ -41,6 +41,7 @@
 
 
     export default {
+        props:['type'],
         components: {
             HeaderSection,
             publicdoc,
@@ -52,13 +53,17 @@
             return{
                 selectedCat: null,
                 cats: [
-                    {id:1, name: 'Bandeja de documentos publicos'},
+                    {id:1, name: 'Bandeja de documentos públicos'},
                     {id:2, name: 'Bandeja de documento asociados a las recomendaciones'},
 
                 ],
             }
         },
-
+        mounted() {
+            if(this.type!=undefined){
+                this.selectedCat = this.type;
+            }
+        },
         methods: {
             goTo(link, data) {
                 axios.post('/api/transaction', data).then(response => {
