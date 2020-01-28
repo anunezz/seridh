@@ -2,6 +2,8 @@
     <div>
 
 <!-- Aplicando cambios a -->
+<!-- Aplicando cambios b -->
+
 
         <div id="myCarousel" class="carousel slide" data-ride="carousel" style="max-height: 450px;">
             <!-- Indicators -->
