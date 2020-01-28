@@ -1,6 +1,8 @@
 <template>
     <div>
 
+<!-- Aplicando cambios a -->
+
         <div id="myCarousel" class="carousel slide" data-ride="carousel" style="max-height: 450px;">
             <!-- Indicators -->
             <ol class="carousel-indicators">
