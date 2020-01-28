@@ -1,9 +1,15 @@
 <template>
     <div>
 
+<<<<<<< HEAD
 <!-- Aplicando cambios a -->
 <!-- Aplicando cambios b -->
 
+=======
+
+<!-- Aplicando cambios C -->
+<!-- Aplicando cambios d-->
+>>>>>>> c9ddd283... Cambios d
 
         <div id="myCarousel" class="carousel slide" data-ride="carousel" style="max-height: 450px;">
             <!-- Indicators -->
