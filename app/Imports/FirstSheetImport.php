@@ -56,11 +56,9 @@ class FirstSheetImport implements ToModel, WithBatchInserts, WithChunkReading
             }
             if ($emptyRow){
                 $col=false;
-                for ($i=0;$i<15;$i++){
-                    if ($i != 12 && $i != 13){
-                        if (is_null($row[$i])){
-                            $col=true;
-                        }
+                for ($i=0;$i<12;$i++){
+                    if (is_null($row[$i])){
+                        $col=true;
                     }
                 }
 
@@ -93,84 +91,114 @@ class FirstSheetImport implements ToModel, WithBatchInserts, WithChunkReading
                 $gobOrders = explode("||", $row[2]);
                 $idsGob=[];
                 $errorGob=[];
-                foreach ($gobOrders as $gob){
-                    if (strlen($gob)>0){
-                        $id = CatGobOrder::where('name',trim($gob))->where('isActive',1)->pluck('id')->first();
-                        if (isset($id)){
-                            array_push($idsGob,$id);
-                        }else{
-                            array_push($errorGob,$gob);
-                            $col=true;
+                if ($row[2]!=null){
+                    foreach ($gobOrders as $gob){
+                        if (strlen($gob)>0){
+                            $id = CatGobOrder::where('name',trim($gob))->where('isActive',1)->pluck('id')->first();
+                            if (isset($id)){
+                                array_push($idsGob,$id);
+                            }else{
+                                array_push($errorGob,$gob);
+                                $col=true;
+                            }
                         }
+                        $id=null;
                     }
-                    $id=null;
+                }else{
+                    array_push($errorGob,'Columna vacía.');
+                    $col=true;
                 }
 
                 /*obtener ids Poder de Gobierno*/
                 $powerGob = explode("||", $row[3]);
                 $idsPow=[];
                 $errorPow=[];
-                foreach ($powerGob as $pow){
-                    if (strlen($pow)>0){
-                        $id = CatGobPower::where('name',trim($pow))->where('isActive',1)->pluck('id')->first();
-                        if (isset($id)){
-                            array_push($idsPow,$id);
-                        }else{
-                            array_push($errorPow,$pow);
-                            $col=true;
+                if ($row[3]!=null){
+                    foreach ($powerGob as $pow){
+                        if (strlen($pow)>0){
+                            $id = CatGobPower::where('name',trim($pow))->where('isActive',1)->pluck('id')->first();
+                            if (isset($id)){
+                                array_push($idsPow,$id);
+                            }else{
+                                array_push($errorPow,$pow);
+                                $col=true;
+                            }
                         }
+                        $id=null;
                     }
-                    $id=null;
+                }else{
+                    array_push($errorPow,'Columna vacía.');
+                    $col=true;
                 }
+
                 /*obtener ids Autoridad encargada de atender*/
                 $entEnc = explode("||", $row[4]);
                 $idsEnt=[];
                 $errorAuthority=[];
-                foreach ($entEnc as $en){
-                    if (strlen($en)>0){
-                        $id = CatAttending::where('name',trim($en))->where('isActive',1)->pluck('id')->first();
-                        if (isset($id)){
-                            array_push($idsEnt,$id);
-                        }else{
-                            array_push($errorAuthority,$en);
-                            $col=true;
+                if ($row[4]!=null){
+                    foreach ($entEnc as $en){
+                        if (strlen($en)>0){
+                            $id = CatAttending::where('name',trim($en))->where('isActive',1)->pluck('id')->first();
+                            if (isset($id)){
+                                array_push($idsEnt,$id);
+                            }else{
+                                array_push($errorAuthority,$en);
+                                $col=true;
+                            }
                         }
+                        $id=null;
                     }
-                    $id=null;
+                }else{
+                    array_push($errorAuthority,'Columna vacía.');
+                    $col=true;
                 }
 
                 /*obtener ids Población*/
                 $population = explode("||", $row[5]);
                 $idsPop=[];
                 $errorPop=[];
-                foreach ($population as $pop){
-                    if (strlen($pop)>0){
-                        $id = CatPopulation::where('name',trim($pop))->where('isActive',1)->pluck('id')->first();
-                        if (isset($id)){
-                            array_push($idsPop,$id);
-                        }else{
-                            array_push($errorPop,$pop);
-                            $col=true;
+                if ($row[5]!=null){
+                    foreach ($population as $pop){
+                        if (strlen($pop)>0){
+                            $id = CatPopulation::where('name',trim($pop))->where('isActive',1)->pluck('id')->first();
+                            if (isset($id)){
+                                array_push($idsPop,$id);
+                            }else{
+                                array_push($errorPop,$pop);
+                                $col=true;
+                            }
                         }
+                        $id=null;
                     }
-                    $id=null;
+                }else{
+                    array_push($errorPop,'Columna vacía.');
+                    $col=true;
                 }
+
 
                 /*obtener ids Acción solidaria*/
                 $actionS = explode("||", $row[6]);
                 $idsAct=[];
                 $errorAction = [];
-                foreach ($actionS as $act){
-                    if (strlen($act)>0){
-                        $id = CatSolidarityAction::where('name',trim($act))->where('isActive',1)->pluck('id')->first();
-                        if (isset($id)){
-                            array_push($idsAct,$id);
+                if ($row[6]!=null){
+                    foreach ($actionS as $act){
+                        if (strlen($act)>0){
+                            $id = CatSolidarityAction::where('name',trim($act))->where('isActive',1)->pluck('id')->first();
+                            if (isset($id)){
+                                array_push($idsAct,$id);
+                            }else{
+                                array_push($errorAction,$act);
+                                $col=true;
+                            }
                         }else{
-                            array_push($errorAction,$act);
+                            array_push($errorAction,'Columna vacía.');
                             $col=true;
                         }
+                        $id=null;
                     }
-                    $id=null;
+                }else{
+                    array_push($errorAction,'Columna vacía.');
+                    $col=true;
                 }
 
                 /*obtener ids ODS*/
@@ -179,20 +207,25 @@ class FirstSheetImport implements ToModel, WithBatchInserts, WithChunkReading
                 $listGoalsOds=[];
                 $auxGoalsOd = [];
                 $errorOds = [];
-                foreach ($ods as $od){
-                    if (strlen($od)>0){
-                        $id = CatGoalsOds::whereAcronym(trim($od))->whereIsactive(1)->first();
-                        if (isset($id)){
-                            $listGoalsOds[$id->id]=[
-                                'ods_id' => $id->ods_id
-                            ];
-                            array_push($auxGoalsOd ,$id);
-                        }else{
-                            array_push($errorOds,$od);
-                            $col=true;
+                if ($row[7]){
+                    foreach ($ods as $od){
+                        if (strlen($od)>0){
+                            $id = CatGoalsOds::whereAcronym(trim($od))->whereIsactive(1)->first();
+                            if (isset($id)){
+                                $listGoalsOds[$id->id]=[
+                                    'ods_id' => $id->ods_id
+                                ];
+                                array_push($auxGoalsOd ,$id);
+                            }else{
+                                array_push($errorOds,$od);
+                                $col=true;
+                            }
                         }
+                        $id=null;
                     }
-                    $id=null;
+                }else{
+                    array_push($errorOds,'Columna vacía.');
+                    $col=true;
                 }
 
                 /*obtener ids Temas*/
@@ -200,21 +233,27 @@ class FirstSheetImport implements ToModel, WithBatchInserts, WithChunkReading
                 $listThemes=[];
                 $auxTopics = [];
                 $erroreTopics = [];
-                foreach ($themes as $theme){
-                    if (strlen($theme)>0){
-                        $them = CatSubtopic::where('name',trim($theme))->where('isActive',1)->first();
-                        if (isset($them)){
-                            $listThemes[$them['id']]=[
-                                'cat_topic_id' => $them['cat_topic_id']
-                            ];
-                            array_push($auxTopics ,$them);
-                        }else{
-                            array_push($erroreTopics,$theme);
-                            $col=true;
+                if ($row[9]!=null){
+                    foreach ($themes as $theme){
+                        if (strlen($theme)>0){
+                            $them = CatSubtopic::where('name',trim($theme))->where('isActive',1)->first();
+                            if (isset($them)){
+                                $listThemes[$them['id']]=[
+                                    'cat_topic_id' => $them['cat_topic_id']
+                                ];
+                                array_push($auxTopics ,$them);
+                            }else{
+                                array_push($erroreTopics,$theme);
+                                $col=true;
+                            }
+                            $them=null;
                         }
-                        $them=null;
                     }
+                }else{
+                    array_push($erroreTopics,'Columna vacía.');
+                    $col=true;
                 }
+
 
                 $comments = '<p style="font-family: Montserrat; font-size: 14px; font-style: normal; font-weight: normal;">'.trim($row[10]).'</p>';
                 $errorComment = [];
@@ -225,7 +264,7 @@ class FirstSheetImport implements ToModel, WithBatchInserts, WithChunkReading
 
                 $errorAnio = [];
                 if(is_null($row[11])){
-                    array_push($errorAnio,$row[11]);
+                    array_push($errorAnio,'Columna vacía.');
                     $col = true;
                 }
                 $anio = (string)$row[11];
@@ -284,51 +323,56 @@ class FirstSheetImport implements ToModel, WithBatchInserts, WithChunkReading
                 $findRightslll = [];
                 $erroreRights = [];
                 $findRights = [];
-
-                foreach ($derechos as $d){
-                    if (strlen($d)>0){
-                        $find = strpos($d, '2.-');
-                        if ($find===false){
-                            array_push($findRightslll,$d);
-                        }else{
-                            if (substr_count($d, '2.-')>1){
-                                array_push($erroreRights,$d);
-                                $col=true;
+                $auxRightlll = [];
+                $auxRight = [];
+                if ($row[8]!=null){
+                    foreach ($derechos as $d){
+                        if (strlen($d)>0){
+                            $find = strpos($d, '2.-');
+                            if ($find===false){
+                                array_push($findRightslll,$d);
                             }else{
-                                $auxDerecho = explode("2.-", $d);
-                                array_push($findRights,$auxDerecho[1]);
+                                if (substr_count($d, '2.-')>1){
+                                    array_push($erroreRights,$d);
+                                    $col=true;
+                                }else{
+                                    $auxDerecho = explode("2.-", $d);
+                                    array_push($findRights,$auxDerecho[1]);
+                                }
                             }
                         }
                     }
-                }
 
-                $auxRightlll = [];
-                foreach ($findRightslll as $existRightlll){
-                    $id = CatSubcategorySubrights::where('name',trim($existRightlll))->where('isActive',1)->first();
-                    if (isset($id)){
-                        array_push($auxRightlll ,$id);
-                    }else{
-                        array_push($erroreRights,$existRightlll);
-                        $col=true;
-                    }
-                    $id=null;
-                }
 
-                /*obtener ids Derechos lll para arbol*/
-
-                $auxRight = [];
-                foreach ($findRights as $existRight){
-                    $id = CatSubRights::where('name',trim($existRight))->where('isActive',1)->first();
-                    if (isset($id)){
-                        array_push($auxRight ,$id);
-                    }else{
-                        if ($existRight!==""){
-                            array_push($erroreRights,$existRight);
+                    foreach ($findRightslll as $existRightlll){
+                        $id = CatSubcategorySubrights::where('name',trim($existRightlll))->where('isActive',1)->first();
+                        if (isset($id)){
+                            array_push($auxRightlll ,$id);
+                        }else{
+                            array_push($erroreRights,$existRightlll);
+                            $col=true;
                         }
-                        $col=true;
+                        $id=null;
                     }
-                    $id=null;
+
+                    /*obtener ids Derechos lll para arbol*/
+                    foreach ($findRights as $existRight){
+                        $id = CatSubRights::where('name',trim($existRight))->where('isActive',1)->first();
+                        if (isset($id)){
+                            array_push($auxRight ,$id);
+                        }else{
+                            if ($existRight!==""){
+                                array_push($erroreRights,$existRight);
+                            }
+                            $col=true;
+                        }
+                        $id=null;
+                    }
+                }else{
+                    array_push($erroreRights,'Columna vacía.');
+                    $col=true;
                 }
+
 
                 $topics = TopicsTrait::orderTopics($auxTopics );
                 $goalsOds = GoalsOdsTrait::orderOds($auxGoalsOd);

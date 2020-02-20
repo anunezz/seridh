@@ -30,7 +30,7 @@ class CatAttendingSeeder extends Seeder
             ['id' => 15, 'name' => 'Comisión Nacional para Prevenir y Erradicar la Violencia contra las Mujeres', 'acronym' => 'CONAVIM', 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
             ['id' => 16, 'name' => 'Comisión para el Diálogo con los Pueblos Indígenas de México', 'acronym' => 'CDPIM', 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
             ['id' => 17, 'name' => 'Conferencia Nacional de Gobernadores', 'acronym' => 'CONAGO', 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
-            ['id' => 18, 'name' => 'Conferencia Nacional de Procuración de Justicia', 'acronym' => 'CNPJ', 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
+            ['id' => 18, 'name' => 'Conferencia Nacional de Procuración de Justicia', 'acronym' => ' CNPJ', 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
             ['id' => 19, 'name' => 'Conferencia Permanente de Congresos Locales', 'acronym' => 'COPECOL', 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
             ['id' => 20, 'name' => 'Consejería Jurídica del Ejecutivo Federal', 'acronym' => 'CJEF', 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
             ['id' => 21, 'name' => 'Consejo de la Judicatura Federal', 'acronym' => 'CJF', 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],

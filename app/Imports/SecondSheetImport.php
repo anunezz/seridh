@@ -15,7 +15,7 @@ class SecondSheetImport implements ToModel, WithBatchInserts, WithChunkReading
 {
     protected $allGood = [];
     protected $allErrors = [];
-    protected $fila = 1;
+    protected $fila = 2;
 
     public function model(array $row)
     {

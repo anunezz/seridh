@@ -100,7 +100,7 @@ class PublicController extends Controller
             $results = Recommendation::with('right','subright','subcategory','topic.subtop','reportedaction')
                 ->publicConsult($data['params'])
                 ->where('isActive', '=', 1)->where('isPublished', '=', 1)
-                ->orderBy('date', 'desc')
+                ->orderBy('date', 'asc')
                 ->get();
 
 
@@ -703,7 +703,10 @@ class PublicController extends Controller
 
     public function listExcel()
     {
+
+
         return Excel::download(new RecommendationExport(), 'recomendacionesexcel.xlsx');
+
     }
 
     public function listWord()

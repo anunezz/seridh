@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\RecommendationsController;
+use App\Http\Models\Recommendation;
+use Maatwebsite\Excel\Concerns\FromView;
 
 Route::get('recommendations/get/files', 'RecommendationsController@documents');
 Route::get('recommendations/get/public-files', 'RecommendationsController@publicDocuments');
@@ -82,6 +84,7 @@ Route::prefix('public')->group(function () {
     Route::get('get/language','PublicController@getLanguage');
     Route::get('get/language/spanish','PublicController@getSpanish');
     Route::get('filter-documents','PublicController@getDocumentPublic');
+    Route::get('exportRecomendaciones','PublicController@listExcel');
 
 });
 

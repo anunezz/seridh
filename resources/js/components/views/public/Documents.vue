@@ -1,18 +1,25 @@
 <template>
     <div class="container">
+        <nav style="margin-top: 5px!important;" >
+            <!-- <br style="margin-bottom: 200px;"> -->
+            <el-col >
+                <!-- <header-section icon="el-icon-document" title="Documentos"></header-section> -->
+                <h4 class="text-center">Documentos</h4>
+            </el-col>
+            <p></p>
+            <template>
+                <div>
 
-     
-  <div class="row">
-           <div class="col-md-12">
-               <h2>Documentos</h2>
-               <hr>
-           </div>
-
-<div class="col-md-12">
+                </div>
+            </template>
+            <template>
+                <div>
             <el-form size="small" ref="search" :model="search" >
+                <el-row>
+                    <el-col :offset="8" :span="8">
                         <el-form-item>
-                            <el-input style="width: 100%;" placeholder="Búscador de documentos" v-model="search.title">
-                                <el-button :disabled="search.title === null" slot="append" icon="el-icon-search" @click="getByFilter"></el-button>
+                            <el-input placeholder="Búscador de documentos" v-model="search.title">
+                                <el-button :disabled="search.title === null" slot="append" icon="el-icon-search" @click.prevent="getByFilter"></el-button>
                             </el-input>
                             <div style="display: flex; margin-top: 10px; height: 23px;">
                                 <transition v-model="search.title" name="el-fade-in-linear">
@@ -22,54 +29,130 @@
                                 </transition>
                             </div>
                         </el-form-item>
+                    </el-col>
+                </el-row>
             </el-form>
-</div>
+                </div>
+            </template>
 
+            <el-tabs type="border-card">
+                <template>
+                    <el-main style="border-left: 8px solid #E9EEF3 ">
+                        <el-card shadow="never">
+                            <div slot="header">
+                                <p>Archivos agregados</p>
 
+                                <el-col :span="6">
+                                    <el-pagination
+                                        :page-size="parseInt(pagination.perPage)"
+                                        @size-change="handleSizeChange"
+                                        @current-change="handleCurrentChange"
+                                        layout="total"
+                                        :current-page.sync="pagination.currentPage"
+                                        :total="pagination.total">
+                                    </el-pagination>
+                                </el-col>
 
+                                <div class="col-md-12" style="padding-bottom: 50px !important;" v-if="pagination.total === 0 && numero == 3" >
+                                    <div class='alert alert-danger'>
+                                        No se encontraron documentos.
+                                    </div>
+                                </div>
+                                <p></p>
+                                <br></br>
+                                <el-row>
+                                    <el-col :span="6" v-for="(o, index) in documents" :key="index"
+                                            :offset="index > 0 ? 1 : 1">
+                                        <el-card :key="index" shadow="hover" :data="documents" style="height: 500px">
+                                            <div class="col-md" >
+                                               <!-- <iframe class="card-img-top" src="/app/recommendations/files/" alt="Card image cap"></iframe> -->
+                                                <div class="card-body">
+                                                    <h5 class="card-title">{{o.title ? o.title : 'Error al mostrar título'}}</h5>
+                                                    <p class="card-text">
+                                                        {{o.description ? o.description : 'Error al mostrar descripción' }}
+                                                    </p>
+                                                    <p class="card-text">
+                                                        {{o.created_at ? o.created_at : 'Error al mostrar descripción' }}
+                                                    </p>
+                                                    <el-tooltip
+                                                        style="margin-top: 40px"
+                                                        class="item"
+                                                        effect="dark"
+                                                        content="Descargar"
+                                                        placement="top-start">
+                                                        <el-button
+                                                            type="primary"
+                                                            size="mini"
+                                                            icon="el-icon-download"
+                                                            style="background: #9363a0; color: whitesmoke;border-color: #9363a0"
+                                                            @click="downloadDocument(o.id, o.documents.fileNameHash)">
+                                                            Descargar
+                                                        </el-button>
+                                                    </el-tooltip>
+                                          <!--          <el-tooltip
+                                                        class="item"
+                                                        effect="dark"
+                                                        content="Abrir"
+                                                        placement="top-start">
+                                                        <el-button
+                                                            type="primary"
+                                                            size="mini"
+                                                            icon="el-icon-view"
+                                                            @click="showDiv = !showDiv">
+                                                        </el-button>
+                                                    </el-tooltip>
+                                                    <div v-show=showDiv>
+                                                        <iframe class="card-img-bottom" src="/app/recommendations/files/"
+                                                                style="height: 150px; width: 250px;" alt=""></iframe>
+                                                    </div> -->
+                                                </div>
 
-<div class="col-md-12">
-    <el-pagination
-        :page-size="parseInt(pagination.perPage)"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        layout="total"
-        :current-page.sync="pagination.currentPage"
-        :total="pagination.total">
-    </el-pagination>
-</div>
+                                                <div align="right" >
+                                                    <img class="card-img-bottom" src="/img/imagenPdf.png"
+                                                         style="height: 80px; width: 80px;" alt="">
+                                                </div>
+                                            </div>
+                                        </el-card>
+                                    </el-col>
+                                </el-row>
+   <!--                                    <el-table
+                                           size="mini"
+                                           border
+                                           :data="documents"
+                                           style="width: 100%">
+                                           <el-table-column>
+                                               <div class="item">
 
-
-<div class="col-md-12">
-<table class="table">
-  <thead>
-    <tr>
-      <th scope="col">T&iacute;tulo</th>
-      <th scope="col">Descripci&oacute;n</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr v-for="(o, index) in documents" :key="index">
-      <td valign="top" v-text="o.title"></td>
-      <td valign="top" v-text="o.description">Otto</td>
-      <td valign="top">
-        <el-tooltip
-                class="item"
-                effect="dark"
-                content="Descargar"
-                placement="top-start">
-               
-                    <img src="/img/imagenPdf.png" style="height: 40px; width: 40px; cursor:pointer;" @click="downloadDocument(o.id, o.documents.fileNameHash)">
-
-            </el-tooltip>
-      </td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-<div class="col-md-12">
-      <el-pagination
+                                                   <img src="/img/imagenPdf.png" style="height: 54px;" alt="">
+                                               </div>
+                                         </el-table-column>
+                                           <el-table-column
+                                               prop="title"
+                                               label="Documentos">
+                                           </el-table-column>
+                                           <el-table-column
+                                               label="Acciones" header-align="left" align="center" width="200">
+                                               <template slot-scope="scope">
+                                                   <el-tooltip
+                                                       class="item"
+                                                       effect="dark"
+                                                       content="Descargar"
+                                                       placement="top-start">
+                                                       <el-button
+                                                           type="primary"
+                                                           size="mini"
+                                                           icon="el-icon-download"
+                                                           style="background: #9363a0; color: whitesmoke;border-color: #9363a0"
+                                                           @click="downloadDocument(scope.row.id, 'fileName')">
+                                                       </el-button>
+                                                   </el-tooltip>
+                                               </template>
+                                           </el-table-column>
+                                       </el-table>
+-->
+                            </div>
+                            <p></p>
+                            <el-pagination
                                 @size-change="handleSizeChange"
                                 @current-change="handleCurrentChange"
                                 :current-page.sync="pagination.currentPage"
@@ -78,18 +161,12 @@
                                 layout="sizes, ->, prev, pager, next"
                                 :total="pagination.total">
                             </el-pagination>
-</div>
 
-<br>
-<br>
-
-           </div>
-       </div>
-
-
-
-
-
+                        </el-card>
+                    </el-main>
+                </template>
+            </el-tabs>
+        </nav>
     </div>
 </template>
 
@@ -228,7 +305,6 @@
 
             downloadDocument(id) {
                 this.startLoading();
-                console.log('id',id);
                 let params = {responseType: 'blob'};
 
                 axios.get(`/api/public/downloadDocumenPdf/${id}`, {params, responseType: 'blob'}).then(response => {
@@ -287,14 +363,18 @@
 
             getByFilter() {
 
-                let _search = {
-                    filters: this.search,
-                    page: 1,
-                    perPage: this.pagination.perPage,
-
+                let config = {
+                    headers:{
+                        'Content-Type':'application/json',
+                        'Accept':'application/json'
+                    },
+                    params: {
+                        filters: this.search,
+                        page: 1,
+                        perPage: this.pagination.perPage,
+                    }
                 };
-
-                axios.get('/api/public/filter-documents', {params: _search}).then(response => {
+                axios.get('/api/public/filter-documents', config).then(response => {
                     if (response.data.success) {
 
                         this.documents = response.data.files.data;

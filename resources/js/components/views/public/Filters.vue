@@ -501,6 +501,7 @@
                 me.catSolidarityAction();
                 window.scrollTo(0, 0);
             }
+             me.activeLoaing(true);
         },
         mounted() {
         },
@@ -938,7 +939,7 @@
                 };
 
                 axios.post('/api/public/recommendationFilter', data).then(function (response) {
-                    me.activeLoaing(true);
+                    //me.activeLoaing(true);
                     if (response.data.success === true) {
                         me.params = me.advancedsearch[0].filters;
                         me.total = response.data.recommendations.data.length;

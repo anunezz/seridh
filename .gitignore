@@ -5,6 +5,9 @@
 /vendor/
 /.idea
 /.vscode
+/public/mix-manifest.json
 storage/app/recommendations/
 
 storage/app/Recomendaciones.xlsm
+
+public/mix-manifest.json

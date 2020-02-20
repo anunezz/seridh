@@ -1,6 +1,5 @@
 <template>
     <div>
-<!-- Comentario completado sobre el iisue 1 Home -->
 
         <div id="myCarousel" class="carousel slide" data-ride="carousel" style="max-height: 450px;">
             <!-- Indicators -->
@@ -112,19 +111,78 @@
                     </div>
                 </div>
 
-                <div class="row">
+
+
+                <div class="row" v-if="messages.activeSeridh">
+                    <div class="col-md-12">
+                        <h2 :title="lang.header && lang.header.seridh ? lang.header.seridh: '¿Qué es el SERIDH?'">{{lang.header.seridh}}</h2>
+                        <hr class="red small-margin text-justify">
+                        <p :title="lang.header && lang.header.messagesSeridh ? lang.header.messagesSeridh: '¿Qué es el SERIDH?'">
+                            <span v-html="messages.seridh"></span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="row" v-if="messages.activeUndersecretary">
+                    <div class="col-md-12">
+                        <h2 :title="lang.header && lang.header.undersecretary ? lang.header.undersecretary: '¿Qué es el SERIDH?'">{{lang.header.undersecretary}}</h2>
+                        <hr class="red small-margin">
+                    </div>
+                    <div  style="padding: 20px;">
+                        <img style="float:left;margin-right: 25px;" :src="messages.path_undersecretary[0].url" width="165px" height="165px" class="img-responsive" alt="subsecretaria">
+                        <span v-html="messages.undersecretary"></span>
+                    </div>
+                </div>
+
+                <br>
+
+                <div class="row" v-if="messages.activeDgdhd">
+                    <div class="col-md-12">
+                        <h2 :title="lang.header && lang.header.dgdhd ? lang.header.dgdhd: 'Mensaje de la DGDHD'">{{lang.header.dgdhd}}</h2>
+                        <hr class="red small-margin">
+                    </div>
+                    <div style="padding: 20px;">
+                        <img style="float:left;margin-right: 25px;" width="165px" height="165px" :src="messages.path_dgdhd[0].url"  alt="dgdh">
+                        <span v-html="messages.dgdhd"></span>
+                    </div>
+                </div>
+
+
+
+                <!-------    Busqueda Avnzada de recomendaciones ---->
+                <div class="row" style="padding-top: 50px;">
                     <div class="col-md-12 col-sm-12">
                         <h2 :title="lang.header && lang.header.search ? lang.header.search: 'Búsqueda'">{{lang.header.search}}</h2>
                         <hr class="red small-margin">
                     </div>
 
-                    <div class="col-md-12" v-show="advancedsearch.length > 0">
-                        <a  style="margin:20px; cursor:pointer;" @click="advancedSearch()"
-                            :title="lang.header && lang.header.previous ? lang.header.previous: 'Búsqueda anterior'">{{lang.header.previous}}</a>
-                    </div>
+    
                     <div class="col-md-12">
                         <div class="panel-body animated fadeIn fast">
                             <div class="card">
+                            <div>
+                                <div class="" style="
+                                width: 100%;
+                                display: flex;
+                                flex-wrap: wrap;
+                                justify-content: space-between;
+                                vertical-align: middle;
+                                text-align: center;
+                                overflow: hidden;
+                                align-items: center;">
+
+                                        <a v-if="advancedsearch.length > 0" style="color:black; margin-left:20px; text-decoration:none; cursor:pointer;" @click="advancedSearch()"
+                                        :title="lang.header && lang.header.previous ? lang.header.previous: 'Búsqueda anterior'"> <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> {{lang.header.previous}}</a>
+                                        <a v-else></a>
+
+                                        <!-- <el-checkbox :label="filters.exclusion" @change="filters.exclusion = !filters.exclusion " style="margin-top: 8px; right: 10%;">
+                                            B&uacute;squeda por exclusi&oacute;n
+                                        </el-checkbox> -->
+                                       <a @click="info = !info" style="margin: 8px 2% 0px 0px; cursor: pointer; color:black; text-decoration:none;"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> Click para mayor información</a>     
+                                </div>
+                            </div>
+
+
                                 <div class="card-body" style="padding: 7px 10px 7px 20px; !important">
                                     <div class="row">
                                         <div class="col-md-4" v-for="(item,index) in arrayFilter" :key="index" style="padding-bottom: 5px;">
@@ -145,6 +203,19 @@
                                     </div>
                                 </div>
                             </div>
+
+
+
+
+
+
+                             <div class="card animated fadeIn fast" v-show="info === true">
+                                <div class="card-body col-md-12" style="padding: 5px 30px 5px 30px; border: 1px solid black; background: #DDDDDD; font-style: italic;">
+                               fghfghfghfghfgh
+                                </div>
+                            </div>
+
+
 
                             <div class="card animated fadeIn fast" v-if="cardCheckbox === true && btnSelect !== 3 && btnSelect !== 6" >
                                 <div class="card-body col-md-12" style="padding: 20px;">
@@ -280,42 +351,10 @@
                     </div>
                 </div>
 
-                <div class="row" v-if="messages.activeSeridh">
-                    <div class="col-md-12">
-                        <h2 :title="lang.header && lang.header.seridh ? lang.header.seridh: '¿Qué es el SERIDH?'">{{lang.header.seridh}}</h2>
-                        <hr class="red small-margin text-justify">
-                        <p :title="lang.header && lang.header.messagesSeridh ? lang.header.messagesSeridh: '¿Qué es el SERIDH?'">
-                            <span v-html="messages.seridh"></span>
-                        </p>
-                    </div>
-                </div>
+                <!-------  Fin de Busqueda Avnzada de recomendaciones ---->
 
-                <div class="row" v-if="messages.activeUndersecretary">
-                    <div class="col-md-12">
-                        <h2 :title="lang.header && lang.header.undersecretary ? lang.header.undersecretary: '¿Qué es el SERIDH?'">{{lang.header.undersecretary}}</h2>
-                        <hr class="red small-margin">
-                    </div>
-                    <div  style="padding: 20px;">
-                        <img style="float:left;margin-right: 25px;" :src="messages.path_undersecretary[0].url" width="165px" height="165px" class="img-responsive" alt="subsecretaria">
-                        <span v-html="messages.undersecretary"></span>
-                    </div>
-                </div>
 
-                <br>
-
-                <div class="row" v-if="messages.activeDgdhd">
-                    <div class="col-md-12">
-                        <h2 :title="lang.header && lang.header.dgdhd ? lang.header.dgdhd: 'Mensaje de la DGDHD'">{{lang.header.dgdhd}}</h2>
-                        <hr class="red small-margin">
-                    </div>
-                    <div style="padding: 20px;">
-                        <img style="float:left;margin-right: 25px;" width="165px" height="165px" :src="messages.path_dgdhd[0].url"  alt="dgdh">
-                        <span v-html="messages.dgdhd"></span>
-                    </div>
-                </div>
-                <br>
-
-                <div class="row">
+                <div class="row" style="padding-top: 50px;">
                     <div class="col-md-12">
                         <h2 :title="lang.header && lang.header.statistics ? lang.header.statistics: 'Estadísticas básicas'">{{lang.header.statistics}}</h2>
                         <hr class="red small-margin">
@@ -400,49 +439,6 @@
 
                 <br><br>
 
-                <!--<div class="col-md-12">
-
-                    <h2>Aliados</h2>
-                    <hr class="red small-margin">
-                    <div class="row categorias">
-                        <div class="col-md-4"></div>
-                        <div class="col-sm-4 col-md-4 col-lg-4">
-                            <div class="card text-center card-gob">
-                                <div class="titulocategoria">
-                                    <div style="background: #2769c6;padding: 1em;">
-                                        <img data-v-ce5e9132="" src="img/logo-onu.png" alt="">
-                                    </div>
-                                    <h4 data-v-ce5e9132="" class="card-title">
-                                        Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                                    </h4>
-                                    <br/>
-                                    <a href="https://www.un.org/es" target="_blank" class="btn btn-primary btn-xs pull-center active" style="width:40%; margin: 7px auto;">Ir al enlace</a>
-
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4"></div>-->
-
-                        <!-- <div class="col-sm-6 col-md-6 col-lg-3">
-                            <div class="card text-center card-gob">
-                                <div class="titulocategoria">
-                                    <div style="background: #0468b1;padding: 1em;">
-                                        <img data-v-ce5e9132="" src="img/pnud-logo-30.svg" style="height: 54px;" alt="">
-                                    </div>
-                                    <h4 data-v-ce5e9132="" class="card-title">
-                                        Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                                    </h4>
-                                    <br/>
-                                    <div style="width:40%; margin: 7px auto;"></div>
-
-                                </div>
-                            </div>
-                        </div> -->
-
-                   <!-- </div>
-
-
-                </div>-->
                 <div class="col-md-12">
                     <h2 :title="lang.header && lang.header.allies ? lang.header.allies: 'Estadísticas básicas'">{{lang.header.allies}}</h2>
                     <hr class="red small-margin">
@@ -510,6 +506,7 @@
           components: {Carousel3d,Slide,HeaderSection,},
         data() {
             return {
+                info: false,
                 cacheTopics:[],
                 cacheRights:[],
                 cacheOds:[],
@@ -523,7 +520,8 @@
                     rights: [],
                     topics: [],
                     ods: [],
-                    actions:[]
+                    actions:[],
+                    exclusion:false
                 },
                 varEntidad: null,
                 charEntidad: null,

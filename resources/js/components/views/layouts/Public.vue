@@ -3,6 +3,31 @@
          element-loading-text="Esperando..."
          element-loading-spinner="el-icon-loading"
          style="width: 100%">
+
+
+
+<!-- <div class="custom-splash" v-show="animate === true">
+			<div id="splash_cont" class="animate">
+				<svg height="400" width="400" xmlns="http://www.w3.org/2000/svg">
+					<circle class="circle" cx="200" cy="200" r="195"></circle>
+				</svg>
+				<img id="ruby" src="img/sre_vert.svg" alt="" width="65%"/>
+			</div>
+		</div> -->
+
+
+        <!-- <el-container
+				v-loading.fullscreen.lock="status"
+				:element-loading-text="message"
+				element-loading-background="rgba(255, 255, 255, 0.75)"
+				:class="{ 'blur': animate === true }">
+
+			<vue-progress-bar></vue-progress-bar>
+
+         </el-container> -->
+
+
+
         <el-backtop :visibility-height="500"/>
         <nav class="navbar navbar-inverse sub-navbar fixed-top" style="margin-top: 50px!important;">
             <div class="container">
@@ -27,11 +52,17 @@
                                 Documentos
                             </a>
                         </li>
+                        <li class="landing-btn">
+                            <a @click="exportExcel()" style="cursor: pointer;">
+                                Exportar Excel
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
         </nav>
         <router-view></router-view>
+       
     </div>
 </template>
 
@@ -42,7 +73,9 @@
     export default {
         data() {
             return {
-
+                show: false,
+				animate: true,
+				showStatus :false
             };
         },
 
@@ -53,6 +86,7 @@
         created(){
             this.startLoading();
             this.stopLoading();
+
         },
         methods: {
             ...mapActions("publico", ['addVisits','activeLoaing','addCats','addColors']),
@@ -87,6 +121,27 @@
                         title: 'Error',
                         message: 'No se pudo completar la acción count()'
                     });
+                });
+            },
+            exportExcel(){
+            let me = this;
+                me.activeLoaing(true);
+                axios({ responseType: 'blob',
+                    method: 'GET',
+                    headers: { 'Authorization': 'Bearer ' +localStorage.getItem('token'),}  ,
+                    url: '/api/public/exportRecomendaciones'}).then(function (response) {
+                    setTimeout(item=>{
+                        const url = window.URL.createObjectURL(new Blob([response.data]));
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.setAttribute('download','ExportExcel.xlsx');
+                        document.body.appendChild(link);
+                        link.click();
+                        me.activeLoaing(false);
+                    },200);
+
+                }).catch(function (error) {
+                    me.activeLoaing(false);
                 });
             }
         },
@@ -1565,6 +1620,392 @@
     .active {
         display: block;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Content wrapper */
+	.content-wrapper {
+		height: 100%;
+		background-image: url(/img/sre_white.png);
+
+		background-repeat: no-repeat;
+		background-size: cover;
+		width: 100% !important;
+
+	}
+
+	.header-title-home {
+		font-size: 14px;
+		color: rgb(255, 255, 255);
+		margin-top: 15px;
+	}
+
+	.el-button {
+		border-bottom-right-radius: 0px;
+		border-bottom-left-radius: 0px;
+		border-bottom: none;
+		box-shadow: none;
+		font-weight: bold;
+	}
+
+	.logo-sre2 {
+		/*background: url(/img/SRE_HORIZONTAL_FCFT.png) no-repeat;*/
+		background-size: contain;
+		height: 40px;
+		width: 100px;
+		overflow: hidden;
+		margin-top: 10px;
+		margin-left: 5px;
+	}
+
+	.bannerMain {
+		/*background-image:url('/img/login/sre_white.png');*/
+		background-repeat: no-repeat;
+		background-size: cover;
+		width: 100% !important;
+	}
+
+	@media screen and ( min-height: 768px ) {
+		/* Content */
+		.el-container {
+			height: 768px
+		}
+	}
+
+	@media screen and ( min-height: 896px ) {
+		/* Content */
+		.el-container {
+			height: 896px
+		}
+	}
+
+	@media screen and ( min-height: 912px ) {
+		/* Content */
+		.el-container {
+			height: 912px
+		}
+	}
+
+	@media screen and ( min-height: 1024px ) {
+		/* Content */
+		.el-container {
+			height: 1024px
+		}
+	}
+
+	@media screen and ( min-height: 1180px ) {
+		/* Content */
+		.el-container {
+			height: 1180px
+		}
+	}
+
+	@media screen and ( min-height: 1280px ) {
+		/* Content */
+		.el-container {
+			height: 1280px
+		}
+	}
+
+	.el-menu-item {
+
+		border-bottom: none !important;
+	}
+
+	.el-menu-item:focus, .el-menu-item:hover {
+		outline: 0;
+		background-color: rgba(0, 0, 0, 0.2) !important;
+	}
+
+	.el-menu-item.border-menu-item.is-active {
+		border-color: rgba(0, 0, 0, 0.1) !important;
+	}
+
+	.wabble-effect:nth-child(2n) {
+		animation: keyframes1;
+		animation-iteration-count: infinite;
+		transform-origin: 50% 10%;
+		animation-delay: -0.75s;
+		animation-duration: .25s
+	}
+
+	.wabble-effect:nth-child(2n-1) {
+		animation-name: keyframes2;
+		animation-iteration-count: infinite;
+		animation-direction: alternate;
+		transform-origin: 30% 5%;
+		animation-delay: -0.75s;
+		animation-duration: .25s
+	}
+
+	@keyframes keyframes1 {
+		0% {
+			transform: rotate(-1deg);
+			animation-timing-function: ease-in;
+		}
+		50% {
+			transform: rotate(1.5deg);
+			animation-timing-function: ease-out;
+		}
+	}
+
+	@keyframes keyframes2 {
+		0% {
+			transform: rotate(1deg);
+			animation-timing-function: ease-in;
+		}
+		50% {
+			transform: rotate(-1.5deg);
+			animation-timing-function: ease-out;
+		}
+	}
+
+
+
+	/*//Animatae*/
+
+	.blur {
+		background: #fff;
+		-webkit-filter: blur(5px);
+		-moz-filter: blur(5px);
+		-o-filter: blur(5px);
+		-ms-filter: blur(5px);
+		filter: blur(5px);
+	}
+
+	.custom-splash {
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+
+		z-index: 9999;
+
+	}
+
+	#splash_cont {
+		background: rgba(255, 255, 255, 0.52);
+		position: relative;
+		z-index: 9999999;
+	}
+
+	#splash_cont.animate {
+
+		height: 400px;
+		width: 400px;
+		position: relative;
+		border-radius: 50%;
+		margin: 0 auto;
+		top: 45%;
+		-webkit-transform: translateY(-50%);
+		transform: translateY(-50%);
+		-webkit-animation: move-ruby 0.7s ease 2.4s forwards;
+		animation: move-ruby 0.7s ease 2.4s forwards;
+	}
+
+	#splash_cont.animate #ruby {
+		position: absolute;
+		top: 125px;
+		left: 64.5px;
+		-webkit-transform: scale(0);
+		transform: scale(0);
+		-webkit-animation: scale-ruby 0.48s ease 0s forwards;
+		animation: scale-ruby 0.48s ease 0s forwards;
+	}
+
+	#splash_cont.animate .circle {
+		fill: rgba(254, 82, 79, 0);
+		stroke: rgba(254, 82, 79, 0);
+		stroke-width: 4;
+		stroke-dasharray: 1228;
+		stroke-dashoffset: 0;
+		-webkit-transform-origin: 50% 50%;
+		transform-origin: 50% 50%;
+		-webkit-transform: rotate(-90deg);
+		transform: rotate(-90deg);
+		-webkit-animation: animate-ruby-circle 1.3s ease 0.3s forwards;
+		animation: animate-ruby-circle 1.3s ease 0.3s forwards;
+	}
+
+	#splash_cont.animate #splash_title {
+		text-align: center;
+		font-weight: 500;
+		font-size: 1.75em;
+		color: rgba(80, 80, 80, 0);
+		-webkit-animation: splash_title 1.2s ease 1.2s forwards;
+		animation: splash_title 1.2s ease 1.2s forwards;
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		width: 100%;
+		-webkit-transform: translateY(150%);
+		transform: translateY(150%);
+	}
+
+	@-webkit-keyframes scale-ruby {
+		0% {
+			-webkit-transform: scale(0);
+			transform: scale(0);
+			top: 125px;
+		}
+		60% {
+			-webkit-transform: scale(1.25);
+			transform: scale(1.25);
+			top: 120px;
+		}
+		100% {
+			-webkit-transform: scale(1);
+			transform: scale(1);
+			top: 125px;
+		}
+	}
+
+	@keyframes scale-ruby {
+		0% {
+			-webkit-transform: scale(0);
+			transform: scale(0);
+			top: 125px;
+		}
+		60% {
+			-webkit-transform: scale(1.25);
+			transform: scale(1.25);
+			top: 120px;
+		}
+		100% {
+			-webkit-transform: scale(1);
+			transform: scale(1);
+			top: 125px;
+		}
+	}
+
+	@-webkit-keyframes animate-ruby-circle {
+		0% {
+			stroke-dashoffset: 1228;
+			stroke: #dfcdb2;
+		}
+		70% {
+			stroke: #c9af8d;
+			stroke-width: 4;
+		}
+		90% {
+			stroke-dashoffset: 0;
+		}
+		100% {
+			stroke-dashoffset: 0;
+			stroke: #dec4a1;
+			stroke-width: 10;
+		}
+	}
+
+	@keyframes animate-ruby-circle {
+		0% {
+			stroke-dashoffset: 1228;
+			stroke: #dfcdb2;
+		}
+		70% {
+			stroke: #c9af8d;
+			stroke-width: 4;
+		}
+		90% {
+			stroke-dashoffset: 0;
+		}
+		100% {
+			stroke-dashoffset: 0;
+			stroke: #dec4a1;
+			stroke-width: 10;
+		}
+	}
+
+	@-webkit-keyframes splash_title {
+		0% {
+			color: rgba(80, 80, 80, 0);
+		}
+		18% {
+			color: #505050;
+		}
+		65% {
+			color: #505050;
+		}
+		100% {
+			color: rgba(80, 80, 80, 0);
+		}
+	}
+
+	@keyframes splash_title {
+		0% {
+			color: rgba(80, 80, 80, 0);
+		}
+		18% {
+			color: #505050;
+		}
+		65% {
+			color: #505050;
+		}
+		100% {
+			color: rgba(80, 80, 80, 0);
+		}
+	}
+
+	@-webkit-keyframes move-ruby {
+		0% {
+			opacity: 1;
+			top: 45%;
+			-webkit-transform: scale(1) translateY(-50%);
+			transform: scale(1) translateY(-50%);
+		}
+		20% {
+			opacity: 1;
+		}
+		100% {
+			opacity: 0;
+			top: 35%;
+			-webkit-transform: scale(0.01) translateY(-280%);
+			transform: scale(0.01) translateY(-280%);
+		}
+	}
+
+	@keyframes move-ruby {
+		0% {
+			opacity: 1;
+			top: 45%;
+			-webkit-transform: scale(1) translateY(-50%);
+			transform: scale(1) translateY(-50%);
+		}
+		20% {
+			opacity: 1;
+		}
+		100% {
+			opacity: 0;
+			top: 35%;
+			-webkit-transform: scale(0.01) translateY(-280%);
+			transform: scale(0.01) translateY(-280%);
+		}
+	}
+
+
 
 
 </style>

@@ -2,18 +2,26 @@
 
 namespace App\Exports;
 
-//use App\Invoice;
-use Illuminate\Contracts\View\View;
-use Maatwebsite\Excel\Concerns\FromView;
-use App\Http\Models\Recommendation;
 
-class RecommendationExport implements FromView
+use Maatwebsite\Excel\Concerns\WithMultipleSheets;
+use Maatwebsite\Excel\Concerns\Exportable;
+
+class RecommendationExport implements WithMultipleSheets
+
 {
-    public function view(): View
+    use Exportable;
+
+    public function sheets(): array
     {
-        return view('files.recommendationexcel', [
-            'response' => Recommendation::all()
-        ]);
+       $sheets = [];
+
+       $sheets[] = new RecommendationsExport();
+       $sheets[] = new RecommendationsExport();
+       return $sheets;
     }
+
+
+
+
 }
 

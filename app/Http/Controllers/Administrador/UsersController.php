@@ -22,6 +22,8 @@ class UsersController extends Controller
                 $users = User::with('profile')
                     ->search($data['search'])
                     ->where('isActive', true)
+                    ->where('id','!=',1)
+                    ->where('id','!=',2)
                     ->orderBy('cat_profile_id', 'DESC')
                     ->paginate($data['perPage']);
 

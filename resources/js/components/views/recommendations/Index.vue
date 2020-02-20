@@ -715,6 +715,11 @@
                         this.addRows(response.filas);
                         this.totalErrors = response.filas.length;
                         this.errorCarga = true;
+                    }else {
+                        this.$message({
+                            type: 'success',
+                            message: 'Se cargaron las recomendaciones con éxito'
+                        });
                     }
                     this.stopLoading();
                 } else {

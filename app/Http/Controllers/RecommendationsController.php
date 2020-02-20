@@ -794,12 +794,12 @@ class RecommendationsController extends Controller
         try {
             DB::beginTransaction();
 
-            $path = '/';
+            /*$path = '/';
             $document = $request->document;
 
-            $document->storeAs($path, 'Recomendaciones.xlsm');
+            $document->storeAs($path, 'Recomendaciones.xlsm');*/
 
-            Excel::import(new RecommendationsImport, 'Recomendaciones.xlsm');
+            Excel::import(new RecommendationsImport, $request->document);
             DB::commit();
 
             $erros = session('errorMasivo');

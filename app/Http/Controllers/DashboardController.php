@@ -51,7 +51,7 @@ class DashboardController extends Controller
                 $CatAttending = CatAttending::where('isActive', '=', 1)
                 ->orderBy('acronym', 'ASC')->get();
                 $catsattending = [];
-                
+
                 $authority = array_count_values($authority);
                 $DATAreportadasAuthority = array_count_values($dataReportadasAuthority);
                 $datosReportadasAuthority = [];
@@ -73,7 +73,7 @@ class DashboardController extends Controller
                             array_push($datosReportadasAuthority, ["name" => $key, "count" => $value]);
                         }
                     }
-                     
+
                     if ($aux2 === 1) {
                         array_push($datosReportadasAuthority, ["name" => $v->acronym, "count" => 0]);
                     }
@@ -82,7 +82,7 @@ class DashboardController extends Controller
                         array_push($dataAuthority, ["name" => $v->acronym, "count" => 0]);
                     }
                 }
-             
+
 
                 $parentOds = [];
                 for ($i = 0; $i < count($recommendationOds); $i++) {
@@ -167,7 +167,7 @@ class DashboardController extends Controller
                     ->where('isActive', '=', 1)
                     ->where('isPublished', '=', 1)
                     ->groupBy('date')
-                    ->orderBy('total', 'ASC')
+                    ->orderBy('date', 'ASC')
                     ->get(['fecha', 'total']);
 
 
