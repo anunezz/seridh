@@ -40,6 +40,13 @@ class CatEntitySeeder extends Seeder
                 'acronym' => 'CERD',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
+            ],
+            [
+                'id' => 5,
+                'name' => 'Comité de Derechos Económicos, Sociales y Culturales',
+                'acronym' => 'CDESC',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ]
         ]);}
 

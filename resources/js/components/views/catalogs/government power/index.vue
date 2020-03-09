@@ -7,7 +7,15 @@
                         Nuevo registro
                     </el-button>
                 </el-col>
-
+                <el-col :span="10" :offset="1">
+                    <el-input
+                        clearable
+                        suffix-icon="fas fa-search"
+                        placeholder="Buscar por nombre"
+                        v-model="search"
+                        @change="getPowers(search)">
+                    </el-input>
+                </el-col>
             </template>
         </header-section>
 
@@ -55,16 +63,45 @@
                                         @click="openEditDialog(scope.$index, scope.row.hash, scope.row.name)">
                                     </el-button>
                                 </el-tooltip>
+                                <el-tooltip v-if="scope.row.is_used" placement="right-start">
+                                    <div slot="content">
+                                        Este elemento no se puede eliminar dado que
+                                        <br/>
+                                        esta siendo utilizado por una recomendación
+                                    </div>
+                                    <span>
+                                        <el-button
+                                            type="danger"
+                                            size="mini"
+                                            icon="fas fa-trash"
+                                            disabled>
+                                        </el-button>
+                                    </span>
+                                </el-tooltip>
                                 <el-tooltip
+                                    v-if="! scope.row.is_used && scope.row.isActive"
                                     class="item"
                                     effect="dark"
                                     content="Eliminar"
-                                    placement="top-start">
+                                    placement="right-start">
                                     <el-button
-                                        size="mini"
                                         type="danger"
+                                        size="mini"
                                         icon="fas fa-trash"
                                         @click="disableDialog(scope.row.hash)">
+                                    </el-button>
+                                </el-tooltip>
+                                <el-tooltip
+                                    v-if="! scope.row.is_used && ! scope.row.isActive"
+                                    class="item"
+                                    effect="dark"
+                                    content="Habilitar"
+                                    placement="right-start">
+                                    <el-button
+                                        type="success"
+                                        size="mini"
+                                        icon="fas fa-check"
+                                        @click="enableRegister(scope.row.hash)">
                                     </el-button>
                                 </el-tooltip>
                             </el-button-group>
@@ -129,7 +166,7 @@
             <h3>¿Está seguro que quiere eliminar este registo?</h3>
             <span slot="footer" class="dialog-footer">
                 <el-button type="danger" @click="removeDialog = false">Cancelar</el-button>
-                <el-button type="success" @click="disablePower(removeHash)">Aceptar</el-button>
+                <el-button type="success" @click="disableRegister(removeHash)">Aceptar</el-button>
             </span>
         </el-dialog>
     </div>
@@ -178,36 +215,6 @@
         },
 
         created() {
-            this.startLoading();
-            axios.get('/api/recommendations/create').then(response => {
-                this.ods = response.data.ods;
-                this.entities = response.data.entities;
-                this.orders = response.data.orders;
-                this.powers = response.data.powers;
-                this.attendings = response.data.attendings;
-                this.rights = response.data.rights;
-                this.populations = response.data.populations;
-                this.actions = response.data.actions;
-                this.topics = response.data.topics;
-                //    this.subtopics = response.data.subtopics;
-                this.ods = response.data.ods;
-                this.dates = response.data.dates;
-                this.tree = response.data.tree;
-                this.stopLoading();
-                if (this.indexEdit!=null){
-                    this.errorData(this.indexEdit);
-                }
-
-            }).catch(error => {
-                this.stopLoading();
-
-                this.$message({
-                    type: "warning",
-                    message: "No fue posible completar la acción, intente nuevamente."
-                });
-            });
-
-
             this.getPowers();
         },
 
@@ -230,10 +237,10 @@
 
                     if (response.data.success) {
 
-                        this.powers = response.data.power.data;
-                        this.pagination.total = response.data.power.total;
-                        this.pagination.currentPage = response.data.power.current_page;
-                        this.pagination.perPage = response.data.power.per_page;
+                        this.powers = response.data.elements.data;
+                        this.pagination.total = response.data.elements.total;
+                        this.pagination.currentPage = response.data.elements.current_page;
+                        this.pagination.perPage = response.data.elements.per_page;
 
                         this.stopLoading();
                     }
@@ -394,7 +401,52 @@
                         this.getPowers();
                     })
                     .catch(_ => {});
-            }
+            },
+            disableRegister(id) {
+                this.startLoading();
+
+                let data ={id: id, cat: 3};
+
+                axios.post('/api/cats/disable-register', data).then(response => {
+                    this.$notify({
+                        type: "success",
+                        message: "El registro se eliminó con éxito."
+                    });
+
+                    this.getPowers();
+                    this.removeDialog = false;
+                    this.removeHash = null;
+                }).catch(error => {
+                    this.stopLoading();
+
+                    this.$notify({
+                        type: "warning",
+                        message: "No fue posible completar la acción, intente nuevamente."
+                    });
+                });
+            },
+
+            enableRegister(id) {
+                this.startLoading();
+
+                let data ={id: id, cat: 3};
+
+                axios.post('/api/cats/enable-register', data).then(response => {
+                    this.$notify({
+                        type: "success",
+                        message: "El registro se habilito con éxito."
+                    });
+
+                    this.getPowers();
+                }).catch(error => {
+                    this.stopLoading();
+
+                    this.$notify({
+                        type: "warning",
+                        message: "No fue posible completar la acción, intente nuevamente."
+                    });
+                });
+            },
         },
     }
 </script>

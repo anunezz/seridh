@@ -3,7 +3,7 @@
 namespace App\Exports;
 
 use Maatwebsite\Excel\Concerns\FromCollection;
-
+use App\Http\Models\Recommendation;
 
 class RecommendationsExport implements FromCollection
 
@@ -14,9 +14,15 @@ class RecommendationsExport implements FromCollection
     {
         $collection = collect();
 
-        return $collection->push([
-           'hola'
-       ]);
+        $results = Recommendation::get();
+
+        foreach ($results as  $value) {
+            $collection->push([
+                $value->recommendation
+            ]);
+        }
+
+        return $collection;
     }
 
 

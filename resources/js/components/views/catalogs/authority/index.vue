@@ -2,7 +2,20 @@
     <div>
         <header-section icon="el-icon-document" title="Autoridad encargada de atender">
             <template slot="buttons">
-
+                <el-col :span="5" :offset="7">
+                    <el-button type="success" @click="newAutority" style="width: 100%">
+                        Nuevo registro
+                    </el-button>
+                </el-col>
+                <el-col :span="10" :offset="1">
+                    <el-input
+                        clearable
+                        suffix-icon="fas fa-search"
+                        placeholder="Buscar por nombre o siglas"
+                        v-model="search"
+                        @change="getAttendings(search)">
+                    </el-input>
+                </el-col>
             </template>
         </header-section>
 
@@ -24,7 +37,7 @@
         <p></p>
         <br>
         <el-row :gutter="20">
-                <el-col :span="24">
+            <!--    <el-col :span="24">
                     <el-card class="box-card">
 
                         <div  class="text item" :body-style="{ width: '100%' }" style="float:right; padding: 0px 0px 20px 0px;">
@@ -39,7 +52,7 @@
                             </el-tooltip>
                         </div>
 
-                        <!-- <div style="margin-top: 15px;">
+                         <div style="margin-top: 15px;">
                         <el-input placeholder="Buscar por Autoridad encargada de atender" v-model="advancedText" class="input-with-select" clearable>
                             <el-select v-model="advancedSelect" slot="prepend" placeholder="Búsqueda avanzada" style="width: 200px;">
                                 <el-option label="Mostrar Todo" value="all"></el-option>
@@ -48,10 +61,10 @@
                             </el-select>
                             <el-button slot="append" icon="el-icon-search" @click="advancedSearch(advancedSelect,advancedText)"></el-button>
                         </el-input>
-                        </div> -->
+                        </div>
 
                     </el-card>
-                </el-col>
+                </el-col>   -->
             <el-col :span="24">
                 <el-table
                     :data="attendings"
@@ -82,16 +95,45 @@
                                         @click="openEditDialog(scope.$index, scope.row.hash, scope.row.name, scope.row.acronym)">
                                     </el-button>
                                 </el-tooltip>
+                                <el-tooltip v-if="scope.row.is_used" placement="right-start">
+                                    <div slot="content">
+                                        Este elemento no se puede eliminar dado que
+                                        <br/>
+                                        esta siendo utilizado por una recomendación
+                                    </div>
+                                    <span>
+                                        <el-button
+                                            type="danger"
+                                            size="mini"
+                                            icon="fas fa-trash"
+                                            disabled>
+                                        </el-button>
+                                    </span>
+                                </el-tooltip>
                                 <el-tooltip
+                                    v-if="! scope.row.is_used && scope.row.isActive"
                                     class="item"
                                     effect="dark"
                                     content="Eliminar"
-                                    placement="top-start">
+                                    placement="right-start">
                                     <el-button
-                                        size="mini"
                                         type="danger"
+                                        size="mini"
                                         icon="fas fa-trash"
                                         @click="disableDialog(scope.row.hash)">
+                                    </el-button>
+                                </el-tooltip>
+                                <el-tooltip
+                                    v-if="! scope.row.is_used && ! scope.row.isActive"
+                                    class="item"
+                                    effect="dark"
+                                    content="Habilitar"
+                                    placement="right-start">
+                                    <el-button
+                                        type="success"
+                                        size="mini"
+                                        icon="fas fa-check"
+                                        @click="enableRegister(scope.row.hash)">
                                     </el-button>
                                 </el-tooltip>
                             </el-button-group>
@@ -181,7 +223,7 @@
             <h3>¿Está seguro que quiere eliminar este registo?</h3>
             <span slot="footer" class="dialog-footer">
                 <el-button type="danger" @click="removeDialog = false">Cancelar</el-button>
-                <el-button type="success" @click="disableAuthority(removeHash)">Aceptar</el-button>
+                <el-button type="success" @click="disableRegister(removeHash)">Aceptar</el-button>
             </span>
         </el-dialog>
     </div>
@@ -278,7 +320,8 @@
                     params: {
                         page: currentPage,
                         perPage: this.pagination.perPage,
-                        search: this.search
+                        search: this.search,
+                        cat: 4
                     }
                 };
 
@@ -286,10 +329,10 @@
 
                     if (response.data.success) {
 
-                        this.attendings = response.data.attendig.data;
-                        this.pagination.total = response.data.attendig.total;
-                        this.pagination.currentPage = response.data.attendig.current_page;
-                        this.pagination.perPage = response.data.attendig.per_page;
+                        this.attendings = response.data.elements.data;
+                        this.pagination.total = response.data.elements.total;
+                        this.pagination.currentPage = response.data.elements.current_page;
+                        this.pagination.perPage = response.data.elements.per_page;
 
                         this.stopLoading();
                     }
@@ -473,7 +516,52 @@
                         this.getAttendings();
                     })
                     .catch(_ => {});
-            }
+            },
+            disableRegister(id) {
+                this.startLoading();
+
+                let data ={id: id, cat: 4};
+
+                axios.post('/api/cats/disable-register', data).then(response => {
+                    this.$notify({
+                        type: "success",
+                        message: "El registro se eliminó con éxito."
+                    });
+
+                    this.getAttendings();
+                    this.removeDialog = false;
+                    this.removeHash = null;
+                }).catch(error => {
+                    this.stopLoading();
+
+                    this.$notify({
+                        type: "warning",
+                        message: "No fue posible completar la acción, intente nuevamente."
+                    });
+                });
+            },
+
+            enableRegister(id) {
+                this.startLoading();
+
+                let data ={id: id, cat: 4};
+
+                axios.post('/api/cats/enable-register', data).then(response => {
+                    this.$notify({
+                        type: "success",
+                        message: "El registro se habilito con éxito."
+                    });
+
+                    this.getAttendings();
+                }).catch(error => {
+                    this.stopLoading();
+
+                    this.$notify({
+                        type: "warning",
+                        message: "No fue posible completar la acción, intente nuevamente."
+                    });
+                });
+            },
         },
     }
 </script>

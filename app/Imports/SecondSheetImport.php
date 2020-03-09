@@ -9,8 +9,8 @@ use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use stdClass;
+use function GuzzleHttp\Psr7\str;
 
-/*ini_set('memory_limit', '1024M');*/
 class SecondSheetImport implements ToModel, WithBatchInserts, WithChunkReading
 {
     protected $allGood = [];
@@ -19,14 +19,20 @@ class SecondSheetImport implements ToModel, WithBatchInserts, WithChunkReading
 
     public function model(array $row)
     {
+        $emptyRow = true;
+        for ($i=1;$i<6;$i++){
+            if (trim($row[$i]) != null){
+                $emptyRow = false;
+            }
+        }
+        if(!$emptyRow){
             if ((trim($row[0]) != "No. fila de recomendación") && (trim($row[5]) != "Ejemplo") && (trim($row[5]) != "Ejemplo2")) {
                 $errors = false;
-                for ($i=0;$i<6;$i++){
+                for ($i=1;$i<6;$i++){
                     if (is_null(trim($row[$i]))){
                         $errors = true;
                     }
                 }
-
                 $recommendation = null;
                 $errorsRec = null;
                 if (is_null(trim($row[0]))){
@@ -52,12 +58,14 @@ class SecondSheetImport implements ToModel, WithBatchInserts, WithChunkReading
                 $errorsReportedActions = [];
                 $goodReportedActions = [];
                 foreach ($typeReportedActions as $reportedAction){
-                    $findAction = CatSolidarityAction::where('name',trim($reportedAction))->where('isActive',1)->pluck('id')->first();
-                    if (is_null($findAction)){
-                        array_push($errorsReportedActions,$reportedAction);
-                        $errors = true;
-                    }else{
-                        array_push($goodReportedActions,$findAction);
+                    if (strlen($reportedAction)>0){
+                        $findAction = CatSolidarityAction::where('name',trim($reportedAction))->where('isActive',1)->pluck('id')->first();
+                        if (is_null($findAction)){
+                            array_push($errorsReportedActions,$reportedAction);
+                            $errors = true;
+                        }else{
+                            array_push($goodReportedActions,$findAction);
+                        }
                     }
                 }
 
@@ -66,12 +74,14 @@ class SecondSheetImport implements ToModel, WithBatchInserts, WithChunkReading
                 $errorsPopulations = [];
                 $goodPopulations = [];
                 foreach ($populations as $population){
-                    $findPopulation = CatPopulation::where('name',trim($population))->where('isActive',1)->pluck('id')->first();
-                    if (is_null($findPopulation)){
-                        array_push($errorsPopulations,$population);
-                        $errors = true;
-                    }else{
-                        array_push($goodPopulations,$findPopulation);
+                    if (strlen($population)>0){
+                        $findPopulation = CatPopulation::where('name',trim($population))->where('isActive',1)->pluck('id')->first();
+                        if (is_null($findPopulation)){
+                            array_push($errorsPopulations,$population);
+                            $errors = true;
+                        }else{
+                            array_push($goodPopulations,$findPopulation);
+                        }
                     }
                 }
 
@@ -80,12 +90,14 @@ class SecondSheetImport implements ToModel, WithBatchInserts, WithChunkReading
                 $errorsAuthorities = [];
                 $goodAuthorities = [];
                 foreach ($authorities as $authority){
-                    $findAuthority= CatAttending::where('name',trim($authority))->where('isActive',1)->pluck('id')->first();
-                    if (is_null($findAuthority)){
-                        array_push($errorsAuthorities,$authority);
-                        $errors = true;
-                    }else{
-                        array_push($goodAuthorities,$findAuthority);
+                    if (strlen($authority)){
+                        $findAuthority= CatAttending::where('name',trim($authority))->where('isActive',1)->pluck('id')->first();
+                        if (is_null($findAuthority)){
+                            array_push($errorsAuthorities,$authority);
+                            $errors = true;
+                        }else{
+                            array_push($goodAuthorities,$findAuthority);
+                        }
                     }
                 }
 
@@ -121,7 +133,9 @@ class SecondSheetImport implements ToModel, WithBatchInserts, WithChunkReading
                 }
                 $this->fila++;
             }
-        session(["reportedActions"=>$this->allGood,"errorsReportedActions"=>$this->allErrors]);
+            session(["reportedActions"=>$this->allGood,"errorsReportedActions"=>$this->allErrors]);
+        }
+
     }
 
     public function batchSize(): int

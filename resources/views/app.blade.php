@@ -21,6 +21,7 @@
 <body>
 <div id="app"></div>
 
+
 <!-- JS -->
 <script src="{{ asset(mix('js/app.js')) }}"></script>
 <?php

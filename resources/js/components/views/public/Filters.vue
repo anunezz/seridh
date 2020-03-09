@@ -2,66 +2,130 @@
     <div class="container">
 
         <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
-            <div class="modal-dialog modal-lg" >
+            <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content graficas" >
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="false"> x </span></button>
-                        <h4 class="modal-title" id="myModalLabel">Gr&aacute;ficas.</h4>
+                        <h4 class="modal-title" id="myModalLabel">Gr&aacute;ficas</h4>
                     </div>
                     <div class="modal-body">
-                        <div class="row">
+
+
+                        <div class="row" >
                             <el-tabs tab-position="top">
 
-                                <el-tab-pane label="Recomendación por año">
+                                <el-tab-pane label="Recomendaciones por año">
                                     <div class="row">
-                                        <div class="col-md-2"></div>
-                                        <div class="col-md-8">
+                                        <div class="col-md-12">
                                             <canvas width="100%" id="Anio"></canvas>
                                         </div>
-                                        <div class="col-md-2"></div>
+
+                                         <div class="col-md-12">
+                                            <a href=""
+                                                style="width:25%;"
+                                                title="Descargar gráfico recomendación por año" 
+                                                class="btn btn-primary btn-xs center-block" 
+                                                @click="imgDownloader('imgAnioo','Anio')" 
+                                                    id="imgAnioo"
+                                            download="Recomendación_por_año.png" >
+                                                <i class="fa fa-download"></i> Descargar gr&aacute;fico
+                                            </a>
+                                         </div>
                                     </div>
                                 </el-tab-pane>
 
                                 <el-tab-pane label="Recomendación por Entidad Emisora">
-                                    <div class="row">
-                                        <div class="col-md-2"></div>
-                                        <div class="col-md-8">
+                                    <div class="row" >
+                                        <div class="col-md-12">
                                             <canvas width="100%" id="Entidad"></canvas>
                                         </div>
-                                        <div class="col-md-2"></div>
+                                        <div class="col-md-12">
+                                            <a href="" 
+                                                style="width:25%;"
+                                                class="btn btn-primary btn-xs center-block" 
+                                                title="Recomendación por Entidad Emisora"
+                                                @click="imgDownloader('imgEntidadEmisora','Entidad')" 
+                                                id="imgEntidadEmisora"
+                                            download="Recomendación_por_Entidad_Emisora.png" >
+                                                <i class="fa fa-download"></i> Descargar gr&aacute;fico
+                                            </a>
+                                         </div>
                                     </div>
                                 </el-tab-pane>
 
-                                <el-tab-pane label="Recomendación por Acción solicitada">
-                                    <div class="col-md-2"></div>
-                                    <div class="col-md-8" style="heigth: 500px;">
-                                        <canvas width="100%" id="id_acciones"></canvas>
+                                <el-tab-pane label="Recomendación por acción solicitada">
+                                    <div class="row">
+                                        <div class="col-md-12" style="heigth: 500px;">
+                                            <canvas width="100%" id="id_acciones"></canvas>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <a href="" 
+                                                style="width:25%;"
+                                                title="Descargar gráfico recomendación por acción solicitada"
+                                                class="btn btn-primary btn-xs center-block" 
+                                                @click="imgDownloader('imgAccionSolicitada','id_acciones')" 
+                                                    id="imgAccionSolicitada"
+                                              download="Recomendación_por_acción_solicitada.png" >
+                                                <i class="fa fa-download"></i> Descargar gr&aacute;fico
+                                            </a>
+                                        </div>
                                     </div>
-                                    <div class="col-md-2"></div>
                                 </el-tab-pane>
 
-                                <el-tab-pane label="Recomendación por Objetivos de Desarrollo Sostenible">
-                                    <div class="col-md-2"></div>
-                                    <div class="col-md-8">
-                                        <canvas width="100%" id="ODS"></canvas>
+                                <el-tab-pane label="Recomendaciones por Objetivos de Desarrollo Sostenible">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <canvas width="100%" id="ODS"></canvas>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <a href=""
+                                                style="width:25%;" 
+                                                title="Descargar gráfico recomendación por objetivos de desarrollo sostenible"
+                                                class="btn btn-primary btn-xs center-block" 
+                                                @click="imgDownloader('imgOdss','ODS')" 
+                                                    id="imgOdss"
+                                            download="recomendación_por_objetivos_de_desarrollo_sostenible.png" >
+                                                <i class="fa fa-download"></i> Descargar gr&aacute;fico
+                                            </a>
+                                        </div>
                                     </div>
-                                    <div class="col-md-2"></div>
                                 </el-tab-pane>
 
                                 <el-tab-pane label="Total de recomendaciones recibidas por autoridad">
-                                    <div class="col-md-2"></div>
-                                    <div class="col-md-8" id="divLoadAuthority">
-                                        <canvas width="100%" id="loadAuthority"></canvas>
+                                    <div class="row">
+                                        <div class="col-md-12" id="divLoadAuthority">
+                                            <canvas width="100%" id="loadAuthority"></canvas>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <a href="" 
+                                                style="width:25%;"
+                                                title="Total de recomendaciones recibidas por autoridad"
+                                                class="btn btn-primary btn-xs center-block" 
+                                                @click="imgDownloader('imgAutoridad','loadAuthority')" 
+                                                    id="imgAutoridad"
+                                            download="Total_de_recomendaciones_recibidas_por_autoridad.png" >
+                                                <i class="fa fa-download"></i> Descargar gr&aacute;fico
+                                            </a>
+                                        </div>
                                     </div>
-                                    <div class="col-md-2"></div>
                                 </el-tab-pane>
 
                                 <el-tab-pane label="Total de recomendaciones con al menos una acción reportada por autoridad">
-                                    <div class="col-md-2"></div>
-                                    <div class="col-md-8" id="divLoadReportadasAuthority">
-                                        <canvas id="loadReportadasAuthority" width="100%"></canvas>
+                                    <div class="row">
+                                        <div class="col-md-12" id="divLoadReportadasAuthority">
+                                            <canvas id="loadReportadasAuthority" width="100%"></canvas>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <a href="" 
+                                                style="width:25%;"
+                                                title="Descargar gráfico total de recomendaciones con al menos una acción reportada por autoridad"
+                                                class="btn btn-primary btn-xs center-block" @click="imgDownloader('imgRAutoridad','loadReportadasAuthority')" 
+                                                id="imgRAutoridad"
+                                            download="Total_de_recomendaciones_con_al_menos_una_acción_reportada_por_autoridad.png" >
+                                                <i class="fa fa-download"></i> Descargar gr&aacute;fico
+                                            </a>
+                                        </div>
                                     </div>
-                                    <div class="col-md-2"></div>
                                 </el-tab-pane>
 
                             </el-tabs>
@@ -74,7 +138,9 @@
             </div>
         </div>
 
-        <div class="row">
+        <div class="row" v-loading="loadingPage"
+                                                element-loading-text="Cargando..."
+                                                element-loading-spinner="el-icon-loading">
             <div class="col-md-12">
                 <h2>Filtros</h2>
                 <hr class="red small-margin">
@@ -208,20 +274,34 @@
                 <!-- <button type="button" v-show="jsonRecommendations.length > 0 " class="btn btn-primary btn-sm pull-right" @click="showDashboard()">  <span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span> Graficas</button> -->
             </div>
 
-            <div class="col-md-12 animated fadeIn fast" style="margin-bottom: 10px;">
-                &nbsp; <span class="glyphicon glyphicon-list-alt"></span> <strong> <b>Total: {{pagination.total}} </b></strong>
+            <div class="col-md-12 animated fadeIn fast" style="margin-bottom: 10px;" >
 
-                <button type="button" v-show="jsonRecommendations.length > 0 " class="pull-right btn btn-primary btn-sm" @click="showDashboard()">  <span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span> Gr&aacute;ficas</button>
+                <div style="width: 100%;
+                           display:flex;
+                           justify-content: space-between">
+                    <div>
+                        &nbsp; <span class="glyphicon glyphicon-list-alt"></span> <strong> <b>Total: {{pagination.total}} </b></strong>
+                    </div>
+                    <div v-loading="loadingDashboard"
+                                                element-loading-text="Cargando..."
+                                                element-loading-spinner="el-icon-loading">
+                        <button type="button" v-show="jsonRecommendations.length > 0 " class="pull-right btn btn-primary btn-sm" @click="showDashboard()">  <span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span> Gr&aacute;ficas</button>
 
-                <!-- <button class="pull-right btn btn-info btn-sm" @click="loadFile('word')" v-show="jsonRecommendations.length > 0 ">
-                    <span class="glyphicon glyphicon glyphicon-file" aria-hidden="true"></span> WORD
-                </button>
-                <button class="pull-right btn btn-success btn-sm" style="margin-right: 5px;" @click="loadFile('excel')" v-show="jsonRecommendations.length > 0 ">
-                    <span class="glyphicon glyphicon glyphicon-file" aria-hidden="true"></span> EXCEL
-                </button> -->
-                <button class="pull-right btn btn-info btn-sm" style="margin-right: 5px;" @click="loadFile('pdf')" v-show="jsonRecommendations.length > 0 ">
-                    <span class="glyphicon glyphicon glyphicon-file" aria-hidden="true"></span> PDF
-                </button>
+                        <!-- <button class="pull-right btn btn-info btn-sm" @click="loadFile('word')" v-show="jsonRecommendations.length > 0 ">
+                            <span class="glyphicon glyphicon glyphicon-file" aria-hidden="true"></span> WORD
+                        </button>
+                        <button class="pull-right btn btn-success btn-sm" style="margin-right: 5px;" @click="loadFile('excel')" v-show="jsonRecommendations.length > 0 ">
+                            <span class="glyphicon glyphicon glyphicon-file" aria-hidden="true"></span> EXCEL
+                        </button> -->
+                        <button class="pull-right btn btn-info btn-sm" style="margin-right: 5px;" @click="loadFile('pdf')" v-show="jsonRecommendations.length > 0 ">
+                            <span class="glyphicon glyphicon glyphicon-file" aria-hidden="true"></span> PDF
+                        </button>
+                    </div>
+                </div>
+
+
+
+
             </div>
 
 
@@ -453,6 +533,8 @@
 
         data() {
             return {
+                loadingPage: false,
+                loadingDashboard:false,
                 varOds:null,
                 charOds:null,
                 varAnio: null,
@@ -493,6 +575,7 @@
         },
         created() {
             let me = this;
+            this.loadingPage = true;
             if(   me.advancedsearch.length === 0 || me.advancedsearch ===  null  ){
                 this.$router.push({path:'/publico'});
                 return;
@@ -501,7 +584,11 @@
                 me.catSolidarityAction();
                 window.scrollTo(0, 0);
             }
-             me.activeLoaing(true);
+
+            this.loadingDashboard = true;
+
+            this.activeLoaing(false);
+
         },
         mounted() {
         },
@@ -510,6 +597,12 @@
         },
         methods: {
             ...mapActions("publico", ['activeLoaing','addAdvancedSearch','addCats','addDetails']),
+            imgDownloader(id,idcanvas){
+                console.log("Parametros de l aimagen a descargar: ",id,idcanvas);
+                let url_base64jp = document.getElementById(idcanvas).toDataURL("image/jpg");
+                let a =  document.getElementById(id);
+                a.href = url_base64jp;
+            },
             fnGoalsOds(item){
                 let me = this;
                 let childOds = [];
@@ -518,7 +611,7 @@
             loadEntidades(data){
                 let me = this;
                 me.varEntidad = document.getElementById('Entidad').getContext('2d');
-
+                let colors = me.getColors(data.length);
                 let labels = [];
                 let counts = [];
                 for (let i = 0; i < data.length; i++) {
@@ -534,14 +627,21 @@
                         datasets: [{
                             label: '',
                             data: counts, //valores a mostrar
-                            backgroundColor: me.colors,
-                            borderColor: me.colors,
+                            backgroundColor: colors,
+                            borderColor: colors,
                             borderWidth: 2,
                             // hoverBackgroundColor: ["rgba(0,255,0,0.2)","rgba(0,225,0,2)"],
                             // hoverBorderColor: "rgba(0,255,0,0.2)",
                         }]
                     },
                     options: {
+                         plugins: {
+                            datalabels: {
+                                    color:'black', 
+                                    align:'end',
+                                    clamp: true
+                                }
+                        },
                         responsive: true,
                         legend: {
                             display: false
@@ -593,7 +693,7 @@
                     data: {
                         labels: labels, //etiquetas a mostrar
                         datasets: [{
-                            label: 'A&ntilde;o',
+                            label: 'Año',
                             data: counts, //valores a mostrar
                             backgroundColor: colors,
                             borderColor: colors,
@@ -604,6 +704,13 @@
                         }]
                     },
                     options: {
+                         plugins: {
+                            datalabels: {
+                                    color:'black',
+                                    align:'end',
+                                    clamp: true
+                                }
+                        },
                         responsive: true,
                         // maintainAspectRatio: false,
                         legend: {
@@ -634,11 +741,11 @@
 
                 me.varAcciones = document.getElementById('id_acciones').getContext('2d');
                 me.charAcciones = new Chart( me.varAcciones, {
-                    type: 'pie',
+                    type: 'bar',
                     data: {
                         labels: actNames, //etiquetas a mostrar
                         datasets: [{
-                            label: 'Entidad emisora 1',
+                            label: '',
                             data: actCount, //valores a mostrar
                             backgroundColor: colors,
                             borderColor: colors,
@@ -648,15 +755,26 @@
                             // hoverBorderColor: "rgba(0,255,0,0.2)",
                         }]
                     },
-                    options: {
+                   options: {
+                        plugins: {
+                            datalabels: {
+                                    color:'black',
+                                    align:'end',
+                                    clamp: true
+                                }
+                        },
                         responsive: true,
-                        //maintainAspectRatio: false,
+                        legend: {
+                            display: false
+                        },
                         scales: {
                             yAxes: [{
                                 ticks: {
+                                    min: 0,
+                                    // maxTicksLimit: total.length
                                     beginAtZero: false
                                 }
-                            }]
+                            }],
                         }
                     }
                 });
@@ -696,6 +814,13 @@
                         }]
                     },
                     options: {
+                         plugins: {
+                            datalabels: {
+                                    color:'black',
+                                    align:'end',
+                                    clamp: true
+                                }
+                        },
                         responsive: true,
                         legend: {
                             display: false
@@ -739,6 +864,13 @@
                 };
 
                 var chartOptions = {
+                     plugins: {
+                            datalabels: {
+                                    color:'black',
+                                    align:'end',
+                                    clamp: true
+                                }
+                        },
                     responsive: true,
                     maintainAspectRatio: false,
                     legend: {
@@ -793,6 +925,13 @@
                 };
 
                 var chartOptions = {
+                     plugins: {
+                            datalabels: {
+                                    color:'black',
+                                    align:'end',
+                                    clamp: true
+                                }
+                        },
                     responsive: true,
                     maintainAspectRatio: false,
                     legend: {
@@ -840,6 +979,8 @@
                         me.loadAuthority(response.data.lResults.Autoridad);
                         me.loadReportadasAuthority(response.data.lResults.datosReportadasAuthority);
 
+                        me.loadingDashboard = false;
+
 
                     }
                 }).catch(function (error){
@@ -852,6 +993,7 @@
             },
             handleCurrentChange(currentPage) {
                 this.pagination.currentPage = currentPage;
+                this.loadingPage = true;
                 this.showInfo(currentPage)
             },
 
@@ -939,9 +1081,11 @@
                 };
 
                 axios.post('/api/public/recommendationFilter', data).then(function (response) {
-                    //me.activeLoaing(true);
+                        console.log("Response :",response);
                     if (response.data.success === true) {
+
                         me.params = me.advancedsearch[0].filters;
+
                         me.total = response.data.recommendations.data.length;
                         me.jsonRecommendations = response.data.recommendations.data;
                         me.right_topic = me.advancedsearch[0].right_topic;
@@ -949,12 +1093,17 @@
                         me.from = response.data.recommendations.from;
                         me.to = response.data.recommendations.to;
 
-                        if( me.pagination.total === 0){ me.numero = 3; }
+                        if(response.data.recommendations.data.length === 0){
+                            me.numero = 3;
+                        }
 
                         me.pagination.currentPage = response.data.recommendations.current_page;
                         me.pagination.perPage = response.data.recommendations.per_page;
 
+
+
                         setTimeout(item => {
+                            me.loadingPage = false;
                             me.activeLoaing(false);
                         },1000);
 
@@ -1016,6 +1165,16 @@
 
     }
 
+
+.Aniooclass, .autoridaddclass, .EntidadEmisoraclass, .AccionSolicitadaclass, .odssclass, .autoridadRdclass{
+    color: #9D2449 !important;
+    text-decoration:none;
+}
+
+.Aniooclass:hover, .autoridaddclass:hover, .EntidadEmisoraclass:hover, .AccionSolicitadaclass:hover, .odssclass:hover ,.autoridadRdclass:hover{
+    color: #FFFFFF !important;
+    text-decoration:none;
+}
 
 
 </style>

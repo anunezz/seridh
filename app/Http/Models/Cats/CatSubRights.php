@@ -19,10 +19,30 @@ class CatSubRights extends Model
 
     public function subcategories()
     {
-        return $this->hasMany(CatSubcategorySubrights::class, 'sub_rights_id');
+        return $this->hasMany(CatSubcategorySubrights::class, 'sub_rights_id')
+            ->whereIsactive(true);
     }
 
-    protected $appends = ['hash'];
+    protected $appends = ['is_used', 'hash'];
+
+    public function scopeSearch($query, $search)
+    {
+        return $query->when(!empty($search), function ($query) use ($search){
+            return $query->where('name', 'like', '%' .$search . '%')
+                ->orWhereHas('rigthRecommendation', function ($q) use ($search) {
+                    $q->where('name', 'like', '%' .$search . '%');
+
+                });
+
+        });
+    }
+
+    public function getIsUsedAttribute()
+    {
+        $isUsed = \DB::table('recommendation_right_subright')->where('subrigth_id', $this->id)->first();
+
+        return $isUsed ? true : false;
+    }
 
     public function getHashAttribute()
     {

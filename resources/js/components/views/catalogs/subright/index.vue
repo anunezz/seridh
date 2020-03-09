@@ -7,7 +7,15 @@
                         Nuevo registro
                     </el-button>
                 </el-col>
-
+                <el-col :span="10" :offset="1">
+                    <el-input
+                        clearable
+                        suffix-icon="fas fa-search"
+                        placeholder="Buscar por derechos nivel 1 y nivel 2"
+                        v-model="search"
+                        @change="getSubrights(search)">
+                    </el-input>
+                </el-col>
             </template>
         </header-section>
 
@@ -59,16 +67,45 @@
                                         @click="openEditDialog(scope.$index, scope.row.hash, scope.row.name, scope.row.rights_recommendations_id)">
                                     </el-button>
                                 </el-tooltip>
+                                <el-tooltip v-if="scope.row.is_used" placement="right-start">
+                                    <div slot="content">
+                                        Este elemento no se puede eliminar dado que
+                                        <br/>
+                                        esta siendo utilizado por una recomendación
+                                    </div>
+                                    <span>
+                                        <el-button
+                                            type="danger"
+                                            size="mini"
+                                            icon="fas fa-trash"
+                                            disabled>
+                                        </el-button>
+                                    </span>
+                                </el-tooltip>
                                 <el-tooltip
+                                    v-if="! scope.row.is_used && scope.row.isActive"
                                     class="item"
                                     effect="dark"
                                     content="Eliminar"
-                                    placement="top-start">
+                                    placement="right-start">
                                     <el-button
-                                        size="mini"
                                         type="danger"
+                                        size="mini"
                                         icon="fas fa-trash"
                                         @click="disableDialog(scope.row.hash)">
+                                    </el-button>
+                                </el-tooltip>
+                                <el-tooltip
+                                    v-if="! scope.row.is_used && ! scope.row.isActive"
+                                    class="item"
+                                    effect="dark"
+                                    content="Habilitar"
+                                    placement="right-start">
+                                    <el-button
+                                        type="success"
+                                        size="mini"
+                                        icon="fas fa-check"
+                                        @click="enableRegister(scope.row.hash)">
                                     </el-button>
                                 </el-tooltip>
                             </el-button-group>
@@ -99,7 +136,7 @@
                 clearable>
             </el-input>
             <el-form ref="newRegisterAcronym" :model="newRegisterAcronym" label-position="top" >
-            <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
+            <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
                 <el-form-item label="Derechos de Nivel 1"
                               prop="rights_recommendations_id"
                               :rules="[
@@ -170,7 +207,7 @@
             <h3>¿Está seguro que quiere eliminar este registo?</h3>
             <span slot="footer" class="dialog-footer">
                 <el-button type="danger" @click="removeDialog = false">Cancelar</el-button>
-                <el-button type="success" @click="disableSubRights(removeHash)">Aceptar</el-button>
+                <el-button type="success" @click="disableRegister(removeHash)">Aceptar</el-button>
             </span>
         </el-dialog>
     </div>
@@ -256,7 +293,8 @@
                     params: {
                         page: currentPage,
                         perPage: this.pagination.perPage,
-                        cat: 10
+                        search: this.search,
+                        cat: 11
                     }
                 };
 
@@ -264,11 +302,11 @@
 
                     if (response.data.success) {
 
-                        this.rights = response.data.rights;
-                        this.subrights = response.data.subright.data;
-                        this.pagination.total = response.data.subright.total;
-                        this.pagination.currentPage = response.data.subright.current_page;
-                        this.pagination.perPage = response.data.subright.per_page;
+                        this.rights = response.data.elements;
+                        this.subrights = response.data.elements.data;
+                        this.pagination.total = response.data.elements.total;
+                        this.pagination.currentPage = response.data.elements.current_page;
+                        this.pagination.perPage = response.data.elements.per_page;
 
                         this.stopLoading();
                     }
@@ -444,7 +482,52 @@
                         this.getSubrights();
                     })
                     .catch(_ => {});
-            }
+            },
+            disableRegister(id) {
+                this.startLoading();
+
+                let data ={id: id, cat: 11};
+
+                axios.post('/api/cats/disable-register', data).then(response => {
+                    this.$notify({
+                        type: "success",
+                        message: "El registro se eliminó con éxito."
+                    });
+
+                    this.getSubrights();
+                    this.removeDialog = false;
+                    this.removeHash = null;
+                }).catch(error => {
+                    this.stopLoading();
+
+                    this.$notify({
+                        type: "warning",
+                        message: "No fue posible completar la acción, intente nuevamente."
+                    });
+                });
+            },
+
+            enableRegister(id) {
+                this.startLoading();
+
+                let data ={id: id, cat: 11};
+
+                axios.post('/api/cats/enable-register', data).then(response => {
+                    this.$notify({
+                        type: "success",
+                        message: "El registro se habilito con éxito."
+                    });
+
+                    this.getSubrights();
+                }).catch(error => {
+                    this.stopLoading();
+
+                    this.$notify({
+                        type: "warning",
+                        message: "No fue posible completar la acción, intente nuevamente."
+                    });
+                });
+            },
         },
     }
 </script>

@@ -7,6 +7,15 @@
                         Nuevo registro
                     </el-button>
                 </el-col>
+                <el-col :span="10" :offset="1">
+                    <el-input
+                        clearable
+                        suffix-icon="fas fa-search"
+                        placeholder="Buscar por nombre o siglas"
+                        v-model="search"
+                        @change="getEntities(search)">
+                    </el-input>
+                </el-col>
             </template>
         </header-section>
 
@@ -58,16 +67,45 @@
                                         @click="openEditDialog(scope.$index, scope.row.hash, scope.row.name, scope.row.acronym)">
                                     </el-button>
                                 </el-tooltip>
+                                <el-tooltip v-if="scope.row.is_used" placement="right-start">
+                                    <div slot="content">
+                                        Este elemento no se puede deshabilitar dado que
+                                        <br/>
+                                        esta siendo utilizado por una recomendación
+                                    </div>
+                                    <span>
+                                        <el-button
+                                            type="danger"
+                                            size="mini"
+                                            icon="fas fa-trash"
+                                            disabled>
+                                        </el-button>
+                                    </span>
+                                </el-tooltip>
                                 <el-tooltip
+                                    v-if="! scope.row.is_used && scope.row.isActive"
                                     class="item"
                                     effect="dark"
                                     content="Eliminar"
-                                    placement="top-start">
+                                    placement="right-start">
                                     <el-button
-                                        size="mini"
                                         type="danger"
+                                        size="mini"
                                         icon="fas fa-trash"
                                         @click="disableDialog(scope.row.hash)">
+                                    </el-button>
+                                </el-tooltip>
+                                <el-tooltip
+                                    v-if="! scope.row.is_used && ! scope.row.isActive"
+                                    class="item"
+                                    effect="dark"
+                                    content="Habilitar"
+                                    placement="right-start">
+                                    <el-button
+                                        type="success"
+                                        size="mini"
+                                        icon="fas fa-check"
+                                        @click="enableRegister(scope.row.hash)">
                                     </el-button>
                                 </el-tooltip>
                             </el-button-group>
@@ -225,10 +263,10 @@
 
                     if (response.data.success) {
 
-                        this.entities = response.data.entity.data;
-                        this.pagination.total = response.data.entity.total;
-                        this.pagination.currentPage = response.data.entity.current_page;
-                        this.pagination.perPage = response.data.entity.per_page;
+                        this.entities = response.data.elements.data;
+                        this.pagination.total = response.data.elements.total;
+                        this.pagination.currentPage = response.data.elements.current_page;
+                        this.pagination.perPage = response.data.elements.per_page;
 
                         this.stopLoading();
                     }
@@ -310,7 +348,7 @@
                 this.nameRegister = name;
                 this.acronymRegister = acronym;
 
-                let data = {cat_transaction_type_id: 1, action: 'Editar Catálogo de Entidades Emisoras'};
+                let data = {cat_transaction_type_id: 3, action: 'Editar Catálogo de Entidades Emisoras'};
 
                 axios.post('/api/transaction', data).then(response => {
                     this.editRegisterDialog = true;
@@ -404,6 +442,29 @@
                     });
                 });
             },
+
+            enableRegister(id) {
+                this.startLoading();
+
+                let data ={id: id, cat: 1};
+
+                axios.post('/api/cats/enable-register', data).then(response => {
+                    this.$notify({
+                        type: "success",
+                        message: "El registro se habilito con éxito."
+                    });
+
+                    this.getEntities();
+                }).catch(error => {
+                    this.stopLoading();
+
+                    this.$notify({
+                        type: "warning",
+                        message: "No fue posible completar la acción, intente nuevamente."
+                    });
+                });
+            },
+
             newEntity(){
                 console.log('nueva entidad');
                 this.newRegisterName = '';

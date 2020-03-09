@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Models\Cats\CatAttending;
 use App\Http\Models\ReportedAction;
+use Cache;
 use Illuminate\Http\Request;
 use DB;
 
@@ -157,7 +158,7 @@ class ReportedActionController extends Controller
             $reportedAction->population()->sync($data['cat_population_id']);
             $reportedAction->attendig()->sync($data['cat_attendig_id']);
             DB::commit();
-
+            Cache::forget('dashboard');
             return response()->json([
                 'success' => true,
             ]);
@@ -183,7 +184,7 @@ class ReportedActionController extends Controller
 
             GeneralController::saveTransactionLog(4,
                 'Elimina una recomendación con id: ' . $reportedAction->id);
-
+            Cache::forget('dashboard');
             return response()->json([
                 'success' => true
             ]);

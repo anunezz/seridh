@@ -24,7 +24,26 @@ class CatSolidarityAction extends Model
 {
     protected $fillable = ['name', 'cat', 'acronym'];
 
-    protected $appends = ['hash'];
+    protected $appends = ['is_used', 'hash'];
+
+    public function scopeSearch($query, $search)
+    {
+        return $query->when(! empty ($search), function ($query) use ($search) {
+
+            return $query->where(function($q) use ($search)
+            {
+                $q->where('name', 'like', '%' .$search . '%');
+            });
+        });
+    }
+
+    public function getIsUsedAttribute()
+    {
+        $isUsed = \DB::table('action_recommendation')->where('cat_solidarity_action_id', $this->id)->first() ||
+            \DB::table('reported_type_acction')->where('type_action_id', $this->id)->first();
+
+        return $isUsed ? true : false;
+    }
 
     public function getHashAttribute()
     {

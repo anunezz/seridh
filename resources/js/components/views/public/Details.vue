@@ -59,6 +59,9 @@
                                             </div>
                                             <div class="col-md-12">
                                                 <ul style="list-style:none; margin:0; padding:0;">
+                                                    <!-- <pre>
+                                                        {{catGobOrder}}
+                                                    </pre> -->
 
                                                     <li v-for="(i,key) in splitNames(catGobOrder)" :key="key" v-text="i"></li>
                                                 </ul>
@@ -73,6 +76,9 @@
                                             </div>
                                             <div class="col-md-12">
                                                 <ul style="list-style:none; margin:0; padding:0;">
+                                                    <!-- <pre>
+                                                        {{CatGobPower}}
+                                                    </pre> -->
                                                     <li v-for="(i,key) in splitNames(CatGobPower)" :key="key" v-text="i"></li>
                                                 </ul>
                                             </div>
@@ -89,6 +95,9 @@
                                             </div>
                                             <div class="col-md-12">
                                                 <ul style="list-style:none; margin:0; padding:0;">
+                                                    <!-- <pre>
+                                                        {{CatAttending}}
+                                                    </pre> -->
                                                     <li v-for="(i,key) in splitNames(CatAttending)" :key="key" v-text="i"></li>
                                                 </ul>
                                             </div>
@@ -102,6 +111,9 @@
                                             </div>
                                             <div class="col-md-12">
                                                 <ul style="list-style:none; margin:0; padding:0;">
+                                                    <!-- <pre>
+                                                        {{population}}
+                                                    </pre> -->
                                                     <li v-for="(i,key) in splitNames(population)" :key="key" v-text="i"></li>
                                                 </ul>
                                             </div>
@@ -114,15 +126,11 @@
                                                 <h5>Acción Solicitada</h5>
                                             </div>
                                             <div class="col-md-12">
-
                                                 <ul style="list-style:none; margin:0; padding:0;">
-
-                                                    <!-- {{ CatSolidarityAction }} -->
-
-                                                    <!-- <li v-for="(i,key) in splitNamesAcction(CatSolidarityAction)" :key="key" v-text="i"></li> -->
-                                                    <li>
-                                                        {{ splitNamesAcction(CatSolidarityAction) }}
-                                                    </li>
+                                                    <!-- <pre>
+                                                        {{CatSolidarityAction.split('|')}}
+                                                    </pre> -->
+                                                    <li v-for="(i,key) in CatSolidarityAction.split('|')" :key="key">{{ i.trim() }}</li>
                                                 </ul>
                                             </div>
                                         </div>
@@ -210,8 +218,13 @@
                                                     <li v-for="(i,key) in topic" :key="key">
                                                         {{ i.name }}
                                                         <ul style="list-style:none;">
-                                                            <li v-for="(ii,keydos) in i.subtop" :key="keydos">
-                                                                &nbsp;  {{ ii.name.substr(6) }}
+                                                             <!-- <pre>
+                                                                {{ i.subtop }}
+                                                            </pre> -->
+                                                            <li v-for="(ii,keydos) in noduplicar(i.subtop)" :key="keydos">
+                                                                <!-- &nbsp;  {{ ii.name.substr(6) }} .split('.-')[1]-->
+                                                                <!-- &nbsp; &nbsp; {{ii.name}} ---- -->
+                                                                &nbsp; &nbsp; {{ ii.name.replace(/([a-zA-Z]{1}[0-9]{1,2}[.][0-9]{1,2}[.][-])/,'') }}
                                                             </li>
                                                         </ul>
                                                     </li>
@@ -393,6 +406,15 @@
         },
         methods:{
             ...mapActions("publico", ['addVisits','activeLoaing','addCats','addDetails']),
+            noduplicar(data){
+
+                _.uniqBy(data, function (e) {
+                    return e.id;
+                });
+
+                return _.uniqBy(data, 'name');
+                //return data;
+            },
             regresar(){
                 this.$router.push({path:'/publico/filtros'});
             },
@@ -461,15 +483,22 @@
 
 
             },
-            splitNamesAcction(value){
-                return value;
+            splitNamesAcction(data){
+                console.log(data);
+                return data;
+               // return data.split('|');
             },
             splitNames(value){
+
+                console.log("Data split: ",value);
 
                 if(value.length === 1){
                     return value;
                 }
-                value = value.split(',');
+                // else{
+
+                // }
+                // value = value.split(',');
                 return value;
             },
             namesCat(value,num){

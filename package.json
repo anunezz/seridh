@@ -30,6 +30,7 @@
     "dependencies": {
         "animate.css": "^3.7.2",
         "chart.js": "^2.9.3",
+        "chartjs-plugin-datalabels": "^0.7.0",
         "element-ui": "^2.11.1",
         "idle-vue": "^2.0.5",
         "moment": "latest",

@@ -30,10 +30,29 @@ class CatRightsRecommendation extends Model
     }
     public function subrights()
     {
-        return $this->hasMany(CatSubRights::class, 'rights_recommendations_id');
+        return $this->hasMany(CatSubRights::class, 'rights_recommendations_id')
+            ->whereIsactive(true);
     }
 
-    protected $appends = ['hash'];
+    protected $appends = ['is_used', 'hash'];
+
+    public function scopeSearch($query, $search)
+    {
+        return $query->when(! empty ($search), function ($query) use ($search) {
+
+            return $query->where(function($q) use ($search)
+            {
+                $q->where('name', 'like', '%' .$search . '%');
+            });
+        });
+    }
+
+    public function getIsUsedAttribute()
+    {
+        $isUsed = \DB::table('recommendation_right_subright')->where('right_id', $this->id)->first();
+
+        return $isUsed ? true : false;
+    }
 
     public function getHashAttribute()
     {

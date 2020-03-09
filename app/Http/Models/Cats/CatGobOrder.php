@@ -23,7 +23,25 @@ use Illuminate\Database\Eloquent\Model;
 class CatGobOrder extends Model
 {
 
-    protected $appends = ['hash'];
+    protected $appends = ['is_used', 'hash'];
+
+    public function scopeSearch($query, $search)
+    {
+        return $query->when(! empty ($search), function ($query) use ($search) {
+
+            return $query->where(function($q) use ($search)
+            {
+                $q->where('name', 'like', '%' .$search . '%');
+            });
+        });
+    }
+
+    public function getIsUsedAttribute()
+    {
+        $isUsed = \DB::table('orders_recommendation')->where('cat_gob_order_id', $this->id)->first();
+
+        return $isUsed ? true : false;
+    }
 
     public function getHashAttribute()
     {

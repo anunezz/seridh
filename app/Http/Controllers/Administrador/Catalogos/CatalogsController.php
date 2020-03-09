@@ -20,6 +20,7 @@ use App\Http\Models\DocumentRecommendation;
 use DB;
 use Exception;
 use Illuminate\Http\Request;
+use Cache;
 
 class CatalogsController extends Controller
 {
@@ -28,98 +29,107 @@ class CatalogsController extends Controller
         try {
             if ($request->wantsJson()) {
                 $data = $request->all();
+                $elements = null;
 
-                $entity = CatEntity::select(['name','id','acronym'])
-                    ->where('isActive', true)
-                    ->orderBy('updated_at', 'DESC')
-                    ->paginate($data['perPage']);
-
-                $order = CatGobOrder::select(['name','id'])
-                    ->where('isActive', true)
-                    ->orderBy('updated_at', 'DESC')
-                    ->paginate($data['perPage']);
-
-                $power = CatGobPower::select(['name','id'])
-                    ->where('isActive', true)
-                    ->orderBy('updated_at', 'DESC')
-                    ->paginate($data['perPage']);
-
-                $attendig = CatAttending::select(['name','id', 'acronym'])
-                    ->where('isActive', true)
-                    ->orderBy('updated_at', 'DESC')
-                    ->paginate($data['perPage']);
-
-                $population = CatPopulation::select(['name','id'])
-                    ->where('isActive', true)
-                    ->orderBy('updated_at', 'DESC')
-                    ->paginate($data['perPage']);
-
-                $action = CatSolidarityAction::select(['name','id'])
-                    ->where('isActive', true)
-                    ->orderBy('updated_at', 'DESC')
-                    ->paginate($data['perPage']);
-
-                $ods = CatOds::select(['name','id'])
-                    ->where('isActive', true)
-                    ->orderBy('updated_at', 'DESC')
-                    ->paginate($data['perPage']);
-
-                $topic = CatTopic::select(['name','id'])
-                    ->where('isActive', true)
-                    ->orderBy('updated_at', 'DESC')
-                    ->paginate($data['perPage']);
-
-                $right = CatRightsRecommendation::select(['name','id'])
-                    ->where('isActive', true)
-                    ->orderBy('updated_at', 'DESC')
-                    ->paginate($data['perPage']);
-
-                $subtopic = CatSubtopic::select(['name','id','cat_topic_id'])
-                    ->with('topics:id,name')
-                    ->where('isActive', true)
-                    ->orderBy('updated_at', 'DESC')
-                    ->paginate($data['perPage']);
-
-                $documents = DocumentRecommendation::select(['folio','document_id','id','isActive'])
-                    ->with('documents:id,fileName,fileNameHash,downloadCount')
-                    ->where('isActive', true)
-                    ->orderBy('updated_at', 'DESC')
-                    ->paginate($data['perPage']);
-
-                $subright = CatSubRights::select(['name','id', 'rights_recommendations_id'])
-                    ->with('rigthRecommendation:id,name')
-                    ->where('isActive', true)
-                    ->orderBy('updated_at', 'DESC')
-                    ->paginate($data['perPage']);
-
-                $subcategory = CatSubcategorySubrights::select(['name','id', 'sub_rights_id'])
-                    ->with('subRight:id,name')
-                    ->where('isActive', true)
-                    ->orderBy('updated_at', 'DESC')
-                    ->paginate($data['perPage']);
-
-                $goalsods = CatGoalsOds::select(['name','id','ods_id','acronym'])
-                    ->with('ods:id,name')
-                    ->where('isActive', true)
-                    ->orderBy('updated_at', 'DESC')
-                    ->paginate($data['perPage']);
-
+                if ($data['cat'] == 1) {
+                    $elements = CatEntity::search($data['search'])
+                        ->select(['name', 'id', 'acronym', 'isActive'])
+                        ->where('isActive', true)
+                        ->orderBy('updated_at', 'DESC')
+                        ->paginate($data['perPage']);
+                }
+                elseif ($data['cat'] == 2) {
+                    $elements = CatGobOrder::search($data['search'])
+                        ->select(['name','id', 'isActive'])
+                        ->where('isActive', true)
+                        ->orderBy('updated_at', 'DESC')
+                        ->paginate($data['perPage']);
+                }
+                elseif ($data['cat'] == 3) {
+                    $elements = CatGobPower::search($data['search'])
+                        ->select(['name','id', 'isActive'])
+                        ->where('isActive', true)
+                        ->orderBy('updated_at', 'DESC')
+                        ->paginate($data['perPage']);
+                }
+                elseif ($data['cat'] == 4) {
+                    $elements = CatAttending::search($data['search'])
+                        ->select(['name','id', 'acronym','isActive'])
+                        ->where('isActive', true)
+                        ->orderBy('updated_at', 'DESC')
+                        ->paginate($data['perPage']);
+                }
+                elseif ($data['cat'] == 5) {
+                    $elements = CatPopulation::search($data['search'])
+                        ->select(['name','id', 'isActive'])
+                        ->where('isActive', true)
+                        ->orderBy('updated_at', 'DESC')
+                        ->paginate($data['perPage']);
+                }
+                elseif ($data['cat'] == 6) {
+                    $elements = CatSolidarityAction::search($data['search'])
+                        ->select(['name','id','isActive'])
+                        ->where('isActive', true)
+                        ->orderBy('updated_at', 'DESC')
+                        ->paginate($data['perPage']);
+                }
+                elseif ($data['cat'] == 7) {
+                    $elements = CatOds::search($data['search'])
+                        ->select(['name','id','isActive'])
+                        ->where('isActive', true)
+                        ->orderBy('updated_at', 'DESC')
+                        ->paginate($data['perPage']);
+                }
+                elseif ($data['cat'] == 8) {
+                    $elements = CatTopic::search($data['search'])
+                        ->select(['name','id', 'isActive'])
+                        ->where('isActive', true)
+                        ->orderBy('updated_at', 'DESC')
+                        ->paginate($data['perPage']);
+                }
+                elseif ($data['cat'] == 9) {
+                    $elements = CatRightsRecommendation::search($data['search'])
+                        ->select(['name','id','isActive'])
+                        ->where('isActive', true)
+                        ->orderBy('updated_at', 'DESC')
+                        ->paginate($data['perPage']);
+                }
+                elseif ($data['cat'] == 10) {
+                    $elements = CatSubtopic::search($data['search'])
+                        ->select(['name','id','cat_topic_id','isActive'])
+                        ->with('topics:id,name')
+                        ->where('isActive', true)
+                        ->orderBy('updated_at', 'DESC')
+                        ->paginate($data['perPage']);
+                }
+                elseif ($data['cat'] == 11) {
+                    $elements = CatSubRights::search($data['search'])
+                        ->select(['name','id', 'rights_recommendations_id','isActive'])
+                        ->with('rigthRecommendation:id,name')
+                        ->where('isActive', true)
+                        ->orderBy('updated_at', 'DESC')
+                        ->paginate($data['perPage']);
+                }
+                elseif ($data['cat'] == 12) {
+                    $elements = CatSubcategorySubrights::search($data['search'])
+                        ->select(['name','id', 'sub_rights_id','isActive'])
+                        ->with('subRight:id,name')
+                        ->where('isActive', true)
+                        ->orderBy('updated_at', 'DESC')
+                        ->paginate($data['perPage']);
+                }
+                elseif ($data['cat'] == 13) {
+                    $elements = CatGoalsOds::search($data['search'])
+                        ->select(['name','id','ods_id','acronym','isActive'])
+                        ->with('ods:id,name')
+                        ->where('isActive', true)
+                        ->orderBy('updated_at', 'DESC')
+                        ->paginate($data['perPage']);
+                }
 
                 return response()->json([
 
-                    'entity'      => $entity,
-                    'order'       => $order,
-                    'power'       => $power,
-                    'attendig'    => $attendig,
-                    'population'  => $population,
-                    'action'      => $action,
-                    'ods'         => $ods,
-                    'topic'       => $topic,
-                    'right'       => $right,
-                    'subtopic'    => $subtopic,
-                    'subright'    => $subright,
-                    'subcategory' => $subcategory,
-                    'goalsods'    => $goalsods,
+                    'elements'    => $elements,
                     'success'     => true
                 ]);
 
@@ -222,6 +232,7 @@ class CatalogsController extends Controller
                 $cat->save();
                 GeneralController::saveTransactionLog(2, 'Se creo elemento en catalogo con id: ' . $cat->id);
                 DB::commit();
+                Cache::forget('dashboard');
 
                 return response()->json([
                     'success' => true
@@ -326,9 +337,8 @@ class CatalogsController extends Controller
             }
 
             elseif ($request->cat === 13) {
-
                 $cat = CatGoalsOds::find(decrypt($request->id));
-                $duplicityCheck = self::duplicityCheck(CatGoalsOds::class, $cat->id, $request->name, $request->ods_id,$request->acronym);
+                $duplicityCheck = self::duplicityCheck(CatGoalsOds::class, $cat->id, $request->name, $request->ods_id, $request->acronym);
             }
 
 
@@ -351,6 +361,7 @@ class CatalogsController extends Controller
 
                 GeneralController::saveTransactionLog(3, 'Se actualizo elemento en catalogo con id: ' . $cat->id);
                 DB::commit();
+                Cache::forget('dashboard');
 
                 return response()->json([
                     'success' => true
@@ -390,7 +401,7 @@ class CatalogsController extends Controller
             }
 
             if ( is_null($rightId)) {
-                return $cat::where('id', '!=', $id)->where('name', $name)->first() ? true : false;
+                return $cat::where('id', '!=', $id)->where('name', $name)->whereIsactive(true)->first() ? true : false;
             }
 
             if ( is_null($subrightId)) {
@@ -432,13 +443,46 @@ class CatalogsController extends Controller
             elseif ($request->cat === 2) {
                 $cat = CatGobOrder::find(decrypt($request->id));
             }
-
+            elseif ($request->cat === 3) {
+                $cat = CatGobPower::find(decrypt($request->id));
+            }
+            elseif ($request->cat === 4) {
+                $cat = CatAttending::find(decrypt($request->id));
+            }
+            elseif ($request->cat === 5) {
+                $cat = CatPopulation::find(decrypt($request->id));
+            }
+            elseif ($request->cat === 6) {
+                $cat = CatSolidarityAction::find(decrypt($request->id));
+            }
+            elseif ($request->cat === 7) {
+                $cat = CatOds::find(decrypt($request->id));
+            }
+            elseif ($request->cat === 8) {
+                $cat = CatTopic::find(decrypt($request->id));
+            }
+            elseif ($request->cat === 9) {
+                $cat = CatRightsRecommendation::find(decrypt($request->id));
+            }
+            elseif ($request->cat === 10) {
+                $cat = CatSubtopic::find(decrypt($request->id));
+            }
+            elseif ($request->cat === 11) {
+                $cat = CatSubRights::find(decrypt($request->id));
+            }
+            elseif ($request->cat === 12) {
+                $cat = CatSubcategorySubrights::find(decrypt($request->id));
+            }
+            elseif ($request->cat === 13) {
+                $cat = CatGoalsOds::find(decrypt($request->id));
+            }
 
             $cat->isActive = false;
             $cat->save();
 
             GeneralController::saveTransactionLog(3, 'Se deshabilito elemento en catalogo con id: ' . $cat->id);
             DB::commit();
+            Cache::forget('dashboard');
 
             return response()->json([
                 'success' => true
@@ -459,22 +503,43 @@ class CatalogsController extends Controller
             DB::beginTransaction();
 
             if ($request->cat === 1) {
-                $cat = CatMission::find(decrypt($request->id));
+                $cat = CatEntity::find(decrypt($request->id));
             }
             elseif ($request->cat === 2) {
-                $cat = CatOrganism::find(decrypt($request->id));
+                $cat = CatGobOrder::find(decrypt($request->id));
             }
             elseif ($request->cat === 3) {
-                $cat = CatTopic::find(decrypt($request->id));
+                $cat = CatGobPower::find(decrypt($request->id));
             }
             elseif ($request->cat === 4) {
-                $cat = CatInformationType::find(decrypt($request->id));
+                $cat = CatAttending::find(decrypt($request->id));
             }
             elseif ($request->cat === 5) {
-                $cat = CatNoticeType::find(decrypt($request->id));
+                $cat = CatPopulation::find(decrypt($request->id));
             }
             elseif ($request->cat === 6) {
+                $cat = CatSolidarityAction::find(decrypt($request->id));
+            }
+            elseif ($request->cat === 7) {
+                $cat = CatOds::find(decrypt($request->id));
+            }
+            elseif ($request->cat === 8) {
+                $cat = CatTopic::find(decrypt($request->id));
+            }
+            elseif ($request->cat === 9) {
+                $cat = CatRightsRecommendation::find(decrypt($request->id));
+            }
+            elseif ($request->cat === 10) {
                 $cat = CatSubtopic::find(decrypt($request->id));
+            }
+            elseif ($request->cat === 11) {
+                $cat = CatSubRights::find(decrypt($request->id));
+            }
+            elseif ($request->cat === 12) {
+                $cat = CatSubcategorySubrights::find(decrypt($request->id));
+            }
+            elseif ($request->cat === 13) {
+                $cat = CatGoalsOds::find(decrypt($request->id));
             }
 
             $cat->isActive = true;
@@ -482,6 +547,7 @@ class CatalogsController extends Controller
 
             GeneralController::saveTransactionLog(3, 'Se habilito elemento en catalogo con id: ' . $cat->id);
             DB::commit();
+            Cache::forget('dashboard');
 
             return response()->json([
                 'success' => true

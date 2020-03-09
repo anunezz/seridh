@@ -7,7 +7,15 @@
                         Nuevo registro
                     </el-button>
                 </el-col>
-
+                <el-col :span="10" :offset="1">
+                    <el-input
+                        clearable
+                        suffix-icon="fas fa-search"
+                        placeholder="Buscar por ods, metas o acrónimo"
+                        v-model="search"
+                        @change="getGoalsOds(search)">
+                    </el-input>
+                </el-col>
             </template>
         </header-section>
 
@@ -64,16 +72,45 @@
                                         @click="openEditDialog(scope.$index, scope.row.hash, scope.row.name, scope.row.ods_id,scope.row.acronym)">
                                     </el-button>
                                 </el-tooltip>
+                                <el-tooltip v-if="scope.row.is_used" placement="right-start">
+                                    <div slot="content">
+                                        Este elemento no se puede deshabilitar dado que
+                                        <br/>
+                                         esta siendo utilizado por una recomendación
+                                    </div>
+                                    <span>
+                                        <el-button
+                                            type="danger"
+                                            size="mini"
+                                            icon="fas fa-trash"
+                                            disabled>
+                                        </el-button>
+                                    </span>
+                                </el-tooltip>
                                 <el-tooltip
+                                    v-if="! scope.row.is_used && scope.row.isActive"
                                     class="item"
                                     effect="dark"
                                     content="Eliminar"
-                                    placement="top-start">
+                                    placement="right-start">
                                     <el-button
-                                        size="mini"
                                         type="danger"
+                                        size="mini"
                                         icon="fas fa-trash"
                                         @click="disableDialog(scope.row.hash)">
+                                    </el-button>
+                                </el-tooltip>
+                                <el-tooltip
+                                    v-if="! scope.row.is_used && ! scope.row.isActive"
+                                    class="item"
+                                    effect="dark"
+                                    content="Habilitar"
+                                    placement="right-start">
+                                    <el-button
+                                        type="success"
+                                        size="mini"
+                                        icon="fas fa-check"
+                                        @click="enableRegister(scope.row.hash)">
                                     </el-button>
                                 </el-tooltip>
                             </el-button-group>
@@ -111,7 +148,7 @@
                 clearable>
             </el-input>
             <el-form ref="newRegisterAcronym" :model="newRegisterAcronym" label-position="top" >
-            <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
+            <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
                 <el-form-item label="ODS"
                               prop="ods_id"
                               :rules="[
@@ -133,6 +170,7 @@
                 </el-form-item>
             </el-col>
             </el-form>
+            <p></p> <br>
             <span slot="footer" class="dialog-footer">
             <el-button type="danger" @click="newRegisterDialog = false">Cancelar</el-button>
             <el-button v-if="newRegisterDialog"
@@ -190,7 +228,7 @@
             <h3>¿Está seguro que quiere eliminar este registo?</h3>
             <span slot="footer" class="dialog-footer">
                 <el-button type="danger" @click="removeDialog = false">Cancelar</el-button>
-                <el-button type="success" @click="disableGoalsOds(removeHash)">Aceptar</el-button>
+                <el-button type="success" @click="disableRegister(removeHash)">Aceptar</el-button>
             </span>
         </el-dialog>
     </div>
@@ -280,6 +318,7 @@
                     params: {
                         page: currentPage,
                         perPage: this.pagination.perPage,
+                        search: this.search,
                         cat: 13
                     }
                 };
@@ -288,12 +327,11 @@
 
                     if (response.data.success) {
 
-                        this.ods = response.data.ods.data;
-                        this.goalsods = response.data.goalsods.data;
-
-                        this.pagination.total = response.data.goalsods.total;
-                        this.pagination.currentPage = response.data.goalsods.current_page;
-                        this.pagination.perPage = response.data.goalsods.per_page;
+                        this.ods = response.data.elements.data;
+                        this.goalsods = response.data.elements.data;
+                        this.pagination.total = response.data.elements.total;
+                        this.pagination.currentPage = response.data.elements.current_page;
+                        this.pagination.perPage = response.data.elements.per_page;
 
                         this.stopLoading();
                         this.filt=true;
@@ -473,7 +511,52 @@
                         this.getGoalsOds();
                     })
                     .catch(_ => {});
-            }
+            },
+            disableRegister(id) {
+                this.startLoading();
+
+                let data ={id: id, cat: 13};
+
+                axios.post('/api/cats/disable-register', data).then(response => {
+                    this.$notify({
+                        type: "success",
+                        message: "El registro se eliminó con éxito."
+                    });
+
+                    this.getGoalsOds();
+                    this.removeDialog = false;
+                    this.removeHash = null;
+                }).catch(error => {
+                    this.stopLoading();
+
+                    this.$notify({
+                        type: "warning",
+                        message: "No fue posible completar la acción, intente nuevamente."
+                    });
+                });
+            },
+
+            enableRegister(id) {
+                this.startLoading();
+
+                let data ={id: id, cat: 13};
+
+                axios.post('/api/cats/enable-register', data).then(response => {
+                    this.$notify({
+                        type: "success",
+                        message: "El registro se habilito con éxito."
+                    });
+
+                    this.getGoalsOds();
+                }).catch(error => {
+                    this.stopLoading();
+
+                    this.$notify({
+                        type: "warning",
+                        message: "No fue posible completar la acción, intente nuevamente."
+                    });
+                });
+            },
 
         },
     }

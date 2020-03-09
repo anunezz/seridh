@@ -25,7 +25,7 @@ class ReportedAction extends Model
             'reported_population',
             'reported_id',
             'population_id'
-        );
+        )->whereIsactive(true);
     }
 
     public function action()
@@ -35,7 +35,7 @@ class ReportedAction extends Model
             'reported_type_acction',
             'reported_id',
             'type_action_id'
-        );
+        )->whereIsactive(true);
     }
 
     public function attendig()
@@ -45,7 +45,7 @@ class ReportedAction extends Model
             'reported_authority',
             'reported_id',
             'authority_id'
-        );
+        )->whereIsactive(true);
     }
 
 

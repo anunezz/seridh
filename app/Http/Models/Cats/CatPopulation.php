@@ -24,7 +24,28 @@ class CatPopulation extends Model
 {
     protected $table = 'cat_populations';
 
-    protected $appends = ['hash'];
+    protected $appends = ['is_used', 'hash'];
+
+    public function scopeSearch($query, $search)
+    {
+        return $query->when(! empty ($search), function ($query) use ($search) {
+
+            return $query->where(function($q) use ($search)
+            {
+                $q->where('name', 'like', '%' .$search . '%');
+            });
+        });
+    }
+
+    public function getIsUsedAttribute()
+    {
+        $isUsed =
+            \DB::table('population_recommendation')->where('cat_population_id', $this->id)->first() ||
+            \DB::table('reported_population')->where('population_id', $this->id)->first();
+
+        return $isUsed ? true : false;
+
+    }
 
     public function getHashAttribute()
     {

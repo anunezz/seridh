@@ -75,7 +75,6 @@ class Recommendation extends Model
 {
     use CustomModelLogic;
 
-
     protected $fillable = ['recommendation','validity','directed', 'cat_entity_id', 'date',
         'comments','invoice', 'isPublished', 'typeIndicator','levelAttention','attentionClassification', 'isType'];
 
@@ -104,7 +103,7 @@ class Recommendation extends Model
         return $this->belongsToMany(
             CatGobOrder::class,
             'orders_recommendation'
-        );
+        )->whereIsactive(true);
     }
 
     public function power()
@@ -112,7 +111,7 @@ class Recommendation extends Model
         return $this->belongsToMany(
             CatGobPower::class,
             'powers_recommendation'
-        );
+        )->whereIsactive(true);
     }
 
     public function attendig()
@@ -120,7 +119,7 @@ class Recommendation extends Model
         return $this->belongsToMany(
             CatAttending::class,
             'attendig_recommendation'
-        );
+        )->whereIsactive(true);
     }
 
 
@@ -159,7 +158,7 @@ class Recommendation extends Model
         return $this->belongsToMany(
             CatPopulation::class,
             'population_recommendation'
-        );
+        )->whereIsactive(true);
     }
 
     public function action()
@@ -167,7 +166,7 @@ class Recommendation extends Model
         return $this->belongsToMany(
             CatSolidarityAction::class,
             'action_recommendation'
-        );
+        )->whereIsactive(true);
     }
 
     public function date()
@@ -295,16 +294,22 @@ class Recommendation extends Model
         });
     }
 
+
+
     public function scopePublicConsult($query, $search){
         return $query->when(!empty($search), function ($query) use ($search){
             return $query->where(function ($q) use ($search){
 
                 $q->when(!empty($search['year']) && count($search['year']) > 0, function ($q) use ($search){
-
-                    return $q->whereIn('date',$search['year']);
+                    if(count($search['year'])){
+                        return $q->whereIn('date',$search['year']);
+                    }
                 });
                 $q->when(!empty($search['entities']) && count($search['entities']) > 0, function ($q) use ($search){
-                    return $q->whereIn('cat_entity_id',$search['entities']);
+                    if(count($search['entities'])){
+                        return $q->whereIn('cat_entity_id',$search['entities']);
+                    }
+                   
                 });
                 $q->when(!empty($search['populations']) && count($search['populations']) > 0, function ($q) use ($search){
                     return $q->whereHas('population', function ($qq) use ($search) {
@@ -338,40 +343,64 @@ class Recommendation extends Model
                     return $q->whereHas('topic', function ($qq) use ($search) {
                         $topic = [];
                         $subtopic = [];
+                      //  dd($search['topics']);
                         foreach($search['topics'] as $item){
+
                             if( count($item) > 0 ){
-                                array_push($topic,$item['cat_topic_id']);
+                                //dd($item);
+                               // $qq->where('cat_topic_id',$item['cat_topic_id']);
+                               // $qq->where('cat_subtopic_id',$item['cat_subtopic_id']);
+                               array_push($topic,$item['cat_topic_id']);
                                 array_push($subtopic,$item['cat_subtopic_id']);
                             }
 
                         }
+                        //return $qq;
                         return $qq->whereIn('cat_topic_id',$topic)
-                            ->whereIn('cat_subtopic_id',$subtopic);
+                            ->orwhereIn('cat_subtopic_id',$subtopic);
 
                     });
                 });
                 $q->when(!empty($search['rights']) && count($search['rights']) > 0, function ($q) use ($search){
                     return $q->whereHas('right', function ($qq) use ($search) {
-                        $righIds = [];
-                        $subIds = [];
-                        $subCatIds = [];
+                        // $righIds = [];
+                        // $subIds = [];
+                        // $subCatIds = [];
 
                         foreach($search['rights'] as $item){
                             if(count($item) > 0 ){
-                                array_push($righIds,$item['right_id']);
-                                array_push($subIds,$item['subrights_id']);
-                                array_push($subCatIds,$item['subcategory_id']);
+
+                                $qq->where('right_id',$item['right_id']);
+
+                                $qq->where('subrigth_id',$item['subrights_id']);
+
+                            //    if($item['subcategory_id'] !== null ){
+                                 $qq->orwhere('subcategory_subrights_id',$item['subcategory_id']);
+                                 // array_push($subIds,$item['subrights_id']);
+                              //  }
+                                 // array_push($righIds,$item['right_id']);
+                                // array_push($subIds,$item['subrights_id']);
+                                // array_push($subCatIds,$item['subcategory_id']);
                             }
                         }
-                        return $qq->whereIn('right_id',$righIds)
-                            ->whereIn('subrigth_id',$subIds)
-                            ->whereIn('subcategory_subrights_id',$subCatIds);
+                        return $qq;
+                        // return $qq->whereIn('right_id',$righIds)
+                        //     ->whereIn('subrigth_id',$subIds)
+                        //     ->whereIn('subcategory_subrights_id',$subCatIds);
 
                     });
                 });
                 $q->when(!empty($search['actions']) && count($search['actions']) > 0, function ($q) use ($search){
                     return $q->whereHas('action', function ($qq) use ($search) {
-                        return $qq->whereIn('cat_solidarity_action_id',$search['actions']);
+                        if(count($search['actions'])){
+                            //foreach ($search['actions'] as $actions) {
+                               // dd($actions);
+                                //$qq->where('cat_solidarity_action_id',$actions);
+                            //}
+                            //return $qq;
+                            return $qq->whereIn('cat_solidarity_action_id',$search['actions']);
+                        }
+                       // return $qq->whereIn('cat_solidarity_action_id',$search['actions']);
                     });
                 });
 
@@ -379,6 +408,24 @@ class Recommendation extends Model
             });
         });
     }
+
+
+
+    public function scopeFilterConsole($query, $search){
+       // dd("Estas llegando en la recomnedacion: ",$search);
+        return $query->when(!empty($search), function ($query) use ($search){
+            return $query->where(function ($q) use ($search){
+                $q->when(!empty($search['date']), function ($q) use ($search){
+                    if( count($search['date']) > 0){
+                        return $q->whereIn('date', $search['date']);
+                    }
+                });
+            });
+        });
+    }
+
+
+
 
     public function getHashAttribute()
     {

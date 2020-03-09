@@ -32,7 +32,9 @@ class CatTopic extends Model
 
     public function subtopics()
     {
-        return $this->hasMany(CatSubtopic::class, 'cat_topic_id');
+        return $this->hasMany(CatSubtopic::class, 'cat_topic_id')
+
+            ->whereIsactive(true)->orderBy('name','ASC');
     }
 
     public function subtop()
@@ -45,7 +47,25 @@ class CatTopic extends Model
         )->distinct('cat_subtopic_id');
     }
 
-    protected $appends = ['hash'];
+    protected $appends = ['is_used', 'hash'];
+
+    public function scopeSearch($query, $search)
+    {
+        return $query->when(! empty ($search), function ($query) use ($search) {
+
+            return $query->where(function($q) use ($search)
+            {
+                $q->where('name', 'like', '%' .$search . '%');
+            });
+        });
+    }
+
+    public function getIsUsedAttribute()
+    {
+        $isUsed = \DB::table('themes_recommendation')->where('cat_topic_id', $this->id)->first();
+
+        return $isUsed ? true : false;
+    }
 
     public function getHashAttribute()
     {

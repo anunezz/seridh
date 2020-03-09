@@ -1,6 +1,7 @@
 <?php namespace App\Http\Models\Cats;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Http\Models\Recommendation;
 
 /**
  * App\Http\Models\Cats\CatEntity
@@ -24,7 +25,28 @@ class CatEntity extends Model
 {
     protected $fillable = ['name', 'cat', 'acronym'];
 
-    protected $appends = ['hash'];
+    protected $appends = ['is_used', 'hash'];
+
+    public function recommendation()
+    {
+        return $this->hasOne(Recommendation::class, 'cat_entity_id')->select('id');
+    }
+
+    public function scopeSearch($query, $search)
+    {
+        return $query->when(! empty ($search), function ($query) use ($search) {
+
+            return $query->where(function($q) use ($search)
+            {
+                $q->where('name', 'like', '%' .$search . '%') ->orWhere ('acronym', 'like', '%' .$search . '%');
+            });
+        });
+    }
+
+    public function getIsUsedAttribute()
+    {
+        return isset($this->recommendation) ? true : false;
+    }
 
     public function getHashAttribute()
     {

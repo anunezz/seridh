@@ -11,6 +11,10 @@ Route::get('recommendations/get/recommendation/files', 'RecommendationsControlle
 
 Route::group(['middleware' => ['auth:api']], function () {
 
+    //Filtros avanzados consola
+    Route::post('recommendations/advancedFiltersRecommendation', 'RecommendationsController@advancedFiltersRecommendation');
+    Route::get('recommendations/getCatsFilters', 'RecommendationsController@getCatsFilters');
+
     //Administración del portal publico
     Route::post('recommendations/saveMessages', 'ConsolePublic@saveMessages');
     Route::get('recommendations/adminPublic', 'ConsolePublic@getData');
@@ -62,6 +66,7 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::delete('recommendations/remove/documents/pdf/{id}', 'RecommendationsController@disableDocumentPdf');
     Route::post('recommendations/save/doc', 'RecommendationsController@saveDoc');
     Route::get('recommendations/edit/doc/{id}', 'RecommendationsController@editDoc');
+    Route::get('recommendations/download/Excel', 'RecommendationsController@downloadExcel');
 
 });
 
@@ -87,8 +92,3 @@ Route::prefix('public')->group(function () {
     Route::get('exportRecomendaciones','PublicController@listExcel');
 
 });
-
-
-
-
-

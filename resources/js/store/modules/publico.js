@@ -2,7 +2,7 @@
 
 const state = {
     loading:false,
-    visits: {},
+    visits: [],
     advancedsearch:[],
     cats:[],
     colorsOds:[{ id:1,  color: '#e02b40'},

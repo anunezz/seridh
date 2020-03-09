@@ -34,8 +34,11 @@ use App\Exports\RecommendationExport;
 use App\Http\Traits\RightsTrait;
 use App\Http\Traits\TopicsTrait;
 use App\Http\Traits\GoalsOdsTrait;
-
 use Exception;
+
+ini_set('memory_limit', '-1');
+set_time_limit(0);
+ini_set('max_execution_time', 0);
 
 class PublicController extends Controller
 {
@@ -153,20 +156,40 @@ class PublicController extends Controller
             }
             //Fin de autoridad
 
-            //Resolviendo ODS
-            $parentOds = [];
-            for ($i=0; $i < count($recommendationOds); $i++) {
-                foreach($recommendationOds[$i] as $valueNameOds){
-                    array_push($parentOds,"ODS ".$valueNameOds->ods->id);
-                }
-            }
+                //Resolviendo ODS
+                // $parentOds = [];
+                // for ($i=0; $i < count($recommendationOds); $i++) {
+                //     foreach($recommendationOds[$i] as $valueNameOds){
+                //         array_push($parentOds,"ODS ".$valueNameOds->ods->id);
+                //     }
+                // }
 
-            $parentOds = array_count_values($parentOds);
-            $dataOds = [];
-            foreach ($parentOds as $key => $value) {
-                $id = explode(' ',$key);
-                array_push($dataOds,["name"=>$key,'count'=>$value,"id"=>$id[1]]);
-            }
+                // $parentOds = array_count_values($parentOds);
+                // $dataOds = [];
+                // foreach ($parentOds as $key => $value) {
+                //     $id = explode(' ',$key);
+                //     array_push($dataOds,["name"=>$key,'count'=>$value,"id"=>$id[1]]);
+                // }
+                $idOds = [];
+                $parentOds = [];
+                for ($i = 0; $i < count($recommendationOds); $i++) {
+                    $odsPadreUnico = [];
+                    for ($e=0; $e < count($recommendationOds[$i]); $e++) {
+                        array_push($odsPadreUnico, $recommendationOds[$i][$e]->ods_id );
+                    }
+
+                    $valueOddd = array_unique($odsPadreUnico);
+
+                    foreach($valueOddd as $rr){
+                        array_push($idOds,$rr);
+                    }
+                }
+
+                $dataOds = [];
+                foreach (array_count_values($idOds) as $key => $value) {
+                    $id = explode(' ', $key);
+                    array_push($dataOds, ["name" => "ODS ".$key, 'count' => $value, "id"=> $key]);
+                }
             //Fin de ODS
 
             //Resolviendo Entidad Emisora
@@ -237,6 +260,7 @@ class PublicController extends Controller
         //  DB::beginTransaction();
         try{
             if ($request->wantsJson()){
+
                 $recommendation = Recommendation::where('isActive', '=', 1)
                     ->where('isPublished', '=', 1)->count();
 
@@ -249,14 +273,9 @@ class PublicController extends Controller
                 $Entity = CatEntity::where('isActive', '=', 1)->count();
                 $Topic = CatTopic::where('isActive', '=', 1)->count();
 
-
-
                 $reportedaction = Recommendation::with('reportedaction')
                     ->where('isActive', '=', 1)
                     ->where('isPublished', '=', 1)->get();
-
-
-
 
                 $arraytypeReportedAction = [];
                 $countReportedaction = [];
@@ -269,16 +288,18 @@ class PublicController extends Controller
 
                 //dd($countReportedaction);
 
-                $CatEntity = CatEntity::where('isActive', 1)->get(['id', 'name']);
-                $CatPopulation = CatPopulation::where('isActive', 1)->get(['id', 'name']);
-                $CatAttending = CatAttending::where('isActive', 1)->get(['id', 'name']);
+                $CatEntity = CatEntity::where('isActive', 1)->orderBy('name', 'desc')->get(['id', 'name']);
+                $CatPopulation = CatPopulation::where('isActive', 1)->orderBy('name', 'desc')->get(['id', 'name']);
+                $CatAttending = CatAttending::where('isActive', 1)->orderBy('name', 'asc')->get(['id', 'name']);
+                //dd("Autoridad: ",$CatAttending);
                 $CatOds = CatOds::where('isActive', 1)->get(['id', 'name']);
-                $CatSolidarityAction = CatSolidarityAction::where('isActive', 1)->get(['id', 'name']);
+                $CatSolidarityAction = CatSolidarityAction::where('isActive', 1)->orderBy('name', 'desc')->get(['id', 'name']);
 
                 $CatDate = Recommendation::select('date')
                     ->where('isActive', 1)
                     ->where('isPublished', 1)
                     ->orderBy('date', 'desc')
+                    ->distinct('date')
                     ->get();
 
                 $arrayaDate = array();
@@ -286,9 +307,11 @@ class PublicController extends Controller
                     array_push($arrayaDate, $date->date);
                 }
 
-                $CatRightsRecommendation = CatRightsRecommendation::where('isActive', 1)->get(['id', 'name']); // 1
-                $CatSubRights = CatSubRights::where('isActive', 1)->get(['id', 'name', 'rights_recommendations_id']); // 2
-                $CatSubcategorySubrights = CatSubcategorySubrights::where('isActive', 1)->get(['id', 'name', 'sub_rights_id']); //3
+                //dd('Fecha: ',$arrayaDate);
+
+                $CatRightsRecommendation = CatRightsRecommendation::where('isActive', 1)->orderBy('name', 'desc')->get(['id', 'name']); // 1
+                $CatSubRights = CatSubRights::where('isActive', 1)->orderBy('name', 'desc')->get(['id', 'name', 'rights_recommendations_id']); // 2
+                $CatSubcategorySubrights = CatSubcategorySubrights::where('isActive', 1)->orderBy('name', 'desc')->get(['id', 'name', 'sub_rights_id']); //3
 
                 $data = array(
                     "0" => array("id" => 0, "name" => "Año", "data" => $arrayaDate),
@@ -340,7 +363,7 @@ class PublicController extends Controller
                 $CatDate = Recommendation::select('date')
                     ->where('isActive', 1)
                     ->where('isPublished', 1)
-                    ->orderBy('date', 'desc')
+                    ->orderBy('date', 'ASC')
                     ->get();
 
                 $arrayaDate = array();
@@ -571,10 +594,14 @@ class PublicController extends Controller
                 $value->Ods = self::Ods($value->goalsOds);
             }
 
+            //dd("Respuesta: ",$results);
+
             return response()->json([
                 'success' => true,
                 'recommendations' => $results
             ], 200);
+
+
         } catch (Exception $e) {
 
             return response()->json([
@@ -680,12 +707,26 @@ class PublicController extends Controller
 
         }else{
 
+
+            // $results = Recommendation::with('right','subright','subcategory','topic.subtop','reportedaction.action','reportedaction.population','goalsOds.ods','docs')
+            //     ->publicConsult($data['params'])
+            //     ->where('isActive', '=', 1)->where('isPublished', '=', 1)->distinct('id')
+            //     ->orderBy('date', 'desc')
+            //     ->paginate($data['perPage']);
+
+            // foreach ($results as $value) {
+            //     $value->cat_entity_id = CatEntity($value->cat_entity_id);
+            //     $value->cat_gob_order_id = self::jsonNames($value->id);
+            //     $value->Ods = self::Ods($value->goalsOds);
+            // }
+
+
             $results = Recommendation::with('right','subright','subcategory','subtopic','topic.subtop','reportedaction.action','reportedaction.attendig','action','goalsOds.ods')
                 ->publicConsult($json)
                 ->where('isActive', '=', 1)
                 ->where('isPublished', '=', 1)
                 ->distinct('id')
-                ->orderBy('id', 'desc')
+                ->orderBy('date', 'desc')
                 ->get();
         }
 
@@ -1035,7 +1076,7 @@ class PublicController extends Controller
 
                 return response()->download(
                     $pathToFile,
-                    $document->fileName,
+                    $document->folio . '.pdf',
                     [],
                     'inline'
                 );

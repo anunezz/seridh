@@ -27,6 +27,7 @@ trait GoalsOdsTrait
 
         $showIde = [];
         $lists=[];
+        $totalAux = 1;
         foreach ($data as  $ods) {
              $goals = [];
 
@@ -51,10 +52,11 @@ trait GoalsOdsTrait
                         }
             }
              $goalsOds[] = [
-                'id' =>  $ods->id,
+                'id' =>  $totalAux,
                 'label' =>  $ods->name,
                 'children' =>  $goals
             ];
+            $totalAux+=1;
         }
         $tree[]=[
             'id' => 0,

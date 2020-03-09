@@ -1,5 +1,7 @@
 <template>
     <div>
+
+
         <header-section icon="fas fa-copy" title="Bandeja de entrada de Recomendaciones">
             <template slot="buttons">
                 <el-button
@@ -10,13 +12,14 @@
                     Regresar
                 </el-button>
                 <el-button-group>
-                    <!--<el-button
-                        size="small"
-                        type="primary"
-                        icon="fas fa-file-excel"
-                        :disabled="downloading">
-                        {{ downloadText }}
-                    </el-button>-->
+                    <!-- <el-button
+                         size="small"
+                         type="primary"
+                         icon="fas fa-file-excel"
+                         :disabled="downloading"
+                     @click="downloadExcel">
+                         {{ downloadText }}
+                     </el-button>-->
                     <el-button
                         v-if="$store.state.user.profile === 1 || 2"
                         icon="fas fa-upload"
@@ -47,7 +50,17 @@
         </header-section>
         <el-row>
             <div align="left">
-                <el-button size="mini" @click="show=!show">Flitros de búsqueda</el-button>
+                <el-button size="mini" @click="show=!show" icon="el-icon-search">Flitros de búsqueda</el-button>
+
+                <!-- <el-button size="mini" @click="showFiltersRecommendations=!showFiltersRecommendations" icon="el-icon-search">Flitros de búsqueda</el-button>
+                <el-button v-show="selectRecomendation.length > 0" type="primary" icon="el-icon-delete" size="mini" @click="clearSelects()">   Limpiar seleccionados</el-button>
+                <el-button v-show="selectRecomendation.length > 0" type="danger" icon="el-icon-brush" size="mini" @click="trashRecomendation = !trashRecomendation">Borrar seleccionados</el-button>
+
+                <FiltersComponent :show="showFiltersRecommendations"   /> -->
+
+                <!-- @deleteId="deleteDraft" -->
+
+
                 <!--  <transition name="boton">
                         <el-button size="mini" v-on:click="getRecommendations" plain @click="cleanFilters" icon="el-icon-refresh-left"><slot>Limpiar Filtro</slot></el-button>
                       </transition>
@@ -161,6 +174,9 @@
                                     <el-button type="danger" size="small" plain @click="cleanFilters">
                                         Limpiar
                                     </el-button>
+                                    <!-- <el-button type="danger" size="small" @click="trashRecomendation = !trashRecomendation">
+                                       Eliminar
+                                   </el-button> -->
                                 </div>
                             </el-row>
                         </el-card>
@@ -170,11 +186,17 @@
         </div>
         <el-row :gutter="20">
             <el-col :span="24">
+                <!-- atributo para seleccionar varios registros de la tabla  @selection-change="handleSelectionChange"-->
                 <el-table
                     size="mini"
                     border
+                    ref="elTableRecommendation"
                     :data="recommendations"
                     style="width: 100%">
+                    <!-- <el-table-column
+                        type="selection"
+                        width="55">
+                    </el-table-column> -->
                     <el-table-column
                         prop="invoice"
                         sortable
@@ -292,6 +314,17 @@
             <span slot="footer" class="dialog-footer">
                 <el-button type="danger" @click="removeDialog = false">Cancelar</el-button>
                 <el-button type="success" @click="disableRecommendation(removeHash)">Aceptar</el-button>
+            </span>
+        </el-dialog>
+
+        <el-dialog
+            v-if="trashRecomendation"
+            :visible.sync="trashRecomendation"
+            width="40%" style="text-align: center">
+            <h3>¿Estás completamente seguro de eliminar las recomendaciones seleccionadas?</h3>
+            <span slot="footer" class="dialog-footer">
+                <el-button type="primary" @click="trashRecomendation = false">Cancelar</el-button>
+                <el-button type="danger" @click="advancedFiltersRecomendation()">Eliminar</el-button>
             </span>
         </el-dialog>
 
@@ -547,20 +580,33 @@
             </span>
         </el-dialog>
 
+
+
+
     </div>
 </template>
 
 <script>
     import HeaderSection from "../layouts/partials/HeaderSection";
+    import FiltersComponent from "../recommendations/FiltersRecomendations";
     import {mapGetters, mapActions} from 'vuex';
 
     export default {
         components: {
-            HeaderSection
+            HeaderSection,
+            FiltersComponent
         },
 
         data() {
             return {
+                // Filtros
+                trashRecomendation: false,
+                selectRecomendation: [],
+
+                showFiltersRecommendations: false,
+
+                // Fin de filtros
+
                 show: false,
 
                 recommendations: [],
@@ -616,6 +662,35 @@
         methods: {
 
             ...mapActions("bulkLoading", ['addRows', 'indexRow']),
+            clearSelects(){
+                this.$refs.elTableRecommendation.clearSelection();
+            },
+            handleSelectionChange(val) {
+                this.selectRecomendation = [];
+                for (let i = 0; i < val.length; i++) {
+                    this.selectRecomendation.push(val[i].id);
+                }
+
+                console.log("Elementos seleccionados: ",this.selectRecomendation);
+            },
+            advancedFiltersRecomendation(){
+
+
+
+
+
+                axios.post('/api/recommendations/advancedFiltersRecommendation',{
+                    deleteId:  this.selectRecomendation
+                }).then(response => {
+                    if (response.data.success) {
+                        console.log("Response buscador de recomendaciones: ",response);
+                        this.getRecommendations();
+                        this.trashRecomendation = false;
+                    }
+                });
+
+
+            },
             getFile() {
                 document.location.href = '/template/Recomendaciones.xlsx';
             },
@@ -647,18 +722,14 @@
             },
 
             getByFilter() {
-
                 let _search = {
                     filters: this.search,
-                    page: 1,
+                    page: this.pagination.currentPage,
                     perPage: this.pagination.perPage,
-
                 };
-
 
                 axios.get('/api/filter-recommendations', {params: _search}).then(response => {
                     if (response.data.success) {
-
                         this.recommendations = response.data.recommendations.data;
                         this.pagination.total = response.data.recommendations.total;
                         this.pagination.currentPage = response.data.recommendations.current_page;
@@ -670,6 +741,7 @@
             },
 
             onError(err, file, fileList) {
+                console.log(err);
                 this.stopLoading();
                 this.$message({
                     type: 'warning',
@@ -860,6 +932,35 @@
 
             handleCurrentChange(currentPage) {
                 this.pagination.currentPage = currentPage;
+
+                let sum = 0;
+                sum = (this.search.date === null )? sum + 0 :sum + 1;
+                // console.log("Date: ",sum);
+                sum = (this.search.recommendation === null)? sum + 0 : sum + 1;
+                // console.log("Recomendation: ",sum);
+                sum = (this.search.cat_entity_id === null)? sum + 0 : sum +1;
+                //  console.log("cat_entity: ",sum);
+                sum = (this.search.isPublished.length > 0)? sum + 1 : sum + 0;
+                //  console.log("publicado: ",sum);
+
+
+                if( sum !== 0  ){
+                    console.log("ESTAS DENTRO DE LA CONDICION");
+                    // console.log("Suma de resultados: ",sum);
+                    // console.log("fecha:",this.search.date);
+                    // console.log("Tipo de valor: ",typeof(this.search.date));
+
+                    console.log("Pagina: ",this.pagination.currentPage);
+
+
+                    this.getByFilter();
+                    return
+                }
+
+                console.log("TOTAL: ",sum);
+
+
+
                 this.getRecommendations(currentPage)
             },
 
@@ -929,7 +1030,27 @@
             cargaMasiva(){
                 this.$refs.upload.uploadFiles=[];
                 this.dialogVisible = true;
-            }
+            },
+            downloadExcel() {
+                let params = {
+                    responseType: 'blob',
+                };
+
+                axios.get(`/api/recommendations/download/Excel`, {params, responseType: 'blob'}).then(response => {
+                    const linkUrl = window.URL.createObjectURL(new Blob([response.data]));
+                    const link = document.createElement('a');
+                    link.href = linkUrl;
+                    link.setAttribute('download', 'Prueba.xlsx');
+                    document.body.appendChild(link);
+                    link.click();
+                }).catch(error => {
+                    this.$notify({
+                        title: 'Mensaje',
+                        text: 'No fue posible realizar la descarga, inténtelo nuevamente.',
+                        type: 'warning'
+                    });
+                });
+            },
         },
     }
 </script>

@@ -32,7 +32,7 @@ use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use stdClass;
-/*ini_set('memory_limit', '1024M');*/
+
 class FirstSheetImport implements ToModel, WithBatchInserts, WithChunkReading
 {
     protected $fila = 1;

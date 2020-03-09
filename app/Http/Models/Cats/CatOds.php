@@ -28,10 +28,29 @@ class CatOds extends Model
 
     public function goalsOds()
     {
-        return $this->hasMany(CatGoalsOds::class, 'ods_id');
+        return $this->hasMany(CatGoalsOds::class, 'ods_id')
+            ->whereIsactive(true);
     }
 
-    protected $appends = ['hash'];
+    protected $appends = ['is_used', 'hash'];
+
+    public function scopeSearch($query, $search)
+    {
+        return $query->when(! empty ($search), function ($query) use ($search) {
+
+            return $query->where(function($q) use ($search)
+            {
+                $q->where('name', 'like', '%' .$search . '%');
+            });
+        });
+    }
+
+    public function getIsUsedAttribute()
+    {
+        $isUsed = \DB::table('ods_recommendation')->where('ods_id', $this->id)->first();
+
+        return $isUsed ? true : false;
+    }
 
     public function getHashAttribute()
     {

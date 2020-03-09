@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\RecommendationExport;
 use App\Http\Models\Cats\CatAttending;
 use App\Http\Models\Cats\CatEntity;
 use App\Http\Models\Cats\CatGoalsOds;
@@ -22,6 +23,7 @@ use App\Http\Models\Recommendation;
 use App\Http\Models\ReportedAction;
 use App\Http\Traits\TopicsTrait;
 use App\Imports\RecommendationsImport;
+use Cache;
 use DB;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
@@ -374,7 +376,7 @@ class RecommendationsController extends Controller
                 'Crea una nueva recomendación con id: ' . $recommendation->id);
 
             DB::commit();
-
+            Cache::forget('dashboard');
             return response()->json([
                 'success' => true,
                 'folio' => $folio,
@@ -472,6 +474,8 @@ class RecommendationsController extends Controller
 
                 $goalsOds = GoalsOdsTrait::orderOds($recommendation->goalsOds->all());
 
+
+
                 $recommendationForm = [
                     'recommendation'               => $recommendation->recommendation,
                     'validity'                     => $recommendation->validity,
@@ -494,6 +498,8 @@ class RecommendationsController extends Controller
                     'dataControl'                  => $recommendation->dataControl,
                     'isPublished'                  => $recommendation->isPublished,
                 ];
+
+                Cache::forget('dashboard');
 
                 return response()->json([
                     'entities'           => $entities,
@@ -611,7 +617,7 @@ class RecommendationsController extends Controller
                 'Edita una recomendación con id: ' . $recommendation->id);
 
             DB::commit();
-
+            Cache::forget('dashboard');
             return response()->json([
                 'success' => true,
             ]);
@@ -634,10 +640,10 @@ class RecommendationsController extends Controller
 
             $recommendation->isPublished = true;
             $recommendation->save();
-
+            Cache::forget('dashboard');
             GeneralController::saveTransactionLog(5,
                 'Publica una recomendación con id: ' . $recommendation->id);
-
+            Cache::forget('dashboard');
             return response()->json([
                 'success' => true
             ]);
@@ -663,7 +669,7 @@ class RecommendationsController extends Controller
 
             GeneralController::saveTransactionLog(5,
                 'Despublica una recomendación con id: ' . $recommendation->id);
-
+            Cache::forget('dashboard');
             return response()->json([
                 'success' => true
             ]);
@@ -690,7 +696,7 @@ class RecommendationsController extends Controller
 
             GeneralController::saveTransactionLog(4,
                 'Elimina una recomendación con id: ' . $recommendation->id);
-
+            Cache::forget('dashboard');
             return response()->json([
                 'success' => true
             ]);
@@ -798,10 +804,9 @@ class RecommendationsController extends Controller
             $document = $request->document;
 
             $document->storeAs($path, 'Recomendaciones.xlsm');*/
-
             Excel::import(new RecommendationsImport, $request->document);
             DB::commit();
-
+            Cache::forget('dashboard');
             $erros = session('errorMasivo');
             session()->forget(['errorsReportedActions', 'reportedActions','errorMasivo']);
             return response()->json([
@@ -1382,5 +1387,104 @@ class RecommendationsController extends Controller
     }
 
 
+    public function advancedFiltersRecommendation(Request $request)
+    {
+        try{
 
+            $data = $request->all();
+
+            if( isset($data['filter']) ){
+                $results = Recommendation::with('right','subright','subcategory','topic.subtop','reportedaction.action','reportedaction.population','goalsOds.ods','docs')
+                ->filterConsole($data['filter'])
+                ->where('isActive', '=', 1)->where('isPublished', '=', 1)->distinct('id')
+                ->orderBy('date', 'desc')->get();
+                //->paginate($data['perPage']);
+
+               // dd($results);
+            }
+
+            if(isset($data['deleteId'])  ){
+                $results = Recommendation::whereIn('id',$data['deleteId'])->get();
+                foreach ($results as $d) {
+                  $d->power()->detach();
+                  $d->attendig()->detach();
+                  $d->action()->detach();
+                  $d->population()->detach();
+                  $d->order()->detach();
+                  $d->right()->detach();
+                  $d->topic()->detach();
+                  $d->ods()->detach();
+                  $d->docs()->detach();
+
+                    foreach ($d->reportedaction as $act) {
+                        $act->population()->detach();
+                        $act->action()->detach();
+                        $act->attendig()->detach();
+                        $act->delete();
+                    }
+
+                   $d->dataControl()->delete();
+                   $d->delete();
+                }
+            }
+
+            return response()->json([
+                'lResults' => $results,
+                'success' => true
+            ]);
+
+        }
+        catch ( \Exception $e ){
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+
+    public function getCatsFilters()
+    {
+        try{
+
+
+            $CatDate = Recommendation::select('date')
+            ->where('isActive', 1)
+            ->where('isPublished', 1)
+            ->distinct('date')
+            ->orderBy('date', 'desc')
+            ->get();
+
+            $entities = CatEntity::select('id','name')->where('isActive',true)->get();
+
+            $arrayaDate = array();
+            foreach ($CatDate as $date) {
+                array_push($arrayaDate, $date->date);
+            }
+
+            $results = ["date"=>$arrayaDate,
+                        "entities"=>$entities];
+
+            return response()->json([
+                'lResults' => $results,
+                'success'         => true
+            ]);
+
+        }
+        catch ( \Exception $e ){
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+
+
+
+    public function downloadExcel(Request $request)
+    {
+        //dd('descargar Excel');
+        return Excel::download(new RecommendationExport(), 'Prueba.xlsx');
+    }
 }

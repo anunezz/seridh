@@ -22,4 +22,7 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::delete('cats/remove/goals/ods/{id}', 'CatalogsController@disableGoalsOds');
     Route::post('cats/disable-register', 'CatalogsController@disableRegister');
     Route::post('cats/searchCats', 'CatalogsController@searchCats');
+    Route::post('cats/enable-register', 'CatalogsController@enableRegister');
+
 });
+

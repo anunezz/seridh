@@ -43,7 +43,26 @@ class CatSubtopic extends Model
 
     }
 
-    protected $appends = ['hash'];
+    protected $appends = ['is_used', 'hash'];
+
+    public function scopeSearch($query, $search)
+    {
+            return $query->when(!empty($search), function ($query) use ($search){
+                return $query->where('name', 'like', '%' .$search . '%')
+                    ->orWhereHas('topics', function ($q) use ($search) {
+                        $q->where('name', 'like', '%' .$search . '%');
+
+            });
+
+        });
+    }
+
+    public function getIsUsedAttribute()
+    {
+        $isUsed = \DB::table('themes_recommendation')->where('cat_subtopic_id', $this->id)->first();
+
+        return $isUsed ? true : false;
+    }
 
     public function getHashAttribute()
     {
