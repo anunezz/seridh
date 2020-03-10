@@ -1622,25 +1622,28 @@ Si experimenta fallas técnicas o tiene comentarios sobre la informaci&oacute;n 
   height: 100%;
   width:100%;
   position: fix;
+  display: flex;
+  justify-content: center;
+  -webkit-filter: blur(7px);
   
   -webkit-transition: all 1s ease;
   -o-transition: all 1s ease;
-  transition: all 1s ease;
+  transition: all 2s ease;
   z-index: 10000;
 }
 
 #carga{
-  border: 15px solid #ccc;
+  border: 10px solid #ccc;
   border-top-color: #F4266A;
   border-top-style: groove;
-  height: 100%;
-  width:  100%;
-  border-radius: 100%;
+  height: 90%;
+  width:  90%;
+  border-radius: 50%;
   
   position: absolute;
   top: 0px;
-  bottom: 37px;
-  left: -50px;
+  bottom: 0px;
+  left: 0px;
   right: 0px;
   margin:auto;
   
@@ -1664,12 +1667,13 @@ Si experimenta fallas técnicas o tiene comentarios sobre la informaci&oacute;n 
 .iimage{
    background-image: url("/img/sre_vert.svg");
   background-repeat: no-repeat;
-  height: 320px;
-  width: 320px;
+  height: 200px;
+  width: 200px;
+  padding:35px;
+  border-radius: 50%;
   position: relative;
   margin:auto;
+  background-size: 100% 107%;
 }
-
-
 
 </style>
